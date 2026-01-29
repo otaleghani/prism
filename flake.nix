@@ -47,6 +47,7 @@
           imports = [
             ./modules/user-logic.nix
             ./modules/system.nix
+            ./modules/profiles.nix
           ];
 
           # Inject our custom scripts package set
