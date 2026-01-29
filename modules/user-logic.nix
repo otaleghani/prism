@@ -81,17 +81,17 @@ in
               
               # Apply COMMON defaults (Shells, Theme Settings)
               # --ignore-existing: Do NOT overwrite if user has edited the file on disk
-              ${rsync} -ravn --ignore-existing --mkpath --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
+              ${rsync} -rav --ignore-existing --mkpath --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
 
               # Apply PROFILE defaults (Dev vs Gamer)
               if [ -d "$PROFILE_SOURCE" ] && [ "${userCfg.profileType}" != "custom" ]; then
-                 ${rsync} -ravn --ignore-existing --mkpath --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
+                 ${rsync} -rav --ignore-existing --mkpath --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
               fi
 
               # Apply USER OVERRIDES (From their flake)
               if [ -n "${toString userCfg.extraFiles}" ] && [ -d "$USER_OVERRIDE" ]; then
                  echo "[Prism] Applying user overrides for ${user}..."
-                 ${rsync} -ravn --ignore-existing --mkpath --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
+                 ${rsync} -rav --ignore-existing --mkpath --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
               fi
             fi
           '') cfg.users
