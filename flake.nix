@@ -72,7 +72,7 @@
             (final: prev: {
               prism = {
                 portal = self.packages.${prev.system}.prism-portal;
-                sync = self.packages.${prev.sync}.prism-sync;
+                sync = self.packages.${prev.system}.prism-sync;
                 update = self.packages.${prev.system}.prism-update;
                 install = self.packages.${prev.system}.prism-install;
                 delete = self.packages.${prev.system}.prism-delete;
