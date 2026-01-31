@@ -36,6 +36,11 @@ in
     type = lib.types.attrsOf (
       lib.types.submodule {
         options = {
+          description = lib.mkOption {
+            type = lib.types.str;
+            default = "Prism User";
+            description = "Full name of the user (e.g., Oliviero Taleghani).";
+          };
           profileType = lib.mkOption {
             type = lib.types.enum [
               "dev"
@@ -52,6 +57,7 @@ in
             default = null;
             description = "Path to a directory of extra dotfiles to override defaults.";
           };
+          # --- FIXED: Added this option back ---
           packages = lib.mkOption {
             type = lib.types.listOf lib.types.package;
             default = [ ];
@@ -65,12 +71,23 @@ in
   };
 
   config = {
-    # Install common packages system-wide
+    # Install Common Packages System-Wide
     environment.systemPackages = commonPkgs;
 
-    # Install profile packages per-user
+    # Install Profile Packages Per-User
     # We now combine the Profile Packages + The User's Custom Packages
     users.users = lib.mapAttrs (name: userCfg: {
+      isNormalUser = true;
+      description = userCfg.description;
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+        "video"
+        "audio"
+        # "vboxusers" # Only add if VirtualBox is enabled system-wide to avoid errors
+      ];
+      shell = pkgs.zsh;
+      initialPassword = "prism"; # Default password (change immediately!)
       packages = (profilePackages.${userCfg.profileType} or [ ]) ++ userCfg.packages;
     }) cfg;
 
