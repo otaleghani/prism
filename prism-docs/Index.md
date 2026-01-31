@@ -1,0 +1,49 @@
+## Pages to create
+- How to create a configuration
+- How to add overrides
+- Explaining everything
+
+## Things to do
+- [ ] System wide themes for each major program, like
+    - [ ] Neovim
+    - [ ] Lazygit
+    - [ ] Lazydocker
+    - [ ] Chromium
+    - [ ] Firefox
+    - [ ] Btop
+    - [ ] Rofi
+    - [ ] Tmux
+    - [ ] Ghotty
+    - [ ] Fastfetch
+    - [ ] fzf
+    - [ ] bat
+    - [ ] eza
+    - [ ] starship
+    - [ ] bluetui
+    - [ ] impala
+    - [ ] mpv
+    - [ ] yazi
+    - [ ] etc...
+- [ ] Wallpapers management
+- [ ] Screensaver setup
+- [ ] Switch user, every user it's own TTY
+- [ ] Shared folder between users
+- [ ] Use mainly TUI, like bluetui and impala
+- [ ] Create helper menu for keybindings
+- [ ] Enhanced Hyprland configuration
+    - [ ] SUPER+G -> Grouping
+    - [ ] SUPER+ALT+TAB -> cycle throgh groups
+- [ ] General helper menu
+    - [ ] Open apps picker
+    - [ ] Learning tab, used to open up different documentations
+        - [ ] Prism
+        - [ ] Hyprland
+        - [ ] Nixos / Nixos packages
+        - [ ] Neovim
+        - [ ] etc...
+    - [ ] Capture tab
+        - [ ] Screenshot -> Full screen, picker -> After send to satty for editing https://github.com/Satty-org/Satty
+        - [ ] Video recording (obs maybe?) Region, region+audio, display, display+audio, display+webcam, terminal
+    - [ ] Color picker
+    - [ ] Local share with https://localsend.org/it
+

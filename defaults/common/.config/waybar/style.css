@@ -1,0 +1,11 @@
+@import url("../../.local/share/prism/current/waybar.css");
+
+window#waybar {
+    background-color: @base;
+    color: @text;
+}
+
+#workspaces button.active {
+    background-color: @mauve;
+    color: @base;
+}

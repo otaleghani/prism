@@ -30,8 +30,11 @@
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          portal = pkgs.callPackage ./pkgs/portal.nix { };
-          pkg-manager = pkgs.callPackage ./pkgs/package-manager.nix { };
+          prism-portal = pkgs.callPackage ./pkgs/prism-portal.nix { };
+          prism-sync = pkgs.callPackage ./pkgs/prism-sync.nix { };
+          prism-update = pkgs.callPackage ./pkgs/prism-update.nix { };
+          prism-install = pkgs.callPackage ./pkgs/prism-install.nix { };
+          prism-delete = pkgs.callPackage ./pkgs/prism-delete.nix { };
         }
       );
 
@@ -54,12 +57,17 @@
           nixpkgs.overlays = [
             (final: prev: {
               prism = {
-                portal = self.packages.${prev.system}.portal;
-                # ADDED: Overlay
-                pkg-manager = self.packages.${prev.system}.pkg-manager;
+                portal = self.packages.${prev.system}.prism-portal;
+                sync = self.packages.${prev.sync}.prism-sync;
+                update = self.packages.${prev.system}.prism-update;
+                install = self.packages.${prev.system}.prism-install;
+                delete = self.packages.${prev.system}.prism-delete;
               };
             })
           ];
         };
+
+      # TODO: Create development shell
+
     };
 }
