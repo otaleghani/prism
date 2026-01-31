@@ -35,6 +35,7 @@
           prism-update = pkgs.callPackage ./pkgs/prism-update.nix { };
           prism-install = pkgs.callPackage ./pkgs/prism-install.nix { };
           prism-delete = pkgs.callPackage ./pkgs/prism-delete.nix { };
+          prism-theme = pkgs.callPackage ./pkgs/prism-theme.nix { };
         }
       );
 
@@ -76,6 +77,7 @@
                 update = self.packages.${prev.system}.prism-update;
                 install = self.packages.${prev.system}.prism-install;
                 delete = self.packages.${prev.system}.prism-delete;
+                theme = self.packages.${prev.system}.prism-theme;
               };
             })
           ];

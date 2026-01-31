@@ -1,0 +1,35 @@
+/* Everforest Dark Hard */
+
+@define-color bg_dim      #1e2326;
+@define-color bg0         #272e33;
+@define-color bg1         #2e383c;
+@define-color bg2         #374145;
+@define-color bg3         #414b50;
+@define-color bg4         #495156;
+@define-color bg5         #4f5b58;
+
+@define-color fg          #d3c6aa;
+@define-color red         #e67e80;
+@define-color orange      #e69875;
+@define-color yellow      #dbbc7f;
+@define-color green       #a7c080;
+@define-color aqua        #83c092;
+@define-color blue        #7fbbb3;
+@define-color purple      #d699b6;
+
+/* Mapping specific roles to Everforest colors */
+@define-color base        @bg0;
+@define-color mantle      @bg1;
+@define-color crust       @bg_dim;
+
+@define-color text        @fg;
+@define-color subtext0    #9da9a0;
+@define-color subtext1    #859289;
+
+@define-color surface0    @bg2;
+@define-color surface1    @bg3;
+@define-color surface2    @bg4;
+
+@define-color overlay0    #7a8478;
+@define-color overlay1    #859289;
+@define-color overlay2    #9da9a0;
