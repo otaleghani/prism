@@ -48,9 +48,23 @@
         }:
         {
           imports = [
-            ./modules/user-logic.nix
-            ./modules/system.nix
-            ./modules/profiles.nix
+            ./modules/users.nix
+            ./modules/packages.nix
+            ./modules/hardware/audio.nix
+            ./modules/hardware/bluetooth.nix
+            ./modules/hardware/boot.nix
+            ./modules/hardware/garbage-collector.nix
+            ./modules/hardware/graphics.nix
+            ./modules/hardware/locale.nix
+            ./modules/hardware/networking.nix
+            ./modules/hardware/print.nix
+            ./modules/hardware/settings.nix
+            ./modules/software/fonts.nix
+            ./modules/software/shared-folder.nix
+            ./modules/software/shell.nix
+            ./modules/software/steam.nix
+            ./modules/software/wacom.nix
+            ./modules/software/window-manager.nix
           ];
 
           # Inject our custom scripts package set
