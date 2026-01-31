@@ -108,24 +108,24 @@ in
              
              # Apply COMMON Defaults (Base Layer) - Enforced
              if [ -d "$COMMON_SOURCE" ]; then
-               ${rsync} -rav --mkpath --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
+               ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
              fi
 
              # Apply PROFILE Defaults (Layer 2) - Enforced
              if [ "${userCfg.profileType}" != "custom" ] && [ -d "$PROFILE_SOURCE" ]; then
-               ${rsync} -rav --mkpath --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
+               ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
              # Apply USER OVERRIDES (Top Layer) - Enforced
              if [ -n "${toString userCfg.extraFiles}" ] && [ -d "$USER_OVERRIDE" ]; then
                echo "[Prism] Applying user overrides..."
-               ${rsync} -rav --mkpath --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
+               ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
              fi
              
              # Sync Themes & Wallpapers
              THEME_DEST="$USER_HOME/.local/share/prism/themes"
              if [ -d "$THEME_SOURCE" ]; then
-                ${rsync} -rav --mkpath --chown=${user}:users "$THEME_SOURCE" "$THEME_DEST/"
+                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$THEME_SOURCE" "$THEME_DEST/"
                 
                 # Set Default Theme (Catppuccin Mocha) if no current theme is selected
                 CURRENT_LINK="$USER_HOME/.local/share/prism/current"
