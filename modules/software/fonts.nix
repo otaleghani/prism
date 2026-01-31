@@ -6,7 +6,7 @@
       # Standard fonts
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
 
       # Nerd Fonts (Required for Starship, Waybar, etc.)
       nerd-fonts.jetbrains-mono
