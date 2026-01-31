@@ -121,6 +121,30 @@ in
               else
                  echo "[Prism] Warning: No themes found at $THEME_SOURCE"
               fi
+
+              # ... existing theme deployment ...
+              if [ -d "$THEME_SOURCE" ]; then
+                 echo "[Prism] Deploying themes and wallpapers..."
+                 ${rsync} -rav --ignore-existing --mkpath --chown=${user}:users "$THEME_SOURCE" "$THEME_DEST/"
+                 
+                 # --- NEW: Set Default Theme (Symlink) ---
+                 CURRENT_LINK="$USER_HOME/.local/share/prism/current"
+                 DEFAULT_THEME="catppuccin-mocha" # Change this to your preferred default
+
+                 # Only set if the link doesn't exist yet
+                 if [ ! -e "$CURRENT_LINK" ]; then
+                    if [ -d "$THEME_DEST/$DEFAULT_THEME" ]; then
+                        echo "[Prism] Setting default theme to $DEFAULT_THEME..."
+                        # Create the symlink
+                        ln -sfn "$THEME_DEST/$DEFAULT_THEME" "$CURRENT_LINK"
+                        # Ensure the user owns the symlink (important!)
+                        chown -h ${user}:users "$CURRENT_LINK"
+                    else
+                        echo "[Prism] Warning: Default theme '$DEFAULT_THEME' not found."
+                    fi
+                 fi
+              fi
+
             fi
           '') cfg.users
         );

@@ -30,6 +30,7 @@ with pkgs;
   walker # Application runner
 
   # Terminal
+  ghostty # Emulator
   neovim # Editor
   wiremix # Volume
   impala # Wifi
