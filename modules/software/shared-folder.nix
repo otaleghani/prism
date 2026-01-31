@@ -1,4 +1,4 @@
-{ }:
+{ ... }:
 {
   system.activationScripts.createSharedDir = ''
     mkdir -p /home/shared
