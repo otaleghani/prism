@@ -8,14 +8,14 @@
 let
   cfg = config.prism.users;
 
-  # 1. Import the package lists
+  # Import the package lists
   commonPkgs = import ./packages/common.nix { inherit pkgs; };
   devPkgs = import ./packages/dev.nix { inherit pkgs; };
   gamerPkgs = import ./packages/gamer.nix { inherit pkgs; };
   pentesterPkgs = import ./packages/pentester.nix { inherit pkgs; };
   creatorPkgs = import ./packages/creator.nix { inherit pkgs; };
 
-  # 2. Map profile strings to package lists
+  # Map profile strings to package lists
   profilePackages = {
     dev = devPkgs;
     gamer = gamerPkgs;
@@ -52,6 +52,11 @@ in
             default = null;
             description = "Path to a directory of extra dotfiles to override defaults.";
           };
+          packages = lib.mkOption {
+            type = lib.types.listOf lib.types.package;
+            default = [ ];
+            description = "Specific extra packages for this persona (merged with profile packages).";
+          };
         };
       }
     );
@@ -60,19 +65,17 @@ in
   };
 
   config = {
-    # Install Common Packages System-Wide
+    # Install common packages system-wide
     environment.systemPackages = commonPkgs;
 
-    # Install Profile Packages Per-User
+    # Install profile packages per-user
+    # We now combine the Profile Packages + The User's Custom Packages
     users.users = lib.mapAttrs (name: userCfg: {
-      packages = (profilePackages.${userCfg.profileType} or [ ]);
+      packages = (profilePackages.${userCfg.profileType} or [ ]) ++ userCfg.packages;
     }) cfg;
 
     # SCAFFOLDING SCRIPT
-    # Strategy: Enforced Updates (General -> Specific)
-    # 1. Common (Overwrite)
-    # 2. Profile (Overwrite)
-    # 3. User Overrides (Overwrite)
+    # Strategy: Enforced Updates (Common -> Profile -> Override)
     system.activationScripts.prismScaffolding = lib.stringAfter [ "users" ] (
       concatStringsSep "\n" (
         mapAttrsToList (user: userCfg: ''
@@ -86,27 +89,23 @@ in
 
           if [ -d "$USER_HOME" ]; then
              
-             # Apply COMMON Defaults (Base Layer)
+             # Apply COMMON Defaults (Base Layer) - Enforced
              if [ -d "$COMMON_SOURCE" ]; then
                ${rsync} -rav --mkpath --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
              fi
 
-             # Apply PROFILE Defaults (Layer 2)
-             # Overwrites common defaults if conflicts exist.
+             # Apply PROFILE Defaults (Layer 2) - Enforced
              if [ "${userCfg.profileType}" != "custom" ] && [ -d "$PROFILE_SOURCE" ]; then
                ${rsync} -rav --mkpath --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
-             # Apply USER OVERRIDES (Top Layer)
-             # This allows the user to persistently override Prism defaults 
-             # by defining the files in their flake 'extraFiles' path.
+             # Apply USER OVERRIDES (Top Layer) - Enforced
              if [ -n "${toString userCfg.extraFiles}" ] && [ -d "$USER_OVERRIDE" ]; then
                echo "[Prism] Applying user overrides..."
                ${rsync} -rav --mkpath --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
              fi
              
-             # Sync themes & wallpapers
-             # Always sync to ensure new themes are available.
+             # Sync Themes & Wallpapers
              THEME_DEST="$USER_HOME/.local/share/prism/themes"
              if [ -d "$THEME_SOURCE" ]; then
                 ${rsync} -rav --mkpath --chown=${user}:users "$THEME_SOURCE" "$THEME_DEST/"
