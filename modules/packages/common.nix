@@ -49,5 +49,5 @@ with pkgs;
   prism.update
   prism.install
   prism.delete
-  prism.style
+  prism.theme
 ]
