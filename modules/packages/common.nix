@@ -50,4 +50,5 @@ with pkgs;
   prism.install
   prism.delete
   prism.theme
+  prism.open-tui
 ]
