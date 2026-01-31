@@ -10,7 +10,7 @@ let
 
   # Import the package lists
   commonPkgs = import ./packages/common.nix { inherit pkgs; };
-  devPkgs = import ./packages/dev.nix { inherit pkgs; };
+  devPkgs = import ./packages/developer.nix { inherit pkgs; };
   gamerPkgs = import ./packages/gamer.nix { inherit pkgs; };
   pentesterPkgs = import ./packages/pentester.nix { inherit pkgs; };
   creatorPkgs = import ./packages/creator.nix { inherit pkgs; };
