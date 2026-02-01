@@ -12,7 +12,6 @@
 
 writeShellScriptBin "prism-portal" ''
   # Dependencies
-  # Added 'id' (coreutils) to get UID/GID
   PATH=${rofi}/bin:${gawk}/bin:${systemd}/bin:${util-linux}/bin:${gnugrep}/bin:${coreutils}/bin:${kbd}/bin:${shadow}/bin:$PATH
 
   # Get current user
@@ -34,10 +33,9 @@ writeShellScriptBin "prism-portal" ''
   fi
 
   # 3. Direct Launch (The "Root" Bypass)
-  # Since we are launching a fresh session, we need root privileges.
-  # Instead of the ugly pkexec prompt, we use Rofi to ask for the password.
 
-  PASSWORD=$(rofi -dmenu -password -p "Password for $CURRENT_USER:" -lines 0)
+  # Improve prompt clarity
+  PASSWORD=$(rofi -dmenu -password -p "Portal Authorization:" -lines 0)
 
   # If user cancelled (empty password), exit
   if [ -z "$PASSWORD" ]; then
@@ -54,19 +52,26 @@ writeShellScriptBin "prism-portal" ''
   RUNTIME_DIR="/run/user/$TARGET_UID"
 
   # Construct the startup command
-  # 1. mkdir: Ensure the runtime dir exists
-  # 2. chown/chmod: Fix permissions (must be owned by user, mode 700)
-  # 3. openvt: Switch to new TTY
-  # 4. su: Login as user and launch Hyprland with XDG_RUNTIME_DIR set
+  # 1. Setup Runtime Dir (Root)
+  # 2. openvt: Open a new Virtual Terminal
+  # 3. Inside openvt (as Root):
+  #    a. chown the TTY device to the target user (Crucial for GPU access!)
+  #    b. su to target user
+  #    c. Create .cache dir (Fixes crash report error)
+  #    d. Launch Hyprland
 
   CMD="
     mkdir -p $RUNTIME_DIR
     chown $TARGET_UID:$TARGET_GID $RUNTIME_DIR
     chmod 700 $RUNTIME_DIR
-    openvt -s -- su -l $TARGET_USER -c 'export XDG_RUNTIME_DIR=$RUNTIME_DIR; Hyprland'
+    
+    openvt -s -- bash -c '
+      chown $TARGET_UID:$TARGET_GID \$(tty); 
+      chmod 600 \$(tty);
+      su -l $TARGET_USER -c \"export XDG_RUNTIME_DIR=$RUNTIME_DIR; mkdir -p \$HOME/.cache; Hyprland\"
+    '
   "
 
   # Execute with sudo, passing the password via stdin
-  # We use -S to read password from stdin
   echo "$PASSWORD" | sudo -S bash -c "$CMD" 2>/dev/null
 ''
