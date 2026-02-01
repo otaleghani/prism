@@ -31,6 +31,7 @@ with pkgs;
   hyprpicker # Color picker
   walker # Application runner
   swww # Wallpaper engine
+  hyprpolkitagent # Needed for prism-portal
 
   # Terminal
   ghostty # Emulator

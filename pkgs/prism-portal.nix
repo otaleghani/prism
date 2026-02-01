@@ -8,12 +8,12 @@
   coreutils,
   kbd, # For openvt and chvt
   shadow, # For su
-  polkit, # For pkexec
 }:
 
 writeShellScriptBin "prism-portal" ''
   # Dependencies
-  PATH=${rofi}/bin:${gawk}/bin:${systemd}/bin:${util-linux}/bin:${gnugrep}/bin:${coreutils}/bin:${kbd}/bin:${shadow}/bin:${polkit}/bin:$PATH
+  # We removed 'polkit' from here because we must use the system wrapper for pkexec
+  PATH=${rofi}/bin:${gawk}/bin:${systemd}/bin:${util-linux}/bin:${gnugrep}/bin:${coreutils}/bin:${kbd}/bin:${shadow}/bin:$PATH
 
   # Get current user
   CURRENT_USER=$(whoami)
@@ -39,12 +39,12 @@ writeShellScriptBin "prism-portal" ''
 
   echo "Launching new session for $TARGET_USER..."
 
-  # pkexec:    Asks for YOUR password (GUI prompt) to get root.
+  # /run/wrappers/bin/pkexec: Uses the system setuid wrapper (Crucial!)
   # openvt:    Finds first available TTY.
   # -s:        Switch to that TTY immediately.
   # --:        End of openvt arguments.
   # su -l:     Login as target user (loads env, doesn't ask password because we are root).
   # -c:        Run the compositor (Hyprland).
 
-  pkexec openvt -s -- su -l "$TARGET_USER" -c "Hyprland"
+  /run/wrappers/bin/pkexec openvt -s -- su -l "$TARGET_USER" -c "Hyprland"
 ''
