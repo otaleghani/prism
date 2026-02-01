@@ -12,19 +12,19 @@
 
 writeShellScriptBin "prism-portal" ''
   # Dependencies
-  # We removed 'polkit' from here because we must use the system wrapper for pkexec
+  # Added 'id' (coreutils) to get UID/GID
   PATH=${rofi}/bin:${gawk}/bin:${systemd}/bin:${util-linux}/bin:${gnugrep}/bin:${coreutils}/bin:${kbd}/bin:${shadow}/bin:$PATH
 
   # Get current user
   CURRENT_USER=$(whoami)
 
-  # List available real users
+  # 1. List available real users
   # Filter out system users, build users, and the current user
   TARGET_USER=$(awk -F: '$3 >= 1000 && $1 != "'"$CURRENT_USER"'" && $1 !~ /^nixbld/ && $1 != "nobody" {print $1}' /etc/passwd | rofi -dmenu -p "Portal to:")
 
   [ -z "$TARGET_USER" ] && exit 0
 
-  # Check for active session of target user
+  # 2. Check for active session of target user
   SESSION_ID=$(loginctl list-sessions | grep "$TARGET_USER" | awk '{print $1}' | head -n 1)
 
   if [ -n "$SESSION_ID" ]; then
@@ -33,18 +33,40 @@ writeShellScriptBin "prism-portal" ''
     exit 0
   fi
 
-  # Direct Launch (The "Root" Bypass)
-  # Since Ly doesn't support switching, and no active session exists,
-  # we spawn a NEW session on a NEW TTY manually.
+  # 3. Direct Launch (The "Root" Bypass)
+  # Since we are launching a fresh session, we need root privileges.
+  # Instead of the ugly pkexec prompt, we use Rofi to ask for the password.
+
+  PASSWORD=$(rofi -dmenu -password -p "Password for $CURRENT_USER:" -lines 0)
+
+  # If user cancelled (empty password), exit
+  if [ -z "$PASSWORD" ]; then
+    exit 1
+  fi
 
   echo "Launching new session for $TARGET_USER..."
 
-  # /run/wrappers/bin/pkexec: Uses the system setuid wrapper (Crucial!)
-  # openvt:    Finds first available TTY.
-  # -s:        Switch to that TTY immediately.
-  # --:        End of openvt arguments.
-  # su -l:     Login as target user (loads env, doesn't ask password because we are root).
-  # -c:        Run the compositor (Hyprland).
+  # Get User ID and Group ID for the target user
+  TARGET_UID=$(id -u "$TARGET_USER")
+  TARGET_GID=$(id -g "$TARGET_USER")
 
-  /run/wrappers/bin/pkexec openvt -s -- su -l "$TARGET_USER" -c "Hyprland"
+  # The runtime directory required by Wayland/Hyprland
+  RUNTIME_DIR="/run/user/$TARGET_UID"
+
+  # Construct the startup command
+  # 1. mkdir: Ensure the runtime dir exists
+  # 2. chown/chmod: Fix permissions (must be owned by user, mode 700)
+  # 3. openvt: Switch to new TTY
+  # 4. su: Login as user and launch Hyprland with XDG_RUNTIME_DIR set
+
+  CMD="
+    mkdir -p $RUNTIME_DIR
+    chown $TARGET_UID:$TARGET_GID $RUNTIME_DIR
+    chmod 700 $RUNTIME_DIR
+    openvt -s -- su -l $TARGET_USER -c 'export XDG_RUNTIME_DIR=$RUNTIME_DIR; Hyprland'
+  "
+
+  # Execute with sudo, passing the password via stdin
+  # We use -S to read password from stdin
+  echo "$PASSWORD" | sudo -S bash -c "$CMD" 2>/dev/null
 ''
