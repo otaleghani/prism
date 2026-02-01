@@ -48,7 +48,7 @@ with pkgs;
   chromium
 
   # Prism
-  prism.portal
+  # prism.portal
   prism.sync
   prism.update
   prism.install
@@ -60,4 +60,5 @@ with pkgs;
   prism.focus-tui
   prism.open-webapp
   prism.focus-webapp
+  prism.session
 ]

@@ -30,7 +30,7 @@
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          prism-portal = pkgs.callPackage ./pkgs/prism-portal.nix { };
+          # prism-portal = pkgs.callPackage ./pkgs/prism-portal.nix { };
           prism-sync = pkgs.callPackage ./pkgs/prism-sync.nix { };
           prism-update = pkgs.callPackage ./pkgs/prism-update.nix { };
           prism-install = pkgs.callPackage ./pkgs/prism-install.nix { };
@@ -42,6 +42,7 @@
           prism-open-or-focus-tui = pkgs.callPackage ./pkgs/prism-open-or-focus-tui.nix { };
           prism-open-webapp = pkgs.callPackage ./pkgs/prism-open-webapp.nix { };
           prism-open-or-focus-webapp = pkgs.callPackage ./pkgs/prism-open-or-fucus-webapp.nix { };
+          prism-session = pkgs.callPackage ./pkgs/prism-session.nix { };
         }
       );
 
@@ -79,7 +80,7 @@
           nixpkgs.overlays = [
             (final: prev: {
               prism = {
-                portal = self.packages.${prev.system}.prism-portal;
+                # portal = self.packages.${prev.system}.prism-portal;
                 sync = self.packages.${prev.system}.prism-sync;
                 update = self.packages.${prev.system}.prism-update;
                 install = self.packages.${prev.system}.prism-install;
@@ -91,6 +92,7 @@
                 focus-tui = self.packages.${prev.system}.prism-open-or-focus-tui;
                 open-webapp = self.packages.${prev.system}.prism-open-webapp;
                 focus-webapp = self.packages.${prev.system}.prism-open-or-focus-webapp;
+                session = self.packages.${prev.system}.prism-session;
               };
             })
           ];
