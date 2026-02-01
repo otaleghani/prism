@@ -37,18 +37,14 @@ in
         # so referring to it simply as "login.jpg" fails.
         # By interpolating the derivation here, we give SDDM the exact /nix/store/... path.
         # background = "${loginWallpaper}";
-        background = {
-          nixos = ../../defaults/wallpapers/login.jpg;
-        };
+        background = ../../defaults/wallpapers/login.jpg;
 
         backgroundMode = "fill";
         backgroundColor = "#1e1e2e";
         textColor = "#cdd6f4";
       };
 
-      LockScreen.background = {
-        nixos = ../../defaults/wallpapers/login.jpg;
-      };
+      LockScreen.background = ../../defaults/wallpapers/login.jpg;
 
       "LoginScreen.LoginArea" = {
         backgroundColor = "transparent";
