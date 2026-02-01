@@ -5,7 +5,7 @@ let
     pkgs.jq
   ];
 in
-writeShellScriptBin "prism-focus" ''
+writeShellScriptBin "prism-tui" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
   # Usage: prism-tui <command> [args...]
   # Example: prism-tui btop

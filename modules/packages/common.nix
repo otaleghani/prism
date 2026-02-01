@@ -54,5 +54,9 @@ with pkgs;
   prism.delete
   prism.theme
   prism.wall
+  prism.focus
   prism.open-tui
+  prism.focus-tui
+  prism.open-webapp
+  prism.focus-webapp
 ]

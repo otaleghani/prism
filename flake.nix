@@ -38,6 +38,10 @@
           prism-theme = pkgs.callPackage ./pkgs/prism-theme.nix { };
           prism-wall = pkgs.callPackage ./pkgs/prism-wall.nix { };
           prism-open-tui = pkgs.callPackage ./pkgs/prism-open-tui.nix { };
+          prism-open-or-focus = pkgs.callPackage ./pkgs/prism-open-or-focus.nix { };
+          prism-open-or-focus-tui = pkgs.callPackage ./pkgs/prism-open-or-focus-tui.nix { };
+          prism-open-webapp = pkgs.callPackage ./pkgs/prism-open-webapp.nix { };
+          prism-open-or-focus-webapp = pkgs.callPackage ./pkgs/prism-open-or-fucus-webapp.nix { };
         }
       );
 
@@ -81,7 +85,11 @@
                 delete = self.packages.${prev.system}.prism-delete;
                 theme = self.packages.${prev.system}.prism-theme;
                 wall = self.packages.${prev.system}.prism-wall;
+                focus = self.packages.${prev.system}.prism-open-or-focus;
                 open-tui = self.packages.${prev.system}.prism-open-tui;
+                focus-tui = self.packages.${prev.system}.prism-open-or-focus-tui;
+                open-webapp = self.packages.${prev.system}.prism-open-webapp;
+                focus-webapp = self.packages.${prev.system}.prism-open-or-focus-webapp;
               };
             })
           ];
