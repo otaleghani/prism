@@ -37,11 +37,11 @@
         scale = 2.0;
       };
       "LockScreen" = {
-        background = "default_wall";
+        background = "login.jpg";
       };
       "LoginScreen" = {
         # Referenced from the 'backgrounds' option above
-        background = "default_wall";
+        background = "login.jpg";
 
         # Ensure it covers the whole screen
         backgroundMode = "fill";
