@@ -1,6 +1,6 @@
 /* Import current Prism theme */
 /* Path relative to ~/.config/walker/style.css pointing to ~/.local/share/prism/current/walker.css */
-@import url("../../../.local/share/prism/current/walker.css");
+@import url("../../../../.local/share/prism/current/walker.css");
 
 #window {
   background: transparent;
