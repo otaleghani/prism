@@ -20,7 +20,7 @@ in
 
   programs.silentSDDM = {
     enable = true;
-    theme = "rei";
+    theme = "catppuccin-mocha";
 
     profileIcons = lib.mkIf (config.prism.users != { }) (
       lib.mapAttrs (name: user: user.icon) (lib.filterAttrs (n: u: u.icon != null) config.prism.users)
