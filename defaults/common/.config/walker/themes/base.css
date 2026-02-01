@@ -1,52 +1,162 @@
+/* https://walkerlauncher.com/docs/theming */
+
+/* Color variables names */
+/* @define-color background @base; */
+/* @define-color input_bg   @surface; */
+/* @define-color input_text @text; */
+/* @define-color selected   @highlight_low; */
+/* @define-color accent     @iris; */
+/* @define-color border     @pine; */
+/* #window { */
+/*   background: transparent; */
+/* } */
+/**/
+/* #box { */
+/*   background-color: @background; */
+/*   color: @input_text; */
+/*   border-radius: 12px; */
+/*   padding: 12px; */
+/*   border: 2px solid @border; */
+/*   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
+/* } */
+/**/
+/* #search { */
+/*   background-color: @input_bg; */
+/*   color: @input_text; */
+/*   border-radius: 8px; */
+/*   padding: 8px 12px; */
+/*   margin-bottom: 8px; */
+/*   border: none; */
+/*   font-weight: bold; */
+/* } */
+/**/
+/* #list { */
+/*   background: transparent; */
+/*   margin-top: 8px; */
+/* } */
+/**/
+/* /* Individual Items */ */
+/* #child { */
+/*   padding: 8px 12px; */
+/*   border-radius: 8px; */
+/* } */
+/**/
+/* #child:selected { */
+/*   background-color: @selected; */
+/*   color: @accent; */
+/*   box-shadow: none; */
+/* } */
+/**/
+/* #icon { */
+/*   margin-right: 12px; */
+/* } */
+/**/
+/* #text { */
+/*   color: @input_text; */
+/* } */
+/**/
+/* #sub { */
+/*   color: @overlay; */
+/*   font-size: 0.8em; */
+/* } */
+/* BASE STYLE (Structure Only)
+   Colors are prepended to this file by prism-theme
+*/
+
+/* Reset all styles */
+* {
+  all: unset;
+}
+
 #window {
   background: transparent;
 }
 
-#box {
-  background-color: @background;
+/* Window wrapper */
+.box-wrapper {
+  box-shadow:
+    0 19px 38px rgba(0, 0, 0, 0.3),
+    0 15px 12px rgba(0, 0, 0, 0.22);
+  background: @background;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid @border;
+}
+
+/* Input field */
+.input {
+  caret-color: @input_text;
+  background: @input_bg;
+  padding: 10px;
   color: @input_text;
-  border-radius: 12px;
-  padding: 12px;
-  border: 2px solid @border;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
 }
 
-#search {
-  background-color: @input_bg;
-  color: @input_text;
-  border-radius: 8px;
-  padding: 8px 12px;
-  margin-bottom: 8px;
-  border: none;
-  font-weight: bold;
-}
-
-#list {
-  background: transparent;
-  margin-top: 8px;
-}
-
-/* Individual Items */
-#child {
-  padding: 8px 12px;
-  border-radius: 8px;
-}
-
-#child:selected {
-  background-color: @selected;
-  color: @accent;
-  box-shadow: none;
-}
-
-#icon {
-  margin-right: 12px;
-}
-
-#text {
+.input placeholder {
+  opacity: 0.5;
   color: @input_text;
 }
 
-#sub {
-  color: @overlay0;
-  font-size: 0.8em;
+/* List items */
+.list {
+  color: @input_text;
+  margin-top: 10px;
+}
+
+.item-box {
+  border-radius: 10px;
+  padding: 10px;
+  transition: all 0.2s;
+}
+
+child:hover .item-box,
+child:selected .item-box {
+  background: @selected;
+}
+
+.item-text {
+  font-size: 14px;
+  color: @input_text;
+}
+
+.item-subtext {
+  font-size: 12px;
+  opacity: 0.5;
+  color: @input_text;
+}
+
+.item-image,
+.item-image-text {
+  margin-right: 10px;
+}
+
+/* Quick activation labels */
+.item-quick-activation {
+  margin-left: 10px;
+  background: @selected;
+  border-radius: 5px;
+  padding: 10px;
+  color: @input_text;
+}
+
+/* Error display */
+.error {
+  padding: 10px;
+  background: @accent;
+  color: @background;
+  border-radius: 5px;
+}
+
+/* Icon sizes */
+.normal-icons {
+  -gtk-icon-size: 16px;
+}
+
+.large-icons {
+  -gtk-icon-size: 32px;
+}
+
+/* Hide scrollbar */
+scrollbar {
+  opacity: 0;
 }
