@@ -18,8 +18,8 @@
     # Define a wallpaper to be used in settings
     backgrounds = {
       # Local file in your repo
-      # Create this file: defaults/wallpapers/login.png
-      default_wall = ../../defaults/wallpapers/login.png;
+      # Create this file: defaults/wallpapers/login.jpg
+      default_wall = ../../defaults/wallpapers/login.jpg;
 
       # Download from internet
       # default_wall = pkgs.fetchurl {
