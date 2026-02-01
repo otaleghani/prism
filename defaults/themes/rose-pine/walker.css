@@ -1,0 +1,17 @@
+/* Rose-Pine Palette for Walker */
+
+@define-color base      #191724;
+@define-color surface   #1f1d2e; /* Mantle equivalent */
+@define-color text      #e0def4;
+@define-color iris      #c4a7e7; /* Accent */
+@define-color pine      #31748f; /* Border */
+@define-color highlight_low #21202e; /* Surface equivalent */
+@define-color overlay   #26233a;
+
+/* Semantic Names */
+@define-color background @base;
+@define-color input_bg   @surface;
+@define-color input_text @text;
+@define-color selected   @highlight_low;
+@define-color accent     @iris;
+@define-color border     @pine;

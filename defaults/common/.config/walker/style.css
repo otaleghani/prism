@@ -1,0 +1,56 @@
+/* Import current Prism theme */
+/* Path relative to ~/.config/walker/style.css pointing to ~/.local/share/prism/current/walker.css */
+@import url("../../.local/share/prism/current/walker.css");
+
+#window {
+  background: transparent;
+}
+
+#box {
+  background-color: @background;
+  color: @input_text;
+  border-radius: 12px;
+  padding: 12px;
+  border: 2px solid @border;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#search {
+  background-color: @input_bg;
+  color: @input_text;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border: none;
+  font-weight: bold;
+}
+
+#list {
+  background: transparent;
+  margin-top: 8px;
+}
+
+/* Individual Items */
+#child {
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+#child:selected {
+  background-color: @selected;
+  color: @accent;
+  box-shadow: none;
+}
+
+#icon {
+  margin-right: 12px;
+}
+
+#text {
+  color: @input_text;
+}
+
+#sub {
+  color: @overlay0;
+  font-size: 0.8em;
+}

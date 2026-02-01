@@ -1,0 +1,17 @@
+/* Everforest Dark Hard Palette for Walker */
+
+@define-color base      #272e33;
+@define-color mantle    #2e383c;
+@define-color text      #d3c6aa;
+@define-color purple    #d699b6; /* Used as accent */
+@define-color blue      #7fbbb3; /* Used as border */
+@define-color surface0  #374145;
+@define-color overlay0  #7a8478;
+
+/* Semantic Names */
+@define-color background @base;
+@define-color input_bg   @mantle;
+@define-color input_text @text;
+@define-color selected   @surface0;
+@define-color accent     @purple;
+@define-color border     @blue;

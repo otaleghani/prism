@@ -1,0 +1,23 @@
+[app]
+# "dmenu" mode is required for our scripts (prism-session, etc.)
+as_window = false 
+
+[window]
+box.width = 500
+box.height = 400
+anchor = "center"
+
+[list]
+height = 300
+always_show = true
+
+[search]
+placeholder = "Search..."
+
+[activation_mode]
+# Use labels (Ctrl+j/k) to navigate or arrows
+labels = "jkl;asdf"
+
+[general]
+# Close when you click away
+monitor_mouse = true
