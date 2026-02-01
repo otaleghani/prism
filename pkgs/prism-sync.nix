@@ -13,7 +13,7 @@ writeShellScriptBin "prism-sync" ''
   # We use nix-env -qa because it's reliable for fetching available packages
   # Format: package.attr.path  Description
   # Filter out 'nixos.' attributes (modules/functions) which cause "not an attribute set" errors
-  ${pkgs.nix}/bin/nix-env -qaP --description | grep -vE "^nixos\." > "$CACHE_DIR/pkglist.txt"
+  ${pkgs.nix}/bin/nix-env -f ${pkgs.path} -qaP --description | grep -vE "^nixos\." > "$CACHE_DIR/pkglist.txt"
 
   echo "[Prism] Database updated. $(wc -l < $CACHE_DIR/pkglist.txt) packages indexed."
 ''
