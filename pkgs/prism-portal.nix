@@ -4,15 +4,12 @@
   gawk,
   systemd,
   util-linux,
-  gnugrep,
   coreutils,
-  kbd, # For openvt and chvt
-  shadow, # For su
 }:
 
 writeShellScriptBin "prism-portal" ''
   # Dependencies
-  PATH=${rofi}/bin:${gawk}/bin:${systemd}/bin:${util-linux}/bin:${gnugrep}/bin:${coreutils}/bin:${kbd}/bin:${shadow}/bin:$PATH
+  PATH=${rofi}/bin:${gawk}/bin:${systemd}/bin:${util-linux}/bin:${coreutils}/bin:$PATH
 
   # Get current user
   CURRENT_USER=$(whoami)
@@ -24,7 +21,9 @@ writeShellScriptBin "prism-portal" ''
   [ -z "$TARGET_USER" ] && exit 0
 
   # 2. Check for active session of target user
-  SESSION_ID=$(loginctl list-sessions | grep "$TARGET_USER" | awk '{print $1}' | head -n 1)
+  # We look for an existing session for the target user.
+  # loginctl output format: SESSION UID USER SEAT TTY
+  SESSION_ID=$(loginctl list-sessions | awk -v u="$TARGET_USER" '$3 == u {print $1}' | head -n 1)
 
   if [ -n "$SESSION_ID" ]; then
     echo "User $TARGET_USER is active in background (Session $SESSION_ID). Switching..."
@@ -32,46 +31,14 @@ writeShellScriptBin "prism-portal" ''
     exit 0
   fi
 
-  # 3. Direct Launch (The "Root" Bypass)
+  # 3. New Session Strategy: The "Log Out" Method
+  # Since we are using Ly (which doesn't support seamless switching APIs),
+  # the cleanest way to start a new session is to log out of the current one.
 
-  # Improve prompt clarity
-  PASSWORD=$(rofi -dmenu -password -p "Portal Authorization:" -lines 0)
+  CONFIRM=$(echo -e "Yes\nNo" | rofi -dmenu -p "Start session for $TARGET_USER? (This will Log Out)")
 
-  # If user cancelled (empty password), exit
-  if [ -z "$PASSWORD" ]; then
-    exit 1
+  if [ "$CONFIRM" == "Yes" ]; then
+      # Exit Hyprland. This returns you to the Ly login screen.
+      hyprctl dispatch exit
   fi
-
-  echo "Launching new session for $TARGET_USER..."
-
-  # Get User ID and Group ID for the target user
-  TARGET_UID=$(id -u "$TARGET_USER")
-  TARGET_GID=$(id -g "$TARGET_USER")
-
-  # The runtime directory required by Wayland/Hyprland
-  RUNTIME_DIR="/run/user/$TARGET_UID"
-
-  # Construct the startup command
-  # 1. Setup Runtime Dir (Root)
-  # 2. openvt: Open a new Virtual Terminal
-  # 3. Inside openvt (as Root):
-  #    a. chown the TTY device to the target user (Crucial for GPU access!)
-  #    b. su to target user
-  #    c. Create .cache dir (Fixes crash report error)
-  #    d. Launch Hyprland
-
-  CMD="
-    mkdir -p $RUNTIME_DIR
-    chown $TARGET_UID:$TARGET_GID $RUNTIME_DIR
-    chmod 700 $RUNTIME_DIR
-    
-    openvt -s -- bash -c '
-      chown $TARGET_UID:$TARGET_GID \$(tty); 
-      chmod 600 \$(tty);
-      su -l $TARGET_USER -c \"export XDG_RUNTIME_DIR=$RUNTIME_DIR; mkdir -p \$HOME/.cache; Hyprland\"
-    '
-  "
-
-  # Execute with sudo, passing the password via stdin
-  echo "$PASSWORD" | sudo -S bash -c "$CMD" 2>/dev/null
 ''
