@@ -22,8 +22,11 @@ writeShellScriptBin "prism-session" ''
 
   case "$selected_option" in
     "$logout")
+      # Ignore signals in this scripts
+      trap '' HUP INT TERM
       # Kill deamons that might hand onto the old Wayland session
       pkill ghostty || true
+      sleep 0.1
       # This kills Hyprland, dropping you back to the login screen
       hyprctl dispatch exit
       ;;
