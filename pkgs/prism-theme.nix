@@ -45,29 +45,35 @@ writeShellScriptBin "prism-theme" ''
 
   echo "[Prism] Switching to theme: $cmd"
 
-  # 1. Update Symlink
+  # Update Symlink
   ln -sfn "$TARGET_THEME" "$CURRENT_LINK"
 
-  # 2. Reload Hyprland
+  # Reload Hyprland
   if pgrep Hyprland > /dev/null; then
     echo "Reloading Hyprland..."
     hyprctl reload
   fi
 
-  # 3. Reload Waybar
+  # Reload waybar
   if pgrep waybar > /dev/null; then
     echo "Reloading Waybar..."
     pkill waybar
     waybar & disown
   fi
 
-  # 4. Reload Kitty
-  if pgrep kitty > /dev/null; then
-    echo "Reloading Kitty..."
-    kill -SIGUSR1 $(pidof kitty)
+  # Reload Kitty 
+  # if pgrep kitty > /dev/null; then
+  #   echo "Reloading Kitty..."
+  #   kill -SIGUSR1 $(pidof kitty)
+  # fi
+
+  if pgrep walker > /dev/null; then
+    echo "Reloading Walker..."
+    pkill walker
+    # waybar --deamon & disown # Preloading walker not necessary
   fi
 
-  # 5. Apply GTK Theme (if theme.json exists)
+  # Apply GTK Theme (if theme.json exists)
   THEME_CONFIG="$TARGET_THEME/theme.json"
   if [ -f "$THEME_CONFIG" ]; then
     GTK_THEME=$(jq -r '.gtk // empty' "$THEME_CONFIG")
@@ -84,7 +90,7 @@ writeShellScriptBin "prism-theme" ''
     fi
   fi
 
-  # 6. Reset Wallpaper
+  # Reset Wallpaper
   # Calls the separate prism-wall command (which is in the PATH via style-manager)
   if command -v prism-wall >/dev/null; then
     prism-wall random
