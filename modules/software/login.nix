@@ -20,7 +20,7 @@ in
 
   programs.silentSDDM = {
     enable = true;
-    theme = "catppuccin-mocha";
+    theme = "default";
 
     profileIcons = lib.mkIf (config.prism.users != { }) (
       lib.mapAttrs (name: user: user.icon) (lib.filterAttrs (n: u: u.icon != null) config.prism.users)
@@ -42,6 +42,7 @@ in
         backgroundColor = "#1e1e2e";
         textColor = "#cdd6f4";
       };
+      LockScreen.background = "${loginWallpaper}";
 
       "LoginScreen.LoginArea" = {
         backgroundColor = "transparent";
