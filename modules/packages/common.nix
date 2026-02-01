@@ -23,11 +23,14 @@ with pkgs;
   slurp # Screen selection for screenshots
   satty # Screenshots editing
   yazi # Terminal file manager
+  findutils # find
+  coreutils # sort, head, etc.
 
   # Window
   wl-clipboard
   hyprpicker # Color picker
   walker # Application runner
+  swww # Wallpaper engine
 
   # Terminal
   ghostty # Emulator

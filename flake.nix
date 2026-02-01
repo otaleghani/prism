@@ -36,6 +36,7 @@
           prism-install = pkgs.callPackage ./pkgs/prism-install.nix { };
           prism-delete = pkgs.callPackage ./pkgs/prism-delete.nix { };
           prism-theme = pkgs.callPackage ./pkgs/prism-theme.nix { };
+          prism-wall = pkgs.callPackage ./pkgs/prism-wall.nix { };
           prism-open-tui = pkgs.callPackage ./pkgs/prism-open-tui.nix { };
         }
       );
@@ -79,6 +80,7 @@
                 install = self.packages.${prev.system}.prism-install;
                 delete = self.packages.${prev.system}.prism-delete;
                 theme = self.packages.${prev.system}.prism-theme;
+                wall = self.packages.${prev.system}.prism-wall;
                 open-tui = self.packages.${prev.system}.prism-open-tui;
               };
             })
