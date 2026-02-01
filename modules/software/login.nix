@@ -11,8 +11,7 @@ let
   loginWallpaper = pkgs.fetchurl {
     name = "login.jpg";
     url = "https://raw.githubusercontent.com/otaleghani/prism/main/defaults/wallpapers/login.jpg";
-    # On first build, this will fail. Copy the SHA256 from the error message and replace this line.
-    sha256 = "sha256-0000000000000000000000000000000000000000000000000000";
+    sha256 = "sha256-000000000000000000000000000000000000000000000";
   };
 in
 {
