@@ -8,30 +8,21 @@
 /* @define-color accent     @iris; */
 /* @define-color border     @pine; */
 
+/* BASE STYLE (Structure Only)
+   Colors are prepended to this file by prism-theme
+*/
+
+/* Reset all styles */
 * {
   all: unset;
 }
 
-popover {
-  background: @input_bg;
-  border: 1px solid @border;
-  border-radius: 18px;
-  padding: 10px;
+#window {
+  background: transparent;
 }
 
-.normal-icons {
-  -gtk-icon-size: 16px;
-}
-
-.large-icons {
-  -gtk-icon-size: 32px;
-}
-
-scrollbar {
-  opacity: 0;
-}
-
-.box-wrapper {
+/* Main Container (formerly .box-wrapper) */
+#box {
   box-shadow:
     0 19px 38px rgba(0, 0, 0, 0.3),
     0 15px 12px rgba(0, 0, 0, 0.22);
@@ -41,134 +32,70 @@ scrollbar {
   border: 1px solid @border;
 }
 
-.preview-box,
-.elephant-hint,
-.placeholder {
-  color: @input_text;
-}
-
-.search-container {
-  border-radius: 10px;
-}
-
-.input placeholder {
-  opacity: 0.5;
-}
-
-.input selection {
-  background: @selected;
-}
-
-.input {
+/* Input Field (formerly .input) */
+#search {
   caret-color: @input_text;
   background: @input_bg;
   padding: 10px;
   color: @input_text;
-}
-
-.list {
-  color: @input_text;
-}
-
-.item-box {
   border-radius: 10px;
-  padding: 10px;
-}
-
-.item-quick-activation {
-  background: alpha(@selected, 0.25);
-  border-radius: 5px;
-  padding: 10px;
-}
-
-child:selected .item-box {
-  background: alpha(@selected, 0.25);
-}
-
-.item-subtext {
-  font-size: 12px;
-  opacity: 0.5;
-}
-
-.providerlist .item-subtext {
-  font-size: unset;
-  opacity: 0.75;
-}
-
-.item-image-text {
-  font-size: 28px;
-}
-
-.preview {
-  border: 1px solid alpha(@selected, 0.25);
-  border-radius: 10px;
-  color: @input_text;
-}
-
-.calc .item-text {
-  font-size: 24px;
-}
-
-.symbols .item-image {
-  font-size: 24px;
-}
-
-.todo.done .item-text-box {
-  opacity: 0.25;
-}
-
-.todo.urgent {
-  font-size: 24px;
-}
-
-.todo.active {
+  margin-bottom: 10px;
   font-weight: bold;
 }
 
-.bluetooth.disconnected {
+#search placeholder {
   opacity: 0.5;
-}
-
-.preview .large-icons {
-  -gtk-icon-size: 64px;
-}
-
-.keybinds {
-  padding-top: 10px;
-  border-top: 1px solid @input_bg;
-  font-size: 12px;
   color: @input_text;
 }
 
-.keybind-button {
-  opacity: 0.5;
+#search selection {
+  background: @selected;
 }
 
-.keybind-button:hover {
-  opacity: 0.75;
+/* List Container (formerly .list) */
+#list {
+  background: transparent;
+  color: @input_text;
+  margin-top: 10px;
 }
 
-.keybind-bind {
-  text-transform: lowercase;
-  opacity: 0.35;
-}
-
-.keybind-label {
-  padding: 2px 4px;
-  border-radius: 4px;
-  border: 1px solid @input_text;
-}
-
-.error {
+/* Individual Items (formerly #child or .item-box) */
+#child {
   padding: 10px;
-  background: @accent;
-  color: @background;
+  border-radius: 10px;
+  transition: all 0.2s;
 }
 
-:not(.calc).current {
-  font-style: italic;
+#child:selected {
+  background: @selected;
 }
 
-.preview-content.archlinuxpkgs, .preview-content.dnfpackages {
-  font-family: monospace;
+/* Icon (formerly #icon / .item-image) */
+#icon {
+  margin-right: 10px;
+  -gtk-icon-size: 16px;
+}
+
+/* Main Text (formerly #text / .item-text) */
+#text {
+  font-size: 14px;
+  color: @input_text;
+}
+
+/* Subtext (formerly #sub / .item-subtext) */
+#sub {
+  font-size: 12px;
+  opacity: 0.5;
+  color: @input_text;
+}
+
+/* Highlight text accent color on selection (optional, but looks nice) */
+#child:selected #text,
+#child:selected #icon {
+  color: @accent;
+}
+
+/* Scrollbar */
+scrollbar {
+  opacity: 0;
 }
