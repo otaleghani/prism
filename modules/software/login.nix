@@ -33,7 +33,13 @@
     # 3. SETTINGS (Theme Overrides)
     # Customize colors to match Catppuccin Mocha
     settings = {
-      LoginScreen = {
+      "General" = {
+        scale = 2.0;
+      };
+      "LockScreen" = {
+        background = "default_wall";
+      };
+      "LoginScreen" = {
         # Referenced from the 'backgrounds' option above
         background = "default_wall";
 
