@@ -72,6 +72,7 @@
             ./modules/software/steam.nix
             ./modules/software/wacom.nix
             ./modules/software/window-manager.nix
+            ./modules/software/login.nix
           ];
 
           # Inject our custom scripts package set
