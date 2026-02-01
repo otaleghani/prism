@@ -11,10 +11,17 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    silentSDDM.url = "github:uiriansan/SilentSDDM";
+    silentSDDM.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
-    { self, nixpkgs, ... }:
+    {
+      self,
+      nixpkgs,
+      silentSDDM,
+      ...
+    }:
     let
       supportedSystems = [
         "x86_64-linux"
@@ -56,6 +63,7 @@
         }:
         {
           imports = [
+            silentSDDM.nixosModules.default
             ./modules/users.nix
             ./modules/packages.nix
             ./modules/hardware/audio.nix

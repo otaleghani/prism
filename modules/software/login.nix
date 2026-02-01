@@ -1,37 +1,24 @@
-{ pkgs, lib, ... }:
+{ lib, ... }:
 
 {
-  # ================================================================
-  # LOGIN MANAGER (Ly)
-  # ================================================================
+  # NOTE: This configuration requires the 'silentSDDM' flake input
+  # and module to be imported in your flake.nix.
 
-  services.displayManager.sddm.enable = lib.mkDefault false;
+  programs.silentSDDM = {
+    enable = true;
 
-  services.displayManager.ly = {
-    enable = lib.mkDefault true;
+    # Available themes in the flake usually include: "rei", "simple"
+    # You can check the flake repo for specific theme names.
+    theme = "rei";
 
-    settings = {
-      # animation: none, doom, matrix, fire
-      animation = "doom";
-
-      # Enable the cool big clock
-      big_clock = true;
-      clock = true;
-
-      # The box around the login prompt
-      blank_box = true;
-      hide_borders = false;
-
-      # Hide build users (nixbld*) which start at UID 30000
-      max_uid = 29000;
-
-      # Hide system users (below 1000)
-      min_uid = 1000;
-
-      # NOTE: Ly does not easily allow showing Root (UID 0)
-      # while hiding other system users (UID 1-999).
-      # You can usually still log in as root by typing the name manually
-      # if the interface allows, or just use 'sudo' from your normal user.
-    };
+    # settings = {
+    #   General = {
+    #     backgroundMode = "fill";
+    #     backgroundColor = "#1e1e2e";
+    #   };
+    # };
   };
+
+  # Ensure Wayland is enabled for SDDM (Critical for Hyprland)
+  services.displayManager.sddm.wayland.enable = lib.mkDefault true;
 }
