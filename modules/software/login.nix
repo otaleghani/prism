@@ -10,13 +10,13 @@
     enable = true;
     theme = "default"; # The default layout
 
-    # 1. PROFILE ICONS (Dynamic Integration)
+    # PROFILE ICONS (Dynamic Integration)
     # We automatically map the 'icon' defined in prism.users to SilentSDDM.
     profileIcons = lib.mkIf (config.prism.users != { }) (
       lib.mapAttrs (name: user: user.icon) (lib.filterAttrs (n: u: u.icon != null) config.prism.users)
     );
 
-    # 2. BACKGROUNDS
+    # BACKGROUNDS
     # Define a wallpaper to be used in settings
     backgrounds = {
       # OPTION A: Local file in your repo (Recommended)
@@ -30,7 +30,7 @@
       # };
     };
 
-    # 3. SETTINGS (Theme Overrides)
+    # SETTINGS (Theme Overrides)
     # Customize colors to match Catppuccin Mocha
     settings = {
       "General" = {

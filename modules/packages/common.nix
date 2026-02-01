@@ -32,6 +32,7 @@ with pkgs;
   walker # Application runner
   swww # Wallpaper engine
   hyprpolkitagent # Needed for prism-portal
+  bibata-cursors # Cursors
 
   # Terminal
   ghostty # Emulator
