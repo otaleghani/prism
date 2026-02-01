@@ -1,5 +1,6 @@
-[app]
 theme = "prism"
+
+[app]
 # "dmenu" mode is required for our scripts (prism-session, etc.)
 as_window = false 
 
