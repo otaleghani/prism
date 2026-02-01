@@ -11,7 +11,7 @@ let
   loginWallpaper = pkgs.fetchurl {
     name = "login.jpg";
     url = "https://raw.githubusercontent.com/otaleghani/prism/main/defaults/wallpapers/login.jpg";
-    sha256 = "sha256-00000000000000000000000000000000";
+    sha256 = lib.fakeSha256;
   };
 in
 {
