@@ -6,15 +6,14 @@
 }:
 
 let
-  # Path to your local wallpaper file
-  wallPath = ../../../defaults/wallpapers/login.jpg;
-
-  # Create a derivation for the wallpaper.
-  # We use runCommand to copy it into the Nix store.
-  # The name "login.jpg" ensures the store path ends in .jpg, which helps SDDM detect the file type.
-  loginWallpaper = pkgs.runCommand "login.jpg" { } ''
-    cp ${wallPath} $out
-  '';
+  # Use fetchurl to download from the repo.
+  # This avoids "pure evaluation" errors with local paths in Flakes.
+  loginWallpaper = pkgs.fetchurl {
+    name = "login.jpg";
+    url = "https://raw.githubusercontent.com/otaleghani/prism/main/defaults/wallpapers/login.jpg";
+    # On first build, this will fail. Copy the SHA256 from the error message and replace this line.
+    sha256 = "sha256-0000000000000000000000000000000000000000000000000000";
+  };
 in
 {
   services.displayManager.ly.enable = lib.mkDefault false;
@@ -35,7 +34,6 @@ in
 
     settings = {
       LoginScreen = {
-        # ABSOLUTE PATH to the store file.
         # The 'backgrounds' option above copies the file with a hash in its name,
         # so referring to it simply as "login.jpg" fails.
         # By interpolating the derivation here, we give SDDM the exact /nix/store/... path.
