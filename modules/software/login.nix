@@ -1,58 +1,60 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-}:
+{ lib, config, ... }:
 
-let
-  # Use fetchurl to download from the repo.
-  # This avoids "pure evaluation" errors with local paths in Flakes.
-  loginWallpaper = pkgs.fetchurl {
-    name = "login.jpg";
-    url = "https://raw.githubusercontent.com/otaleghani/prism/main/defaults/wallpapers/login.jpg";
-    sha256 = "sha256-j9E/mdh39/Fe1BonsJbaHR+wW8/MgQPWaXRlT3d1wos=";
-  };
-in
 {
   services.displayManager.ly.enable = lib.mkDefault false;
+
+  # Ensure Wayland is enabled for SDDM
   services.displayManager.sddm.wayland.enable = lib.mkDefault true;
 
   programs.silentSDDM = {
     enable = true;
-    theme = "default";
+    theme = "default"; # The default layout
 
+    # 1. PROFILE ICONS (Dynamic Integration)
+    # We automatically map the 'icon' defined in prism.users to SilentSDDM.
     profileIcons = lib.mkIf (config.prism.users != { }) (
       lib.mapAttrs (name: user: user.icon) (lib.filterAttrs (n: u: u.icon != null) config.prism.users)
     );
 
+    # 2. BACKGROUNDS
+    # Define a wallpaper to be used in settings
     backgrounds = {
-      # We include it here to ensure it is part of the system closure
-      "login.jpg" = loginWallpaper;
+      # OPTION A: Local file in your repo (Recommended)
+      # Create this file: defaults/wallpapers/login.png
+      default_wall = ../../defaults/wallpapers/login.jpg;
+
+      # OPTION B: Download from internet
+      # default_wall = pkgs.fetchurl {
+      #   url = "https://raw.githubusercontent.com/catppuccin/wallpapers/main/misc/footsteps.png";
+      #   sha256 = lib.fakeSha256; # Build once, get error, paste hash here
+      # };
     };
 
+    # 3. SETTINGS (Theme Overrides)
+    # Customize colors to match Catppuccin Mocha
     settings = {
       LoginScreen = {
-        # The 'backgrounds' option above copies the file with a hash in its name,
-        # so referring to it simply as "login.jpg" fails.
-        # By interpolating the derivation here, we give SDDM the exact /nix/store/... path.
-        # background = "${loginWallpaper}";
-        background = ../../defaults/wallpapers/login.jpg;
+        # Referenced from the 'backgrounds' option above
+        background = "default_wall";
 
+        # Ensure it covers the whole screen
         backgroundMode = "fill";
+
+        # Fallback color (if image fails or loads slowly)
         backgroundColor = "#1e1e2e";
+
+        # Color of the User Name text
         textColor = "#cdd6f4";
       };
 
-      LockScreen.background = ../../defaults/wallpapers/login.jpg;
-
       "LoginScreen.LoginArea" = {
+        # Transparent background for the login box so wallpaper shows through
         backgroundColor = "transparent";
       };
 
       "LoginScreen.LoginArea.Avatar" = {
-        shape = "circle";
-        "active-border-color" = "#cba6f7";
+        shape = "circle"; # or "rectangle"
+        "active-border-color" = "#cba6f7"; # Mauve
       };
     };
   };
