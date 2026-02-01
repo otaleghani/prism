@@ -1,24 +1,59 @@
-{ lib, ... }:
+{ lib, config, ... }:
 
 {
-  # NOTE: This configuration requires the 'silentSDDM' flake input
-  # and module to be imported in your flake.nix.
+  # Ensure Wayland is enabled for SDDM
+  services.displayManager.sddm.wayland.enable = lib.mkDefault true;
 
   programs.silentSDDM = {
     enable = true;
+    theme = "rei"; # The default layout
 
-    # Available themes in the flake usually include: "rei", "simple"
-    # You can check the flake repo for specific theme names.
-    theme = "rei";
+    # PROFILE ICONS (Dynamic Integration)
+    # We automatically map the 'icon' defined in prism.users to SilentSDDM.
+    profileIcons = lib.mkIf (config.prism.users != { }) (
+      lib.mapAttrs (name: user: user.icon) (lib.filterAttrs (n: u: u.icon != null) config.prism.users)
+    );
 
-    # settings = {
-    #   General = {
-    #     backgroundMode = "fill";
-    #     backgroundColor = "#1e1e2e";
-    #   };
-    # };
+    # BACKGROUNDS
+    # Define a wallpaper to be used in settings
+    backgrounds = {
+      # Local file in your repo
+      # Create this file: defaults/wallpapers/login.png
+      default_wall = ../../defaults/wallpapers/login.png;
+
+      # Download from internet
+      # default_wall = pkgs.fetchurl {
+      #   url = "https://raw.githubusercontent.com/catppuccin/wallpapers/main/misc/footsteps.png";
+      #   sha256 = lib.fakeSha256; # Build once, get error, paste hash here
+      # };
+    };
+
+    # SETTINGS (Theme Overrides)
+    # Customize colors to match Catppuccin Mocha
+    settings = {
+      LoginScreen = {
+        # Referenced from the 'backgrounds' option above
+        background = "default_wall";
+
+        # Ensure it covers the whole screen
+        backgroundMode = "fill";
+
+        # Fallback color (if image fails or loads slowly)
+        backgroundColor = "#1e1e2e";
+
+        # Color of the User Name text
+        textColor = "#cdd6f4";
+      };
+
+      "LoginScreen.LoginArea" = {
+        # Transparent background for the login box so wallpaper shows through
+        backgroundColor = "transparent";
+      };
+
+      "LoginScreen.LoginArea.Avatar" = {
+        shape = "circle"; # or "rectangle"
+        "active-border-color" = "#cba6f7"; # Mauve
+      };
+    };
   };
-
-  # Ensure Wayland is enabled for SDDM (Critical for Hyprland)
-  services.displayManager.sddm.wayland.enable = lib.mkDefault true;
 }

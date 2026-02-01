@@ -57,11 +57,15 @@ in
             default = null;
             description = "Path to a directory of extra dotfiles to override defaults.";
           };
-          # --- FIXED: Added this option back ---
           packages = lib.mkOption {
             type = lib.types.listOf lib.types.package;
             default = [ ];
             description = "Specific extra packages for this persona (merged with profile packages).";
+          };
+          icon = lib.mkOption {
+            type = lib.types.nullOr lib.types.path;
+            default = null;
+            description = "Path to the user's profile picture.";
           };
         };
       }
@@ -139,6 +143,7 @@ in
                    fi
                 fi
              fi
+            fi
           fi
         '') cfg
       )
