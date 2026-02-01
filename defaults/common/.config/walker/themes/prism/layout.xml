@@ -1,0 +1,14 @@
+<window name="window">
+  <box name="box" orientation="vertical" spacing="0">
+    <entry name="search" />
+    <list name="list" scroll="true">
+      <item name="child" orientation="horizontal" spacing="5">
+        <image name="icon" width="24" height="24"/>
+        <box orientation="vertical" spacing="0" valign="center">
+          <label name="text" text="{{label}}" />
+          <label name="sub" text="{{sub}}" />
+        </box>
+      </item>
+    </list>
+  </box>
+</window>
