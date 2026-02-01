@@ -19,7 +19,7 @@
     backgrounds = {
       # Local file in your repo
       # Create this file: defaults/wallpapers/login.jpg
-      default_wall = ../../defaults/wallpapers/login.jpg;
+      "login.jpg" = ../../defaults/wallpapers/login.jpg;
 
       # Download from internet
       # default_wall = pkgs.fetchurl {
@@ -33,7 +33,7 @@
     settings = {
       LoginScreen = {
         # Referenced from the 'backgrounds' option above
-        background = "default_wall";
+        background = "login.jpg";
 
         # Ensure it covers the whole screen
         backgroundMode = "fill";
