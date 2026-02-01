@@ -5,12 +5,12 @@ theme = "prism"
 as_window = false 
 
 [window]
-box.width = 400
-box.height = 400
+box.width = 800
+box.height = 800
 anchor = "center"
 
 [list]
-height = 300
+height = 800
 always_show = true
 
 [search]
