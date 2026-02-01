@@ -1,58 +1,58 @@
-{ lib, config, ... }:
-
 {
-  # Ensure Wayland is enabled for SDDM
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+
+let
+  # Path to your local wallpaper file
+  wallPath = ../../../defaults/wallpapers/login.jpg;
+
+  # Create a derivation for the wallpaper.
+  # We use runCommand to copy it into the Nix store.
+  # The name "login.jpg" ensures the store path ends in .jpg, which helps SDDM detect the file type.
+  loginWallpaper = pkgs.runCommand "login.jpg" { } ''
+    cp ${wallPath} $out
+  '';
+in
+{
+  services.displayManager.ly.enable = lib.mkDefault false;
   services.displayManager.sddm.wayland.enable = lib.mkDefault true;
 
   programs.silentSDDM = {
     enable = true;
-    theme = "rei"; # The default layout
+    theme = "rei";
 
-    # PROFILE ICONS (Dynamic Integration)
-    # We automatically map the 'icon' defined in prism.users to SilentSDDM.
     profileIcons = lib.mkIf (config.prism.users != { }) (
       lib.mapAttrs (name: user: user.icon) (lib.filterAttrs (n: u: u.icon != null) config.prism.users)
     );
 
-    # BACKGROUNDS
-    # Define a wallpaper to be used in settings
     backgrounds = {
-      # Local file in your repo
-      # Create this file: defaults/wallpapers/login.jpg
-      "login.jpg" = ../../defaults/wallpapers/login.jpg;
-
-      # Download from internet
-      # default_wall = pkgs.fetchurl {
-      #   url = "https://raw.githubusercontent.com/catppuccin/wallpapers/main/misc/footsteps.png";
-      #   sha256 = lib.fakeSha256; # Build once, get error, paste hash here
-      # };
+      # We include it here to ensure it is part of the system closure
+      "login.jpg" = loginWallpaper;
     };
 
-    # SETTINGS (Theme Overrides)
-    # Customize colors to match Catppuccin Mocha
     settings = {
       LoginScreen = {
-        # Referenced from the 'backgrounds' option above
-        background = "login.jpg";
+        # ABSOLUTE PATH to the store file.
+        # The 'backgrounds' option above copies the file with a hash in its name,
+        # so referring to it simply as "login.jpg" fails.
+        # By interpolating the derivation here, we give SDDM the exact /nix/store/... path.
+        background = "${loginWallpaper}";
 
-        # Ensure it covers the whole screen
         backgroundMode = "fill";
-
-        # Fallback color (if image fails or loads slowly)
         backgroundColor = "#1e1e2e";
-
-        # Color of the User Name text
         textColor = "#cdd6f4";
       };
 
       "LoginScreen.LoginArea" = {
-        # Transparent background for the login box so wallpaper shows through
         backgroundColor = "transparent";
       };
 
       "LoginScreen.LoginArea.Avatar" = {
-        shape = "circle"; # or "rectangle"
-        "active-border-color" = "#cba6f7"; # Mauve
+        shape = "circle";
+        "active-border-color" = "#cba6f7";
       };
     };
   };
