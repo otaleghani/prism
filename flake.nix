@@ -48,7 +48,7 @@
           prism-open-or-focus = pkgs.callPackage ./pkgs/prism-open-or-focus.nix { };
           prism-open-or-focus-tui = pkgs.callPackage ./pkgs/prism-open-or-focus-tui.nix { };
           prism-open-webapp = pkgs.callPackage ./pkgs/prism-open-webapp.nix { };
-          prism-open-or-focus-webapp = pkgs.callPackage ./pkgs/prism-open-or-fucus-webapp.nix { };
+          prism-open-or-focus-webapp = pkgs.callPackage ./pkgs/prism-open-or-focus-webapp.nix { };
           prism-session = pkgs.callPackage ./pkgs/prism-session.nix { };
           prism-screenshot = pkgs.callPackage ./pkgs/prism-screenshot.nix { };
         }
