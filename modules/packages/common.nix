@@ -38,7 +38,8 @@ with pkgs;
   wl-clipboard
   hyprpicker # Color picker
   hyprcursor
-  papirus-icon
+  papirus-icon-theme
+  rose-pine-icon-theme
   rose-pine-hyprcursor # Cursor
   walker # Application runner
   rofi # Application runner
