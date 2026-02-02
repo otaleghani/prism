@@ -63,4 +63,5 @@ with pkgs;
   prism.open-webapp
   prism.focus-webapp
   prism.session
+  prism.screenshot
 ]
