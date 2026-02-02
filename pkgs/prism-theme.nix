@@ -83,6 +83,14 @@ writeShellScriptBin "prism-theme" ''
     pkill -SIGUSR2 waybar
   fi
 
+  # Reload yazi
+  # Yazi watches theme.toml for changes. We symlink it to the 'current' theme file.
+  if [ -f "$TARGET_THEME/yazi.toml" ]; then
+      mkdir -p "$HOME/.config/yazi"
+      # We link to the CURRENT_LINK path so it stays valid if we update the folder later
+      ln -sf "$CURRENT_LINK/yazi.toml" "$HOME/.config/yazi/theme.toml"
+  fi
+
   # Apply GTK Theme (if theme.json exists)
   THEME_CONFIG="$TARGET_THEME/theme.json"
   if [ -f "$THEME_CONFIG" ]; then

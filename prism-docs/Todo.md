@@ -1,0 +1,13 @@
+- [ ] Update `prism-update` to pick the latest release instead of the latest commit
+- [ ] Create `prism-update-unstable` to update using the lastest commit
+- [ ] Create default nix flakes for development
+- [ ] Create `prism-development-open` to open a project
+- [ ] Create `prism-development-new` to create a project
+- [ ] Create `prism-bluetooth`
+- [ ] Create `prism-wifi`
+- [ ] Create dotfiles for `nvim`
+- [ ] Create dotfiles for `qbittorrent`
+- [ ] Create dotfiles for `yazi`
+- [ ] Create dotfiles for `mpv`
+- [ ] Create dotfiles for `starship`
+- [ ] Create dotfiles for `hyprland`

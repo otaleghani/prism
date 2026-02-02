@@ -1,0 +1,37 @@
+# Rose Pine for Yazi
+[manager]
+cwd = { fg = "#9ccfd8" }
+hovered = { fg = "#191724", bg = "#ebbcba" }
+preview_hovered = { underline = true }
+find_keyword = { fg = "#f6c177", italic = true }
+find_position = { fg = "#c4a7e7", bg = "reset", italic = true }
+marker_copied = { fg = "#31748f", bg = "#31748f" }
+marker_cut = { fg = "#eb6f92", bg = "#eb6f92" }
+marker_selected = { fg = "#c4a7e7", bg = "#c4a7e7" }
+tab_active = { fg = "#191724", bg = "#e0def4" }
+tab_inactive = { fg = "#e0def4", bg = "#26233a" }
+border_symbol = "│"
+border_style = { fg = "#6e6a86" }
+
+[status]
+separator_open = ""
+separator_close = ""
+separator_style = { fg = "#26233a", bg = "#26233a" }
+mode_normal = { fg = "#191724", bg = "#ebbcba", bold = true }
+mode_select = { fg = "#191724", bg = "#c4a7e7", bold = true }
+mode_unset = { fg = "#191724", bg = "#eb6f92", bold = true }
+progress_label = { fg = "#191724", bold = true }
+progress_normal = { fg = "#ebbcba", bg = "#26233a" }
+progress_error = { fg = "#eb6f92", bg = "#26233a" }
+
+[input]
+border = { fg = "#ebbcba" }
+selected = { rev = true }
+
+[select]
+border = { fg = "#ebbcba" }
+active = { fg = "#e0def4" }
+
+[completion]
+border = { fg = "#ebbcba" }
+active = { fg = "#e0def4", bg = "#26233a" }
