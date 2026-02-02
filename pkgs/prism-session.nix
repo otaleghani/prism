@@ -18,7 +18,7 @@ writeShellScriptBin "prism-session" ''
   # Rofi Command
   # --dmenu: Reads from stdin
   # --placeholder: Sets the text in the search bar
-  selected_option=$(echo -e "$lock\n$suspend\n$logout\n$reboot\n$shutdown" | rofi --dmenu --placeholder "Session")
+  selected_option=$(echo -e "$lock\n$suspend\n$logout\n$reboot\n$shutdown" | rofi -show dmenu)
 
   case "$selected_option" in
     "$logout")
