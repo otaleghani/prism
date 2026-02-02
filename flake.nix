@@ -51,6 +51,7 @@
           prism-open-or-focus-webapp = pkgs.callPackage ./pkgs/prism-open-or-focus-webapp.nix { };
           prism-session = pkgs.callPackage ./pkgs/prism-session.nix { };
           prism-screenshot = pkgs.callPackage ./pkgs/prism-screenshot.nix { };
+          prism-screenrecord = pkgs.callPackage ./pkgs/prism-screenrecord.nix { };
         }
       );
 
@@ -103,6 +104,7 @@
                 focus-webapp = self.packages.${prev.system}.prism-open-or-focus-webapp;
                 session = self.packages.${prev.system}.prism-session;
                 screenshot = self.packages.${prev.system}.prism-screenshot;
+                screenrecord = self.packages.${prev.system}.prism-screenrecord;
               };
             })
           ];

@@ -20,7 +20,7 @@ writeShellScriptBin "prism-screenshot" ''
   # Modes: smart (default), region, windows, fullscreen
   # Processing: edit (default/satty), copy (no edit)
 
-  # 1. Setup Output Directory
+  # Setup Output Directory
   if [ -f ~/.config/user-dirs.dirs ]; then
     source ~/.config/user-dirs.dirs
   fi
@@ -31,7 +31,7 @@ writeShellScriptBin "prism-screenshot" ''
     mkdir -p "$OUTPUT_DIR"
   fi
 
-  # 2. Toggle Behavior
+  # Toggle Behavior
   # If slurp is already running (user changed mind), kill it and exit
   if pgrep slurp >/dev/null; then
     pkill slurp
@@ -55,7 +55,7 @@ writeShellScriptBin "prism-screenshot" ''
 
   echo "[Prism] Starting Screenshot (Mode: $MODE)"
 
-  # 3. Selection Logic
+  # Selection logic
   case "$MODE" in
     region)
       # Freeze -> Select -> Unfreeze
@@ -128,7 +128,7 @@ writeShellScriptBin "prism-screenshot" ''
     exit 0
   fi
 
-  # 4. Processing
+  # Processing
   FILENAME="$OUTPUT_DIR/Screenshot_$(date +'%Y-%m-%d_%H-%M-%S').png"
 
   if [[ "$PROCESSING" == "copy" ]]; then
