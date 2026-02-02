@@ -1,11 +1,112 @@
+ /* Import dynamic Prism theme */
 @import url("../../.local/share/prism/current/waybar.css");
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 13px;
+    min-height: 0;
+}
 
 window#waybar {
     background-color: @base;
     color: @text;
+    transition-property: background-color;
+    transition-duration: .5s;
+    border-bottom: 2px solid @surface;
+}
+
+/* --- WORKSPACES --- */
+#workspaces button {
+    padding: 0 5px;
+    background-color: transparent;
+    color: @subtext;
+}
+
+#workspaces button:hover {
+    background: @surface;
+    color: @text;
 }
 
 #workspaces button.active {
-    background-color: @mauve;
+    color: @accent;
+    background-color: @surface;
+    border-bottom: 2px solid @accent;
+}
+
+#workspaces button.urgent {
+    background-color: @urgent;
     color: @base;
+}
+
+/* --- MODULES --- */
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#mpd {
+    padding: 0 10px;
+    color: @text;
+    background-color: transparent;
+}
+
+/* Semantic Colors */
+#clock {
+    color: @info;
+    font-weight: bold;
+}
+
+#battery {
+    color: @good;
+}
+
+#battery.charging, #battery.plugged {
+    color: @info;
+}
+
+#battery.critical:not(.charging) {
+    color: @urgent;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#network {
+    color: @accent;
+}
+
+#pulseaudio, #wireplumber {
+    color: @warning;
+}
+
+#cpu {
+    color: @warning;
+}
+
+#memory {
+    color: @good;
+}
+
+/* Tooltip */
+tooltip {
+    background: @base;
+    border: 1px solid @accent;
+}
+
+tooltip label {
+    color: @text;
 }

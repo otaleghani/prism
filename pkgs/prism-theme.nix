@@ -77,6 +77,12 @@ writeShellScriptBin "prism-theme" ''
     kill -SIGUSR2 $(pidof ghostty)
   fi
 
+  # Reload waybar
+  if pgrep waybar > /dev/null; then
+    echo "Reloading Waybar..."
+    pkill -SIGUSR2 waybar
+  fi
+
   # Apply GTK Theme (if theme.json exists)
   THEME_CONFIG="$TARGET_THEME/theme.json"
   if [ -f "$THEME_CONFIG" ]; then

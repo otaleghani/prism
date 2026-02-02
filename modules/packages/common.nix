@@ -28,6 +28,7 @@ with pkgs;
   coreutils # sort, head, etc.
 
   # Window
+  waybar
   wl-clipboard
   hyprpicker # Color picker
   walker # Application runner
