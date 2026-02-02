@@ -4,7 +4,7 @@ let
   deps = [
     pkgs.gpu-screen-recorder
     pkgs.ffmpeg # For ffplay (webcam overlay)
-    pkgs.v4l2-utils # For webcam detection
+    pkgs.v4l-utils # For webcam detection
     pkgs.jq # JSON parsing (hyprctl)
     pkgs.gawk # Math
     pkgs.libnotify # Notifications
