@@ -3,6 +3,7 @@
 with pkgs;
 [
   # Base utils
+  tmux
   ffmpeg
   git
   wget

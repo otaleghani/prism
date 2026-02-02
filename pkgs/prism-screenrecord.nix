@@ -135,7 +135,7 @@ writeShellScriptBin "prism-screenrecord" ''
 
   stop_recording() {
     # Send SIGINT to allow graceful saving of MP4
-    pkill -SIGINT -f "^gpu-screen-recorder"
+    pkill -SIGINT -f "gpu-screen-recorder"
 
     # Wait loop (max 5 seconds)
     local count=0
