@@ -71,6 +71,12 @@ writeShellScriptBin "prism-theme" ''
     tmux source-file ~/.config/tmux/tmux.conf >/dev/null 2>&1
   fi
 
+  # Reload ghostty
+  if pgrep ghostty > /dev/null; then
+    echo "Reloading Ghostty..."
+    kill -SIGUSR2 $(pidof ghostty)
+  fi
+
   # Apply GTK Theme (if theme.json exists)
   THEME_CONFIG="$TARGET_THEME/theme.json"
   if [ -f "$THEME_CONFIG" ]; then

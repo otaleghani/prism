@@ -1,0 +1,9 @@
+# Load the dynamic Prism theme
+config-file = ~/.local/share/prism/current/ghostty.conf
+
+# Other settings...
+font-family = "JetBrainsMono Nerd Font"
+font-size = 12
+window-padding-x = 10
+window-padding-y = 10
+window-decoration = false
