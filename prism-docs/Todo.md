@@ -12,5 +12,5 @@
 - [ ] Create dotfiles for `swaync`
 - [ ] Create dotfiles for `starship`
 - [ ] Create dotfiles for `hyprland`
-- [ ] Create dotfiles for `dunst`
+- [ ] Create dotfiles for `fastfetch`
 

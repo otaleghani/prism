@@ -46,6 +46,8 @@ with pkgs;
   hyprpolkitagent # Needed for prism-portal
   swaynotificationcenter # Notification manager
   libnotify
+  brightnessctl
+  playerctl
 
   # Terminal
   ghostty # Emulator
