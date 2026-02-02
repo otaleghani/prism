@@ -27,7 +27,7 @@ writeShellScriptBin "prism-update" ''
   # Rebuild the system
   # This triggers the activation scripts (rsync scaffolding)
   echo "[2/2] Rebuilding system..."
-  sudo nixos-rebuild switch --flake "$CONFIG_DIR"
+  sudo nixos-rebuild switch --flake "$CONFIG_DIR#prism"
 
   echo "=========================================="
   echo "   Update Complete!                       "
