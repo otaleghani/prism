@@ -1,0 +1,8 @@
+# Use the terminal's color palette (Managed by Prism)
+--theme="ansi"
+
+# Show line numbers, git changes and file header
+--style="numbers,changes,header"
+
+# Use italic text, bold text and underline text
+--italic-text=always
