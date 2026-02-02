@@ -18,7 +18,13 @@ with pkgs;
   bat # cal alternative
   eza # ls alternative
   starship
-  mpv # Video viewer
+  # mpv # Video viewer
+  (mpv.override {
+    scripts = [
+      mpvScripts.uosc
+      mpvScripts.thumbfast
+    ];
+  })
   feh # Image viewer
   grim # Screenshots
   slurp # Screen selection for screenshots
