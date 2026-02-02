@@ -1,0 +1,136 @@
+/* Import Dynamic Theme Colors */
+@import "../../.local/share/prism/current/swaync.css";
+
+* {
+  font-family: "JetBrainsMono Nerd Font";
+}
+
+/* Control Center Window */
+.control-center .notification-row:focus,
+.control-center .notification-row:hover {
+  opacity: 1;
+  background: @surface0;
+}
+
+.control-center {
+  background: @base;
+  border: 2px solid @accent;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.4);
+}
+
+/* Widgets */
+.widget-title {
+  color: @text;
+  background: @mantle;
+  padding: 10px;
+  margin: 10px;
+  font-size: 1.5rem;
+  border-radius: 12px;
+}
+
+.widget-title > button {
+  font-size: 1rem;
+  color: @text;
+  text-shadow: none;
+  background: @surface0;
+  box-shadow: none;
+  border-radius: 10px;
+}
+
+.widget-title > button:hover {
+  background: @surface1;
+}
+
+.widget-dnd {
+  background: @mantle;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 12px;
+}
+
+.widget-dnd > switch {
+  border-radius: 10px;
+  background: @surface0;
+}
+
+.widget-dnd > switch:checked {
+  background: @accent;
+}
+
+.widget-dnd > switch slider {
+  background: @text;
+  border-radius: 10px;
+}
+
+/* Notifications */
+.notification-row {
+  outline: none;
+  margin: 10px;
+}
+
+.notification {
+  background: @base;
+  border-radius: 12px;
+  margin: 0px;
+  border: 2px solid @surface0;
+  padding: 0px;
+}
+
+.notification-content {
+  background: transparent;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.summary {
+  font-size: 1rem;
+  font-weight: bold;
+  color: @text;
+  text-shadow: none;
+}
+
+.time {
+  font-size: 0.8rem;
+  color: @subtext0;
+  text-shadow: none;
+}
+
+.body {
+  font-size: 0.9rem;
+  color: @text;
+  text-shadow: none;
+}
+
+/* Floating Notifications (Toasts) */
+.floating-notifications {
+  background: transparent;
+}
+
+.floating-notifications .notification {
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.4);
+  border: 2px solid @accent;
+}
+
+/* Media Player */
+.widget-mpris {
+  color: @text;
+  background: @mantle;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 12px;
+}
+
+.widget-mpris-player {
+  padding: 10px;
+  margin: 0px;
+}
+
+.widget-mpris-title {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.widget-mpris-subtitle {
+  font-size: 1rem;
+}

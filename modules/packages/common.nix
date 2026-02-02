@@ -42,6 +42,8 @@ with pkgs;
   swww # Wallpaper engine
   hyprpolkitagent # Needed for prism-portal
   bibata-cursors # Cursors
+  swaynotificationcenter # Notification manager
+  libnotify
 
   # Terminal
   ghostty # Emulator

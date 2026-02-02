@@ -8,7 +8,8 @@
 - [ ] Create dotfiles for `nvim`
 - [ ] Create dotfiles for `qbittorrent`
 - [x] Create dotfiles for `yazi`
-- [ ] Create dotfiles for `mpv`
+- [x] Create dotfiles for `mpv`
+- [ ] Create dotfiles for `swaync`
 - [ ] Create dotfiles for `starship`
 - [ ] Create dotfiles for `hyprland`
 - [ ] Create dotfiles for `dunst`

@@ -10,6 +10,7 @@ let
     pkgs.coreutils
     pkgs.hyprland # contains hyprctl
     pkgs.procps # contains pkill/pgrep
+    pkgs.swaynotificationcenter
   ];
 in
 writeShellScriptBin "prism-theme" ''
@@ -82,6 +83,12 @@ writeShellScriptBin "prism-theme" ''
     echo "Reloading Waybar..."
     pkill -SIGUSR2 waybar
   fi
+
+  # Reload swaync
+  if pgrep swaync > /dev/null; then
+    swaync-client -rs;
+  fi
+
 
   # Reload yazi
   # Yazi watches theme.toml for changes. We symlink it to the 'current' theme file.
