@@ -64,6 +64,13 @@ writeShellScriptBin "prism-theme" ''
     waybar & disown
   fi
 
+  # Reload tmux
+  # Forces tmux to re-source the main config, which re-reads the symlink
+  if pgrep tmux > /dev/null; then
+    echo "Reloading Tmux..."
+    tmux source-file ~/.config/tmux/tmux.conf >/dev/null 2>&1
+  fi
+
   # Apply GTK Theme (if theme.json exists)
   THEME_CONFIG="$TARGET_THEME/theme.json"
   if [ -f "$THEME_CONFIG" ]; then
