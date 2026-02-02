@@ -44,6 +44,10 @@ with pkgs;
   bibata-cursors # Cursors
   swaynotificationcenter # Notification manager
   libnotify
+  # Icons
+  papirus-icon-theme # For Catppuccin / Everforest
+  # rose-pine-icon-theme # For Rose Pine
+  # adwaita-icon-theme # Standard Fallback
 
   # Terminal
   ghostty # Emulator
