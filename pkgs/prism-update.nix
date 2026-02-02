@@ -22,7 +22,7 @@ writeShellScriptBin "prism-update" ''
   # Update the 'prism' input specifically
   # This fetches the latest commit from your GitHub repo
   echo "[1/2] Fetching latest Prism version..."
-  nix flake lock --update-input prism --commit-lock-file "$CONFIG_DIR"
+  sudo nix flake lock --update-input prism --commit-lock-file "$CONFIG_DIR"
 
   # Rebuild the system
   # This triggers the activation scripts (rsync scaffolding)
