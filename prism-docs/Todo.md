@@ -7,7 +7,9 @@
 - [ ] Create `prism-wifi`
 - [ ] Create dotfiles for `nvim`
 - [ ] Create dotfiles for `qbittorrent`
-- [ ] Create dotfiles for `yazi`
+- [x] Create dotfiles for `yazi`
 - [ ] Create dotfiles for `mpv`
 - [ ] Create dotfiles for `starship`
 - [ ] Create dotfiles for `hyprland`
+- [ ] Create dotfiles for `dunst`
+
