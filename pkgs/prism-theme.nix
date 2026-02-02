@@ -91,6 +91,19 @@ writeShellScriptBin "prism-theme" ''
       ln -sf "$CURRENT_LINK/yazi.toml" "$HOME/.config/yazi/theme.toml"
   fi
 
+  # Generate mpv conf
+  # Combines the Theme Colors with the Base Settings
+  MPV_CONFIG_DIR="$HOME/.config/mpv"
+  if [ -d "$MPV_CONFIG_DIR" ] && [ -f "$MPV_CONFIG_DIR/base.conf" ]; then
+      echo "Generating MPV Config..."
+      if [ -f "$TARGET_THEME/mpv.conf" ]; then
+          cat "$TARGET_THEME/mpv.conf" "$MPV_CONFIG_DIR/base.conf" > "$MPV_CONFIG_DIR/mpv.conf"
+      else
+          # Fallback if theme has no mpv config
+          cp "$MPV_CONFIG_DIR/base.conf" "$MPV_CONFIG_DIR/mpv.conf"
+      fi
+  fi
+
   # Apply GTK Theme (if theme.json exists)
   THEME_CONFIG="$TARGET_THEME/theme.json"
   if [ -f "$THEME_CONFIG" ]; then

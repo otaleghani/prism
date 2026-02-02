@@ -134,11 +134,6 @@ in
               CURRENT_LINK="$USER_HOME/.local/share/prism/current"
               DEFAULT_THEME="catppuccin-mocha"
 
-              # Add symlink for yazi config
-              if [ -f "$DEFAULT_THEME/yazi.toml" ]; then
-                mkdir -p "$USER_HOME/.config/yazi"
-                ln -sf "$CURRENT_LINK/yazi.toml" "$USER_HOME/.config/yazi/theme.toml"
-              fi
               
               if [ ! -e "$CURRENT_LINK" ]; then
                  if [ -d "$THEME_DEST/$DEFAULT_THEME" ]; then
@@ -146,6 +141,26 @@ in
                      ln -sfn "$THEME_DEST/$DEFAULT_THEME" "$CURRENT_LINK"
                      chown -h ${user}:users "$CURRENT_LINK"
                  fi
+              fi
+
+              # Configure all programs that do not directly take the styles from the current theme
+              # Add symlink for yazi config
+              if [ -f "$DEFAULT_THEME/yazi.toml" ]; then
+                mkdir -p "$USER_HOME/.config/yazi"
+                ln -sf "$CURRENT_LINK/yazi.toml" "$USER_HOME/.config/yazi/theme.toml"
+              fi
+
+              # Generate MPV config
+              # Combines the Theme Colors with the Base Settings
+              MPV_CONFIG_DIR="$HOME/.config/mpv"
+              if [ -d "$MPV_CONFIG_DIR" ] && [ -f "$MPV_CONFIG_DIR/base.conf" ]; then
+                  echo "Generating MPV Config..."
+                  if [ -f "$CURRENT_LINK/mpv.conf" ]; then
+                      cat "$CURRENT_LINK/mpv.conf" "$MPV_CONFIG_DIR/base.conf" > "$MPV_CONFIG_DIR/mpv.conf"
+                  else
+                      # Fallback if theme has no mpv config
+                      cp "$MPV_CONFIG_DIR/base.conf" "$MPV_CONFIG_DIR/mpv.conf"
+                  fi
               fi
             fi
           fi
