@@ -1,37 +1,122 @@
-# Everforest Dark Hard for Yazi
+# Everforest Dark Hard
 [manager]
-cwd = { fg = "#83c092" }
-hovered = { fg = "#272e33", bg = "#a7c080" }
-preview_hovered = { underline = true }
-find_keyword = { fg = "#dbbc7f", italic = true }
-find_position = { fg = "#d699b6", bg = "reset", italic = true }
-marker_copied = { fg = "#a7c080", bg = "#a7c080" }
-marker_cut = { fg = "#e67e80", bg = "#e67e80" }
-marker_selected = { fg = "#7fbbb3", bg = "#7fbbb3" }
-tab_active = { fg = "#272e33", bg = "#d3c6aa" }
-tab_inactive = { fg = "#d3c6aa", bg = "#495156" }
+cwd = { fg = "#83c092" } # Aqua
+
+hovered         = { fg = "#272e33", bg = "#7fbbb3" } # Blue (Accent)
+preview_hovered = { fg = "#272e33", bg = "#d3c6aa" } # Fg
+
+find_keyword  = { fg = "#dbbc7f", italic = true } # Yellow
+find_position = { fg = "#d699b6", bg = "reset", italic = true } # Purple
+
+marker_copied   = { fg = "#a7c080", bg = "#a7c080" } # Green
+marker_cut      = { fg = "#e67e80", bg = "#e67e80" } # Red
+marker_marked   = { fg = "#83c092", bg = "#83c092" } # Aqua
+marker_selected = { fg = "#7fbbb3", bg = "#7fbbb3" } # Blue
+
+count_copied   = { fg = "#272e33", bg = "#a7c080" }
+count_cut      = { fg = "#272e33", bg = "#e67e80" }
+count_selected = { fg = "#272e33", bg = "#7fbbb3" }
+
 border_symbol = "│"
-border_style = { fg = "#859289" }
+border_style  = { fg = "#859289" } # Gray1
+
+# syntect_theme = "~/.config/yazi/Everforest.tmTheme"
+
+[tabs]
+active   = { fg = "#272e33", bg = "#d3c6aa", bold = true }
+inactive = { fg = "#d3c6aa", bg = "#414b50" } # Bg3
+
+[mode]
+normal_main = { fg = "#272e33", bg = "#7fbbb3", bold = true }
+normal_alt  = { fg = "#7fbbb3", bg = "#374145"} # Bg2
+
+select_main = { fg = "#272e33", bg = "#a7c080", bold = true }
+select_alt  = { fg = "#a7c080", bg = "#374145"}
+
+unset_main  = { fg = "#272e33", bg = "#e69875", bold = true } # Orange
+unset_alt   = { fg = "#e69875", bg = "#374145"}
 
 [status]
-separator_open = ""
-separator_close = ""
-separator_style = { fg = "#495156", bg = "#495156" }
-mode_normal = { fg = "#272e33", bg = "#a7c080", bold = true }
-mode_select = { fg = "#272e33", bg = "#dbbc7f", bold = true }
-mode_unset = { fg = "#272e33", bg = "#e69875", bold = true }
-progress_label = { fg = "#272e33", bold = true }
-progress_normal = { fg = "#7fbbb3", bg = "#495156" }
-progress_error = { fg = "#e67e80", bg = "#495156" }
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+progress_label  = { fg = "#ffffff", bold = true }
+progress_normal = { fg = "#7fbbb3", bg = "#414b50" }
+progress_error  = { fg = "#e67e80", bg = "#414b50" }
+
+perm_type  = { fg = "#7fbbb3" }
+perm_read  = { fg = "#dbbc7f" }
+perm_write = { fg = "#e67e80" }
+perm_exec  = { fg = "#a7c080" }
+perm_sep   = { fg = "#859289" }
 
 [input]
-border = { fg = "#a7c080" }
-selected = { rev = true }
+border   = { fg = "#7fbbb3" }
+title    = {}
+value    = {}
+selected = { reversed = true }
 
-[select]
-border = { fg = "#a7c080" }
-active = { fg = "#d3c6aa" }
+[pick]
+border   = { fg = "#7fbbb3" }
+active   = { fg = "#d699b6" }
+inactive = {}
 
-[completion]
-border = { fg = "#a7c080" }
-active = { fg = "#d3c6aa", bg = "#495156" }
+[confirm]
+border     = { fg = "#7fbbb3" }
+title      = { fg = "#7fbbb3" }
+content    = {}
+list       = {}
+btn_yes    = { reversed = true }
+btn_no     = {}
+
+[cmp]
+border = { fg = "#7fbbb3" }
+
+[tasks]
+border  = { fg = "#7fbbb3" }
+title   = {}
+hovered = { underline = true }
+
+[which]
+mask            = { bg = "#374145" }
+cand            = { fg = "#83c092" }
+rest            = { fg = "#9da9a0" } # Gray2
+desc            = { fg = "#d699b6" }
+separator       = "  "
+separator_style = { fg = "#495156" } # Bg4
+
+[help]
+on      = { fg = "#83c092" }
+run     = { fg = "#d699b6" }
+desc    = { fg = "#9da9a0" }
+hovered = { bg = "#495156", bold = true }
+footer  = { fg = "#d3c6aa", bg = "#414b50" }
+
+[notify]
+title_info  = { fg = "#83c092" }
+title_warn  = { fg = "#dbbc7f" }
+title_error = { fg = "#e67e80" }
+
+[filetype]
+rules = [
+	# Media
+	{ mime = "image/*", fg = "#83c092" },
+	{ mime = "{audio,video}/*", fg = "#dbbc7f" },
+
+	# Archives
+	{ mime = "application/*zip", fg = "#d699b6" },
+	{ mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", fg = "#d699b6" },
+
+	# Documents
+	{ mime = "application/{pdf,doc,rtf}", fg = "#a7c080" },
+
+	# Fallback
+	{ name = "*", fg = "#d3c6aa" },
+	{ name = "*/", fg = "#7fbbb3" }
+]
+
+[spot]
+border = { fg = "#7fbbb3" }
+title  = { fg = "#7fbbb3" }
+tbl_cell = { fg = "#7fbbb3", reversed = true }
+tbl_col = { bold = true }

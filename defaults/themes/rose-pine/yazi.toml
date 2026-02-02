@@ -1,37 +1,122 @@
-# Rose Pine for Yazi
+# Rose Pine
 [manager]
-cwd = { fg = "#9ccfd8" }
-hovered = { fg = "#191724", bg = "#ebbcba" }
-preview_hovered = { underline = true }
-find_keyword = { fg = "#f6c177", italic = true }
-find_position = { fg = "#c4a7e7", bg = "reset", italic = true }
-marker_copied = { fg = "#31748f", bg = "#31748f" }
-marker_cut = { fg = "#eb6f92", bg = "#eb6f92" }
-marker_selected = { fg = "#c4a7e7", bg = "#c4a7e7" }
-tab_active = { fg = "#191724", bg = "#e0def4" }
-tab_inactive = { fg = "#e0def4", bg = "#403d52" }
+cwd = { fg = "#9ccfd8" } # Foam
+
+hovered         = { fg = "#191724", bg = "#ebbcba" } # Rose (Accent)
+preview_hovered = { fg = "#191724", bg = "#e0def4" } # Text
+
+find_keyword  = { fg = "#f6c177", italic = true } # Gold
+find_position = { fg = "#c4a7e7", bg = "reset", italic = true } # Iris
+
+marker_copied   = { fg = "#31748f", bg = "#31748f" } # Pine
+marker_cut      = { fg = "#eb6f92", bg = "#eb6f92" } # Love
+marker_marked   = { fg = "#9ccfd8", bg = "#9ccfd8" } # Foam
+marker_selected = { fg = "#ebbcba", bg = "#ebbcba" } # Rose
+
+count_copied   = { fg = "#191724", bg = "#31748f" }
+count_cut      = { fg = "#191724", bg = "#eb6f92" }
+count_selected = { fg = "#191724", bg = "#ebbcba" }
+
 border_symbol = "│"
-border_style = { fg = "#6e6a86" }
+border_style  = { fg = "#908caa" } # Subtle
+
+# syntect_theme = "~/.config/yazi/Rose-Pine.tmTheme"
+
+[tabs]
+active   = { fg = "#191724", bg = "#e0def4", bold = true }
+inactive = { fg = "#e0def4", bg = "#403d52" } # Highlight Med
+
+[mode]
+normal_main = { fg = "#191724", bg = "#ebbcba", bold = true }
+normal_alt  = { fg = "#ebbcba", bg = "#21202e"} # Highlight Low
+
+select_main = { fg = "#191724", bg = "#31748f", bold = true }
+select_alt  = { fg = "#31748f", bg = "#21202e"}
+
+unset_main  = { fg = "#191724", bg = "#eb6f92", bold = true }
+unset_alt   = { fg = "#eb6f92", bg = "#21202e"}
 
 [status]
-separator_open = ""
-separator_close = ""
-separator_style = { fg = "#403d52", bg = "#403d52" }
-mode_normal = { fg = "#191724", bg = "#ebbcba", bold = true }
-mode_select = { fg = "#191724", bg = "#c4a7e7", bold = true }
-mode_unset = { fg = "#191724", bg = "#eb6f92", bold = true }
-progress_label = { fg = "#191724", bold = true }
-progress_normal = { fg = "#ebbcba", bg = "#403d52" }
-progress_error = { fg = "#eb6f92", bg = "#403d52" }
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+progress_label  = { fg = "#ffffff", bold = true }
+progress_normal = { fg = "#9ccfd8", bg = "#403d52" }
+progress_error  = { fg = "#eb6f92", bg = "#403d52" }
+
+perm_type  = { fg = "#9ccfd8" }
+perm_read  = { fg = "#f6c177" }
+perm_write = { fg = "#eb6f92" }
+perm_exec  = { fg = "#31748f" }
+perm_sep   = { fg = "#908caa" }
 
 [input]
-border = { fg = "#ebbcba" }
-selected = { rev = true }
+border   = { fg = "#ebbcba" }
+title    = {}
+value    = {}
+selected = { reversed = true }
 
-[select]
-border = { fg = "#ebbcba" }
-active = { fg = "#e0def4" }
+[pick]
+border   = { fg = "#ebbcba" }
+active   = { fg = "#c4a7e7" }
+inactive = {}
 
-[completion]
+[confirm]
+border     = { fg = "#ebbcba" }
+title      = { fg = "#ebbcba" }
+content    = {}
+list       = {}
+btn_yes    = { reversed = true }
+btn_no     = {}
+
+[cmp]
 border = { fg = "#ebbcba" }
-active = { fg = "#e0def4", bg = "#403d52" }
+
+[tasks]
+border  = { fg = "#ebbcba" }
+title   = {}
+hovered = { underline = true }
+
+[which]
+mask            = { bg = "#21202e" }
+cand            = { fg = "#9ccfd8" }
+rest            = { fg = "#6e6a86" } # Muted
+desc            = { fg = "#c4a7e7" }
+separator       = "  "
+separator_style = { fg = "#524f67" } # Highlight High
+
+[help]
+on      = { fg = "#9ccfd8" }
+run     = { fg = "#c4a7e7" }
+desc    = { fg = "#6e6a86" }
+hovered = { bg = "#524f67", bold = true }
+footer  = { fg = "#e0def4", bg = "#403d52" }
+
+[notify]
+title_info  = { fg = "#9ccfd8" }
+title_warn  = { fg = "#f6c177" }
+title_error = { fg = "#eb6f92" }
+
+[filetype]
+rules = [
+	# Media
+	{ mime = "image/*", fg = "#9ccfd8" },
+	{ mime = "{audio,video}/*", fg = "#f6c177" },
+
+	# Archives
+	{ mime = "application/*zip", fg = "#c4a7e7" },
+	{ mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", fg = "#c4a7e7" },
+
+	# Documents
+	{ mime = "application/{pdf,doc,rtf}", fg = "#31748f" },
+
+	# Fallback
+	{ name = "*", fg = "#e0def4" },
+	{ name = "*/", fg = "#ebbcba" }
+]
+
+[spot]
+border = { fg = "#ebbcba" }
+title  = { fg = "#ebbcba" }
+tbl_cell = { fg = "#ebbcba", reversed = true }
+tbl_col = { bold = true }

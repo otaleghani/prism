@@ -133,6 +133,12 @@ in
               # Set Default Theme (Catppuccin Mocha) if no current theme is selected
               CURRENT_LINK="$USER_HOME/.local/share/prism/current"
               DEFAULT_THEME="catppuccin-mocha"
+
+              # Add symlink for yazi config
+              if [ -f "$DEFAULT_THEME/yazi.toml" ]; then
+                mkdir -p "$USER_HOME/.config/yazi"
+                ln -sf "$CURRENT_LINK/yazi.toml" "$USER_HOME/.config/yazi/theme.toml"
+              fi
               
               if [ ! -e "$CURRENT_LINK" ]; then
                  if [ -d "$THEME_DEST/$DEFAULT_THEME" ]; then
