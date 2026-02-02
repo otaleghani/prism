@@ -37,17 +37,15 @@ with pkgs;
   waybar
   wl-clipboard
   hyprpicker # Color picker
+  hyprcursor
+  rose-pine-hyprcursor # Cursor
+  rose-pine-icon-theme # Icons
   walker # Application runner
   rofi # Application runner
   swww # Wallpaper engine
   hyprpolkitagent # Needed for prism-portal
-  bibata-cursors # Cursors
   swaynotificationcenter # Notification manager
   libnotify
-  # Icons
-  papirus-icon-theme # For Catppuccin / Everforest
-  # rose-pine-icon-theme # For Rose Pine
-  # adwaita-icon-theme # Standard Fallback
 
   # Terminal
   ghostty # Emulator

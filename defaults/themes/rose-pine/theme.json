@@ -1,6 +1,5 @@
 {
   "name": "Rose Pine",
   "gtk": "Rose-Pine-Main-BL",
-  "icon": "Papirus-Dark",
-  "cursor": "Bibata-Modern-Ice"
+  "icon": "Rose-Pine-Icons",
 }
