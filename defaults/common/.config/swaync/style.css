@@ -63,6 +63,49 @@
   border-radius: 10px;
 }
 
+/* Sliders (Volume & Backlight) */
+.widget-volume,
+.widget-backlight {
+  background: @mantle;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  color: @text;
+}
+
+.widget-volume > box,
+.widget-backlight > box {
+  background: transparent;
+  spacing: 10px;
+}
+
+.widget-volume > box > label,
+.widget-backlight > box > label {
+  padding: 0 10px;
+}
+
+.widget-volume trough,
+.widget-backlight trough {
+  background: @surface0;
+  border-radius: 12px;
+  min-height: 8px;
+}
+
+.widget-volume highlight,
+.widget-backlight highlight {
+  background: @accent;
+  border-radius: 12px;
+}
+
+.widget-volume slider,
+.widget-backlight slider {
+  background: @text;
+  border-radius: 12px;
+  min-height: 20px;
+  min-width: 20px;
+}
+
 /* Notifications */
 .notification-row {
   outline: none;
@@ -133,4 +176,16 @@
 
 .widget-mpris-subtitle {
   font-size: 1rem;
+}
+
+/* Player Buttons (Circular) */
+.widget-mpris button {
+  border-radius: 50%;
+  color: @text;
+  background: @surface0;
+  border: none;
+}
+
+.widget-mpris button:hover {
+  background: @surface1;
 }

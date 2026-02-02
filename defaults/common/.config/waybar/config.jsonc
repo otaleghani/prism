@@ -53,6 +53,7 @@
     
     "clock": {
         "format": " {:%H:%M   %e %b}",
+        "on-click": "swaync-client -t -sw",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
     
