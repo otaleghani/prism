@@ -1,12 +1,12 @@
 {
   writeShellScriptBin,
-  walker,
+  rofi,
   systemd,
   procps, # for pkill
 }:
 
 writeShellScriptBin "prism-session" ''
-  export PATH=${walker}/bin:${systemd}/bin:${procps}/bin:$PATH
+  export PATH=${rofi}/bin:${systemd}/bin:${procps}/bin:$PATH
 
   # Options
   logout="󰗽  Logout (Disconnect)"
@@ -15,10 +15,10 @@ writeShellScriptBin "prism-session" ''
   reboot="  Reboot"
   shutdown="  Shutdown"
 
-  # Walker Command
+  # Rofi Command
   # --dmenu: Reads from stdin
   # --placeholder: Sets the text in the search bar
-  selected_option=$(echo -e "$lock\n$suspend\n$logout\n$reboot\n$shutdown" | walker --dmenu --placeholder "Session")
+  selected_option=$(echo -e "$lock\n$suspend\n$logout\n$reboot\n$shutdown" | rofi --dmenu --placeholder "Session")
 
   case "$selected_option" in
     "$logout")

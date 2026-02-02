@@ -1,0 +1,87 @@
+configuration {
+    modi: "drun,run,filebrowser,window";
+    show-icons: true;
+    display-drun: " ";
+    display-run: " ";
+    display-filebrowser: " ";
+    display-window: " ";
+    drun-display-format: "{name}";
+    window-format: "{w} · {c} · {t}";
+}
+
+/* Import the dynamic colors from Prism */
+/* This works natively in Rofi without needing scripts to concatenate files */
+@import "~/.local/share/prism/current/rofi.rasi"
+
+* {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    spacing: 0;
+}
+
+window {
+    width: 45%;
+    background-color: @background;
+    border: 2px;
+    border-color: @active;
+    border-radius: 12px;
+}
+
+mainbox {
+    background-color: transparent;
+    children: [inputbar, listview];
+    padding: 20px;
+}
+
+inputbar {
+    background-color: @background-alt;
+    text-color: @foreground;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 0 0 15px 0;
+    children: [prompt, entry];
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @active;
+    padding: 0 10px 0 0;
+}
+
+entry {
+    background-color: transparent;
+    text-color: @foreground;
+    placeholder: "Search...";
+    placeholder-color: inherit;
+}
+
+listview {
+    background-color: transparent;
+    lines: 8;
+    columns: 1;
+}
+
+element {
+    background-color: transparent;
+    text-color: @foreground;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+element selected {
+    background-color: @selected;
+    text-color: @active;
+}
+
+element-icon {
+    size: 24px;
+    margin: 0 10px 0 0;
+    background-color: transparent;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    vertical-align: 0.5;
+}

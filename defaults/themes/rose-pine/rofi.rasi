@@ -1,0 +1,9 @@
+/* Rose-Pine Main Colors */
+* {
+    background:     #191724FF;
+    background-alt: #1f1d2eFF;
+    foreground:     #e0def4FF;
+    selected:       #26233aFF;
+    active:         #c4a7e7FF;
+    urgent:         #eb6f92FF;
+}

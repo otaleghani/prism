@@ -1,0 +1,9 @@
+/* Everforest Dark Hard Colors */
+* {
+    background:     #272e33FF;
+    background-alt: #2e383cFF;
+    foreground:     #d3c6aaFF;
+    selected:       #374145FF;
+    active:         #a7c080FF;
+    urgent:         #e67e80FF;
+}

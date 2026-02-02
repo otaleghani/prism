@@ -30,6 +30,7 @@ with pkgs;
   wl-clipboard
   hyprpicker # Color picker
   walker # Application runner
+  rofi # Application runner
   swww # Wallpaper engine
   hyprpolkitagent # Needed for prism-portal
   bibata-cursors # Cursors

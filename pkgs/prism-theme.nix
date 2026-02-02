@@ -61,37 +61,37 @@ writeShellScriptBin "prism-theme" ''
     waybar & disown
   fi
 
-  # Reload Kitty 
+  # KITTY REMOVED, using ghostty
   # if pgrep kitty > /dev/null; then
   #   echo "Reloading Kitty..."
   #   kill -SIGUSR1 $(pidof kitty)
   # fi
 
-  if pgrep walker > /dev/null; then
-    echo "Reloading Walker..."
-    pkill walker
-    # waybar --deamon & disown # Preloading walker not necessary
-  fi
-
-  # Walker Paths
-  WALKER_CONFIG_DIR="$HOME/.config/walker/themes"
-  # GENERATE WALKER CSS (Dynamic Import Strategy)
-  # We construct a valid style.css by writing an absolute @import line (using file://)
-  # followed by the base structural CSS. This avoids relative path issues in Walker.
-  if [ -d "$WALKER_CONFIG_DIR" ]; then
-      echo "Generating Walker CSS..."
-      
-      # Write the absolute path import: @import url("file:///home/user/.../walker.css");
-      echo "@import url(\"file://$TARGET_THEME/walker.css\");" > "$WALKER_CONFIG_DIR/prism.css"
-      
-      # Append the structure styles
-      cat "$WALKER_CONFIG_DIR/base.css" >> "$WALKER_CONFIG_DIR/prism.css"
-      
-      # Restart Walker to load new config
-      if pgrep walker > /dev/null; then
-        pkill walker
-      fi
-  fi
+  # WALKER REMOVED, using rofi
+  # if pgrep walker > /dev/null; then
+  #   echo "Reloading Walker..."
+  #   pkill walker
+  #   # waybar --deamon & disown # Preloading walker not necessary
+  # fi
+  # Walker Paths 
+  # WALKER_CONFIG_DIR="$HOME/.config/walker/themes"
+  # # GENERATE WALKER CSS (Dynamic Import Strategy)
+  # # We construct a valid style.css by writing an absolute @import line (using file://)
+  # # followed by the base structural CSS. This avoids relative path issues in Walker.
+  # if [ -d "$WALKER_CONFIG_DIR" ]; then
+  #     echo "Generating Walker CSS..."
+  #
+  #     # Write the absolute path import: @import url("file:///home/user/.../walker.css");
+  #     echo "@import url(\"file://$TARGET_THEME/walker.css\");" > "$WALKER_CONFIG_DIR/prism.css"
+  #
+  #     # Append the structure styles
+  #     cat "$WALKER_CONFIG_DIR/base.css" >> "$WALKER_CONFIG_DIR/prism.css"
+  #
+  #     # Restart Walker to load new config
+  #     if pgrep walker > /dev/null; then
+  #       pkill walker
+  #     fi
+  # fi
 
   # Apply GTK Theme (if theme.json exists)
   THEME_CONFIG="$TARGET_THEME/theme.json"
