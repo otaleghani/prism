@@ -12,7 +12,7 @@ let
   ];
 in
 
-writeShellScriptBin "prism-remove" ''
+writeShellScriptBin "prism-delete" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
   # FZF Args
