@@ -1,3 +1,4 @@
+# Everforest Dark Hard for Yazi
 [manager]
 cwd = { fg = "#83c092" }
 hovered = { fg = "#272e33", bg = "#a7c080" }
@@ -8,20 +9,20 @@ marker_copied = { fg = "#a7c080", bg = "#a7c080" }
 marker_cut = { fg = "#e67e80", bg = "#e67e80" }
 marker_selected = { fg = "#7fbbb3", bg = "#7fbbb3" }
 tab_active = { fg = "#272e33", bg = "#d3c6aa" }
-tab_inactive = { fg = "#d3c6aa", bg = "#374145" }
+tab_inactive = { fg = "#d3c6aa", bg = "#495156" }
 border_symbol = "│"
 border_style = { fg = "#859289" }
 
 [status]
 separator_open = ""
 separator_close = ""
-separator_style = { fg = "#374145", bg = "#374145" }
+separator_style = { fg = "#495156", bg = "#495156" }
 mode_normal = { fg = "#272e33", bg = "#a7c080", bold = true }
 mode_select = { fg = "#272e33", bg = "#dbbc7f", bold = true }
 mode_unset = { fg = "#272e33", bg = "#e69875", bold = true }
 progress_label = { fg = "#272e33", bold = true }
-progress_normal = { fg = "#7fbbb3", bg = "#374145" }
-progress_error = { fg = "#e67e80", bg = "#374145" }
+progress_normal = { fg = "#7fbbb3", bg = "#495156" }
+progress_error = { fg = "#e67e80", bg = "#495156" }
 
 [input]
 border = { fg = "#a7c080" }
@@ -33,4 +34,4 @@ active = { fg = "#d3c6aa" }
 
 [completion]
 border = { fg = "#a7c080" }
-active = { fg = "#d3c6aa", bg = "#374145" }
+active = { fg = "#d3c6aa", bg = "#495156" }

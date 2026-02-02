@@ -1,3 +1,4 @@
+# Catppuccin Mocha for Yazi
 [manager]
 cwd = { fg = "#94e2d5" }
 hovered = { fg = "#1e1e2e", bg = "#89b4fa" }
@@ -8,33 +9,29 @@ marker_copied = { fg = "#a6e3a1", bg = "#a6e3a1" }
 marker_cut = { fg = "#f38ba8", bg = "#f38ba8" }
 marker_selected = { fg = "#89b4fa", bg = "#89b4fa" }
 tab_active = { fg = "#1e1e2e", bg = "#cba6f7" }
-tab_inactive = { fg = "#cdd6f4", bg = "#313244" }
+tab_inactive = { fg = "#cdd6f4", bg = "#45475a" }
 border_symbol = "│"
 border_style = { fg = "#7f849c" }
 
 [status]
 separator_open = ""
 separator_close = ""
-separator_style = { fg = "#313244", bg = "#313244" }
+separator_style = { fg = "#45475a", bg = "#45475a" }
 mode_normal = { fg = "#1e1e2e", bg = "#89b4fa", bold = true }
 mode_select = { fg = "#1e1e2e", bg = "#a6e3a1", bold = true }
 mode_unset = { fg = "#1e1e2e", bg = "#f2cdcd", bold = true }
 progress_label = { fg = "#ffffff", bold = true }
-progress_normal = { fg = "#89b4fa", bg = "#313244" }
-progress_error = { fg = "#f38ba8", bg = "#313244" }
+progress_normal = { fg = "#89b4fa", bg = "#45475a" }
+progress_error = { fg = "#f38ba8", bg = "#45475a" }
 
 [input]
 border = { fg = "#89b4fa" }
-title = {}
-value = {}
 selected = { rev = true }
 
 [select]
 border = { fg = "#89b4fa" }
 active = { fg = "#f5c2e7" }
-inactive = {}
 
 [completion]
 border = { fg = "#89b4fa" }
-active = { fg = "#f5c2e7", bg = "#313244" }
-inactive = {}
+active = { fg = "#f5c2e7", bg = "#45475a" }
