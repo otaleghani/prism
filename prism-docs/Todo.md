@@ -6,11 +6,13 @@
 - [ ] Create `prism-bluetooth`
 - [ ] Create `prism-wifi`
 - [ ] Create dotfiles for `nvim`
-- [ ] Create dotfiles for `qbittorrent`
 - [x] Create dotfiles for `yazi`
 - [x] Create dotfiles for `mpv`
-- [ ] Create dotfiles for `swaync`
+- [x] Create dotfiles for `swaync`
 - [ ] Create dotfiles for `starship`
 - [ ] Create dotfiles for `hyprland`
-- [ ] Create dotfiles for `fastfetch`
+- [x] Create dotfiles for `fastfetch`
 
+
+## Not important
+- [ ] Create dotfiles for `qbittorrent` | There are not many themes for qbittorrent
