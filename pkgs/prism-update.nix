@@ -1,7 +1,15 @@
 # prism-update fetches and installs the latest version of prism
 {
+  pkgs,
   writeShellScriptBin,
 }:
+let
+  # Dependencies for fetching release info
+  deps = [
+    pkgs.curl
+    pkgs.jq
+  ];
+in
 # Updates to the latest GitHub Release Tag
 writeShellScriptBin "prism-update" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
@@ -40,5 +48,4 @@ writeShellScriptBin "prism-update" ''
   echo "=========================================="
   echo "   Update Complete! (Version: $LATEST_TAG)"
   echo "=========================================="
-'';
-
+''
