@@ -5,7 +5,7 @@ let
     pkgs.hyprland
     pkgs.coreutils
     pkgs.libnotify
-    pkgs.rofi-wayland
+    pkgs.rofi
   ];
 in
 writeShellScriptBin "prism-monitor" ''
