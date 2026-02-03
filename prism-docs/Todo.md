@@ -11,7 +11,7 @@
 - [x] Create dotfiles for `mpv`
 - [x] Create dotfiles for `swaync`
 - [x] Create dotfiles for `starship`
-- [ ] Create dotfiles for `hyprland`
+- [x] Create dotfiles for `hyprland`
 - [x] Create dotfiles for `fastfetch`
 - [ ] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file
 
