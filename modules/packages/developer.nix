@@ -5,6 +5,7 @@ with pkgs;
   # Utils
   lazygit
   lazydocker
+  opencode
 
   python3
   nodejs_20
