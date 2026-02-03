@@ -37,6 +37,7 @@ with pkgs;
   waybar
   wl-clipboard
   hyprpicker # Color picker
+  cliphist
   hyprcursor
   papirus-icon-theme
   rose-pine-icon-theme
