@@ -5,7 +5,7 @@ let
     pkgs.hyprland
     pkgs.coreutils
     pkgs.libnotify
-    pkgs.rofi-wayland # For the Yes/No prompt
+    pkgs.rofi # For the Yes/No prompt
   ];
 in
 writeShellScriptBin "prism-monitor" ''
