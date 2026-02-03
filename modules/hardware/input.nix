@@ -21,4 +21,7 @@
   boot.kernelParams = [
     "psmouse.synaptics_intertouch=1"
   ];
+
+  # Test for lenovo laptop
+  boot.blacklistedKernelModules = [ "elan_i2c" ];
 }
