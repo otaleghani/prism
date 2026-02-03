@@ -1,4 +1,4 @@
-export EDITOR = nvim
+export EDITOR=nvim
 eval "$(ssh-agent -s)" >/dev/null 2>&1
 
 export COLORTERM="truecolor"

@@ -16,7 +16,7 @@ in
 writeShellScriptBin "prism-screenrecord" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  # --- Configuration ---
+  # Configuration 
   # Detect XDG Videos directory or fallback to ~/Videos
   if [ -f ~/.config/user-dirs.dirs ]; then
     source ~/.config/user-dirs.dirs
@@ -27,7 +27,7 @@ writeShellScriptBin "prism-screenrecord" ''
     mkdir -p "$OUTPUT_DIR"
   fi
 
-  # --- State Defaults ---
+  # State Defaults 
   DESKTOP_AUDIO="false"
   MICROPHONE_AUDIO="false"
   WEBCAM="false"

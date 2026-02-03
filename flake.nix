@@ -57,6 +57,11 @@
           prism-apps = pkgs.callPackage ./pkgs/prism-apps.nix { };
           prism-bluetooth = pkgs.callPackage ./pkgs/prism-bluetooth.nix { };
           prism-wifi = pkgs.callPackage ./pkgs/prism-wifi.nix { };
+          prism-music = pkgs.callPackage ./pkgs/prism-music.nix { };
+          prism-chat = pkgs.callPackage ./pkgs/prism-chat.nix { };
+          prism-ai = pkgs.callPackage ./pkgs/prism-ai.nix { };
+          prism-settings = pkgs.callPackage ./pkgs/prism-settings.nix { };
+          prism-clipboard = pkgs.callPackage ./pkgs/prism-clipboard.nix { };
         }
       );
 
@@ -116,6 +121,11 @@
                 apps = self.packages.${prev.system}.prism-apps;
                 bluetooth = self.packages.${prev.system}.prism-bluetooth;
                 wifi = self.packages.${prev.system}.prism-wifi;
+                music = self.packages.${prev.system}.prism-music;
+                chat = self.packages.${prev.system}.prism-chat;
+                ai = self.packages.${prev.system}.prism-ai;
+                settings = self.packages.${prev.system}.prism-settings;
+                clipboard = self.packages.${prev.system}.prism-clipboard;
               };
             })
           ];

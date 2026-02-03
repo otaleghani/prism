@@ -85,4 +85,9 @@ with pkgs;
   prism.apps
   prism.bluetooth
   prism.wifi
+  prism.music
+  prism.chat
+  prism.ai
+  prism.settings
+  prism.clipboard
 ]
