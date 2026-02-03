@@ -6,7 +6,7 @@
 writeShellScriptBin "prism-update" ''
   # Usage: prism-update [path/to/config]
   # Defaults to current directory if no path provided
-  CONFIG_DIR="~/.config/prism"
+  CONFIG_DIR="$HOME/.config/prism"
 
   if [ ! -f "$CONFIG_DIR/flake.nix" ]; then
     echo "Error: No flake.nix found in '$CONFIG_DIR'"
