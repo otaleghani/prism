@@ -80,4 +80,6 @@ with pkgs;
   prism.session
   prism.screenshot
   prism.screenrecord
+  prism.save
+  prism.monitor
 ]
