@@ -4,7 +4,7 @@
 }:
 let
   deps = [
-    pkgs.bluectl
+    pkgs.impala
   ];
 in
 
