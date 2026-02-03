@@ -52,6 +52,8 @@
           prism-session = pkgs.callPackage ./pkgs/prism-session.nix { };
           prism-screenshot = pkgs.callPackage ./pkgs/prism-screenshot.nix { };
           prism-screenrecord = pkgs.callPackage ./pkgs/prism-screenrecord.nix { };
+          prism-save = pkgs.callPackage ./pkgs/prism-save.nix { };
+          prism-monitor = pkgs.callPackage ./pkgs/prism-monitor.nix { };
         }
       );
 
@@ -77,6 +79,7 @@
             ./modules/hardware/networking.nix
             ./modules/hardware/print.nix
             ./modules/hardware/settings.nix
+            ./modules/hardware/input.nix
             ./modules/software/fonts.nix
             ./modules/software/shared-folder.nix
             ./modules/software/shell.nix
@@ -105,6 +108,8 @@
                 session = self.packages.${prev.system}.prism-session;
                 screenshot = self.packages.${prev.system}.prism-screenshot;
                 screenrecord = self.packages.${prev.system}.prism-screenrecord;
+                save = self.packages.${prev.system}.prism-save;
+                monitor = self.packages.${prev.system}.prism-monitor;
               };
             })
           ];
