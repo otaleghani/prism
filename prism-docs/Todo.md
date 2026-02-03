@@ -3,10 +3,10 @@
 - [ ] Create default nix flakes for development
 - [ ] Create `prism-development-open` to open a project
 - [ ] Create `prism-development-new` to create a project
-- [ ] Create `prism-bluetooth`
-- [ ] Create `prism-wifi`
+- [x] Create `prism-bluetooth`
+- [x] Create `prism-wifi`
 - [ ] Create `prism-config` to edit the configuration
-- [ ] Create dotfiles for `nvim`
+- [x] Create dotfiles for `nvim`
 - [x] Create dotfiles for `yazi`
 - [x] Create dotfiles for `mpv`
 - [x] Create dotfiles for `swaync`
@@ -14,6 +14,10 @@
 - [x] Create dotfiles for `hyprland`
 - [x] Create dotfiles for `fastfetch`
 - [ ] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file
+
+## Fixes
+- [ ] `prism-monitor` doesn't open the file
+- [ ] `prism-wall select`  needs to open a terminal window
 
 ## Not important
 - [ ] Create dotfiles for `qbittorrent` | There are not many themes for qbittorrent

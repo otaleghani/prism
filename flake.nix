@@ -40,6 +40,7 @@
           # prism-portal = pkgs.callPackage ./pkgs/prism-portal.nix { };
           prism-sync = pkgs.callPackage ./pkgs/prism-sync.nix { };
           prism-update = pkgs.callPackage ./pkgs/prism-update.nix { };
+          prism-update-unstable = pkgs.callPackage ./pkgs/prism-update-unstable.nix { };
           prism-install = pkgs.callPackage ./pkgs/prism-install.nix { };
           prism-delete = pkgs.callPackage ./pkgs/prism-delete.nix { };
           prism-theme = pkgs.callPackage ./pkgs/prism-theme.nix { };
@@ -104,6 +105,7 @@
                 # portal = self.packages.${prev.system}.prism-portal;
                 sync = self.packages.${prev.system}.prism-sync;
                 update = self.packages.${prev.system}.prism-update;
+                update-unstable = self.packages.${prev.system}.prism-update-unstable;
                 install = self.packages.${prev.system}.prism-install;
                 delete = self.packages.${prev.system}.prism-delete;
                 theme = self.packages.${prev.system}.prism-theme;

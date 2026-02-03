@@ -2,36 +2,43 @@
 {
   writeShellScriptBin,
 }:
-
+# Updates to the latest GitHub Release Tag
 writeShellScriptBin "prism-update" ''
-  # Usage: prism-update [path/to/config]
-  # Defaults to current directory if no path provided
-  CONFIG_DIR="$HOME/.config/prism"
+  export PATH=${pkgs.lib.makeBinPath deps}:$PATH
+
+  CONFIG_DIR="''${1:-$HOME/.config/prism}"
 
   if [ ! -f "$CONFIG_DIR/flake.nix" ]; then
     echo "Error: No flake.nix found in '$CONFIG_DIR'"
-    echo "Usage: prism-update <path-to-your-config>"
-    echo "   or: cd /etc/nixos && prism-update"
     exit 1
   fi
 
   echo "=========================================="
-  echo "   Updating Prism & System Dependencies   "
+  echo "   Updating Prism (STABLE RELEASE)        "
   echo "=========================================="
 
-  # Update the 'prism' input specifically
-  # This fetches the latest commit from your GitHub repo
-  echo "[1/2] Fetching latest Prism version..."
-  sudo nix flake lock --update-input prism --commit-lock-file "$CONFIG_DIR"
+  # Fetch Latest Tag from GitHub API
+  echo "[1/3] Checking for updates..."
+  LATEST_TAG=$(curl -sL https://api.github.com/repos/otaleghani/prism/releases/latest | jq -r ".tag_name")
 
-  # Rebuild the system
-  # This triggers the activation scripts (rsync scaffolding)
-  echo "[2/2] Rebuilding system..."
+  if [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" == "null" ]; then
+      echo "Error: Could not fetch latest release tag from GitHub."
+      exit 1
+  fi
+
+  echo "Found Release: $LATEST_TAG"
+
+  # Override the input to pin the specific tag
+  # This modifies flake.lock to point to the tag instead of the branch
+  echo "[2/3] Locking dependencies..."
+  sudo nix flake lock --override-input prism "github:otaleghani/prism/$LATEST_TAG" --commit-lock-file "$CONFIG_DIR"
+
+  # Rebuild
+  echo "[3/3] Rebuilding system..."
   sudo nixos-rebuild switch --flake "$CONFIG_DIR#prism"
 
   echo "=========================================="
-  echo "   Update Complete!                       "
+  echo "   Update Complete! (Version: $LATEST_TAG)"
   echo "=========================================="
-  echo "Note: Configuration files are only copied if they don't exist locally."
-  echo "To reset a config file to the new Prism default, delete your local copy."
-''
+'';
+
