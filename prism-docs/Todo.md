@@ -1,5 +1,5 @@
-- [ ] Update `prism-update` to pick the latest release instead of the latest commit
-- [ ] Create `prism-update-unstable` to update using the lastest commit
+- [x] Update `prism-update` to pick the latest release instead of the latest commit
+- [x] Create `prism-update-unstable` to update using the lastest commit
 - [ ] Create default nix flakes for development
 - [ ] Create `prism-development-open` to open a project
 - [ ] Create `prism-development-new` to create a project
@@ -14,6 +14,7 @@
 - [x] Create dotfiles for `hyprland`
 - [x] Create dotfiles for `fastfetch`
 - [ ] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file
+- [ ] Setup github actions for automatic releases
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file

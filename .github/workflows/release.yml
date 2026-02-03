@@ -1,0 +1,24 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers on tags like v1.0.0, v0.1.0, etc.
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to create the release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          # Automatically generate title and notes from merged PRs/commits
+          generate_release_notes: true
+          # Optional: Mark as prerelease if the tag contains 'beta' or 'alpha'
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
