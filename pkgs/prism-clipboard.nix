@@ -2,7 +2,7 @@
 
 let
   deps = [
-    pkgs.rofi-wayland
+    pkgs.rofi
     pkgs.cliphist
     pkgs.wl-clipboard
     pkgs.libnotify

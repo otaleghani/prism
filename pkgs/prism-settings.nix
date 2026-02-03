@@ -2,7 +2,7 @@
 
 let
   deps = [
-    pkgs.rofi-wayland
+    pkgs.rofi
     pkgs.coreutils
     pkgs.libnotify
     # Note: We assume prism-* scripts (monitor, theme, wall, tui) are installed in the user profile
