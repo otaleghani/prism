@@ -5,6 +5,7 @@
 - [ ] Create `prism-development-new` to create a project
 - [ ] Create `prism-bluetooth`
 - [ ] Create `prism-wifi`
+- [ ] Create `prism-config` to edit the configuration
 - [ ] Create dotfiles for `nvim`
 - [x] Create dotfiles for `yazi`
 - [x] Create dotfiles for `mpv`

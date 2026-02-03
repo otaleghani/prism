@@ -82,4 +82,7 @@ with pkgs;
   prism.screenrecord
   prism.save
   prism.monitor
+  prism.apps
+  prism.bluetooth
+  prism.wifi
 ]

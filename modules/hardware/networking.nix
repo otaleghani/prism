@@ -3,7 +3,25 @@
 {
   networking = {
     # Enable NetworkManager (Standard for desktops)
-    networkmanager.enable = lib.mkDefault true;
+    networkmanager = {
+      enable = lib.mkDefault true;
+      wifi.backend = lib.mkDefault "iwd";
+    };
+
+    # Enable the IWD Service explicitly
+    # This ensures the daemon is running and listening on DBus for Impala.
+    wireless.iwd = {
+      enable = lib.mkDefault true;
+
+      settings = {
+        # We don't enable 'EnableNetworkConfiguration' here because
+        # NetworkManager will handle IP assignment (DHCP).
+        General = {
+          # Roaming thresholds
+          RoamThreshold = -70;
+        };
+      };
+    };
 
     # Firewall Settings
     firewall = {
