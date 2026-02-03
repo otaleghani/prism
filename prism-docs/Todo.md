@@ -9,7 +9,7 @@
 - [x] Create dotfiles for `yazi`
 - [x] Create dotfiles for `mpv`
 - [x] Create dotfiles for `swaync`
-- [ ] Create dotfiles for `starship`
+- [x] Create dotfiles for `starship`
 - [ ] Create dotfiles for `hyprland`
 - [x] Create dotfiles for `fastfetch`
 
