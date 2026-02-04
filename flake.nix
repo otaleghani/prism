@@ -66,6 +66,8 @@
           prism-installer = pkgs.callPackage ./pkgs/prism-installer.nix { };
           prism-timezone = pkgs.callPackage ./pkgs/prism-timezone.nix { };
           prism-keyboard = pkgs.callPackage ./pkgs/prism-keyboard.nix { };
+          prism-keybinds = pkgs.callPackage ./pkgs/prism-keybinds.nix { };
+          prism-power = pkgs.callPackage ./pkgs/prism-power.nix { };
         }
       );
 
@@ -92,6 +94,7 @@
             ./modules/hardware/print.nix
             ./modules/hardware/settings.nix
             ./modules/hardware/input.nix
+            ./modules/hardware/power.nix
             ./modules/software/fonts.nix
             ./modules/software/shared-folder.nix
             ./modules/software/shell.nix
@@ -134,6 +137,8 @@
                 installer = self.packages.${prev.system}.prism-installer;
                 timezone = self.packages.${prev.system}.prism-timezone;
                 keyboard = self.packages.${prev.system}.prism-keyboard;
+                keybinds = self.packages.${prev.system}.prism-keybinds;
+                power = self.packages.${prev.system}.prism-power;
               };
             })
           ];

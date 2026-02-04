@@ -1,10 +1,12 @@
 - [ ] Create default nix flakes for development
 - [ ] Create `prism-development-open` to open a project
 - [ ] Create `prism-development-new` to create a project
-- [ ] Create `prism-config` to edit the configuration
-- [ ] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file
-- [ ] Create `prism-timezone` to change the timezone in the flake
-- [ ] Create `prism-keyboard` to change the keyboards in the flake
+- [x] Create `prism-config` to edit the configuration
+- [x] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file
+- [x] Create `prism-timezone` to change the timezone in the flake
+- [x] Create `prism-keyboard` to change the keyboards in the flake
+- [ ] Create `prism-keybinds`
+- [ ] Create `prism-power`
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file
