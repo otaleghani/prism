@@ -103,13 +103,7 @@ in
     users.users = lib.mapAttrs (name: userCfg: {
       isNormalUser = true;
       description = userCfg.description;
-      extraGroups = [
-        "wheel"
-        "networkmanager"
-        "video"
-        "audio"
-        # "vboxusers" # Only add if VirtualBox is enabled system-wide to avoid errors
-      ];
+      extraGroups = userCfg.extraGroups;
       shell = pkgs.zsh;
       initialPassword = "prism"; # Default password (change immediately!)
       packages = (profilePackages.${userCfg.profileType} or [ ]) ++ userCfg.packages;
