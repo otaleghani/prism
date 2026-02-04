@@ -1,20 +1,10 @@
-- [x] Update `prism-update` to pick the latest release instead of the latest commit
-- [x] Create `prism-update-unstable` to update using the lastest commit
 - [ ] Create default nix flakes for development
 - [ ] Create `prism-development-open` to open a project
 - [ ] Create `prism-development-new` to create a project
-- [x] Create `prism-bluetooth`
-- [x] Create `prism-wifi`
 - [ ] Create `prism-config` to edit the configuration
-- [x] Create dotfiles for `nvim`
-- [x] Create dotfiles for `yazi`
-- [x] Create dotfiles for `mpv`
-- [x] Create dotfiles for `swaync`
-- [x] Create dotfiles for `starship`
-- [x] Create dotfiles for `hyprland`
-- [x] Create dotfiles for `fastfetch`
 - [ ] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file
-- [ ] Setup github actions for automatic releases
+- [ ] Create `prism-timezone` to change the timezone in the flake
+- [ ] Create `prism-keyboard` to change the keyboards in the flake
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file
@@ -22,3 +12,17 @@
 
 ## Not important
 - [ ] Create dotfiles for `qbittorrent` | There are not many themes for qbittorrent
+
+## Done
+- [x] Setup github actions for automatic releases
+- [x] Create dotfiles for `nvim`
+- [x] Create dotfiles for `yazi`
+- [x] Create dotfiles for `mpv`
+- [x] Create dotfiles for `swaync`
+- [x] Create dotfiles for `starship`
+- [x] Create dotfiles for `hyprland`
+- [x] Create dotfiles for `fastfetch`
+- [x] Create `prism-bluetooth`
+- [x] Create `prism-wifi`
+- [x] Update `prism-update` to pick the latest release instead of the latest commit
+- [x] Create `prism-update-unstable` to update using the lastest commit

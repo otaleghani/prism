@@ -63,6 +63,7 @@
           prism-ai = pkgs.callPackage ./pkgs/prism-ai.nix { };
           prism-settings = pkgs.callPackage ./pkgs/prism-settings.nix { };
           prism-clipboard = pkgs.callPackage ./pkgs/prism-clipboard.nix { };
+          prism-installer = pkgs.callPackage ./pkgs/prism-installer.nix { };
         }
       );
 
@@ -79,6 +80,7 @@
             silentSDDM.nixosModules.default
             ./modules/users.nix
             ./modules/packages.nix
+            ./modules/iso.nix
             ./modules/hardware/audio.nix
             ./modules/hardware/bluetooth.nix
             ./modules/hardware/boot.nix
@@ -128,6 +130,7 @@
                 ai = self.packages.${prev.system}.prism-ai;
                 settings = self.packages.${prev.system}.prism-settings;
                 clipboard = self.packages.${prev.system}.prism-clipboard;
+                installer = self.packages.${prev.system}.prism-installer;
               };
             })
           ];
