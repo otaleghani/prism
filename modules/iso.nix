@@ -1,31 +1,35 @@
-{ pkgs, modulesPath, ... }:
+{
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 {
   imports = [
-    "${modulesPath}/installer/cd-dvd/installation-cd-graphical-calamares.nix"
-    # Or use 'installation-cd-minimal.nix' if you don't want a GUI desktop environment
+    # Switch to Minimal (TTY only, smaller, more reliable)
+    "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
   ];
 
-  # ISO Settings
+  # --- ISO Settings ---
 
-  # Enable Flakes in the installer
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
 
-  # Add our custom installer to the environment
   environment.systemPackages = with pkgs; [
     # The Wizard
-    (callPackage ../pkgs/prism-installer.nix { })
+    (pkgs.callPackage ../pkgs/prism-installer.nix { })
 
-    # Tools needed for manual intervention
+    # Tools needed for manual/auto intervention
     git
     neovim
-    gparted
     gum
+    parted # For partitioning
+    dosfstools # For FAT32 (EFI) formatting
+    e2fsprogs # For Ext4 formatting
   ];
 
-  # Auto-start the installer wizard on login (Optional)
+  # Optional: Auto-start the installer wizard on login
   # services.getty.helpLine = lib.mkForce "Run 'prism-installer' to start the setup wizard.";
 }
