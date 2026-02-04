@@ -5,7 +5,8 @@
     # Enable NetworkManager (Standard for desktops)
     networkmanager = {
       enable = lib.mkDefault true;
-      wifi.backend = lib.mkDefault "iwd";
+      # wifi.backend = lib.mkDefault "iwd";
+      unmanaged = [ "type:wifi" ];
     };
 
     # Enable the IWD Service explicitly
@@ -17,6 +18,7 @@
         # We don't enable 'EnableNetworkConfiguration' here because
         # NetworkManager will handle IP assignment (DHCP).
         General = {
+          EnableNetworkConfiguration = true;
           # Roaming thresholds
           RoamThreshold = -70;
         };
