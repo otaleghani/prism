@@ -1,51 +1,173 @@
-# prism-update fetches and installs the latest version of prism
 {
   pkgs,
   writeShellScriptBin,
+  symlinkJoin,
 }:
+
 let
-  # Dependencies for fetching release info
   deps = [
     pkgs.curl
     pkgs.jq
+    pkgs.coreutils
+    pkgs.findutils
   ];
-in
-# Updates to the latest GitHub Release Tag
-writeShellScriptBin "prism-update" ''
-  export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  CONFIG_DIR="''${1:-/etc/prism}"
+  # --- RESET LOGIC ---
+  # Shared function to clean up dotfiles before rebuilding
+  resetScript = ''
+    reset_dotfiles() {
+      CONFIG_DIR="$1"
+      echo "!!! WARNING: You are about to reset Prism dotfiles to defaults. !!!"
+      echo "This will delete local modifications to files managed by Prism."
+      echo "Files in 'overrides/' will be preserved and reapplied."
+      echo ""
+      read -p "Are you sure? (y/N) " -n 1 -r
+      echo
+      if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+          echo "Aborting."
+          exit 1
+      fi
 
-  if [ ! -f "$CONFIG_DIR/flake.nix" ]; then
-    echo "Error: No flake.nix found in '$CONFIG_DIR'"
-    exit 1
-  fi
+      echo "Cleaning up local dotfiles..."
+      DEFAULTS_DIR="$CONFIG_DIR/defaults"
+      
+      if [ -d "$DEFAULTS_DIR" ]; then
+          # Find all files in defaults and delete their counterparts in HOME
+          # We check common, dev, gamer, etc. recursively
+          find "$DEFAULTS_DIR" -type f | while read -r file; do
+              # Strip the path up to defaults/LAYER/ to get the relative path in HOME
+              # Example: .../defaults/common/.config/hypr/hyprland.conf -> .config/hypr/hyprland.conf
+              
+              # First remove prefix up to defaults/
+              REL_PATH="''${file#$DEFAULTS_DIR/}"
+              
+              # Remove the first directory (common, dev, etc.)
+              TARGET_REL="''${REL_PATH#*/}"
+              
+              TARGET_ABS="$HOME/$TARGET_REL"
+              
+              if [ -f "$TARGET_ABS" ]; then
+                  rm "$TARGET_ABS"
+                  echo "  - Deleted: $TARGET_REL"
+              fi
+          done
+      fi
+      echo "Cleanup complete. Rebuilding will generate fresh defaults."
+    }
+  '';
 
-  echo "=========================================="
-  echo "   Updating Prism (STABLE RELEASE)        "
-  echo "=========================================="
+  # --- 1. UNSTABLE UPDATE ---
+  updateUnstable = writeShellScriptBin "prism-update-unstable" ''
+    export PATH=${pkgs.lib.makeBinPath deps}:$PATH
+    ${resetScript}
 
-  # Fetch Latest Tag from GitHub API
-  echo "[1/3] Checking for updates..."
-  LATEST_TAG=$(curl -sL https://api.github.com/repos/otaleghani/prism/releases/latest | jq -r ".tag_name")
+    # Parse Flags
+    RESET="false"
+    ARGS=""
+    for arg in "$@"; do
+        case $arg in
+            --reset-dotfiles) RESET="true" ;;
+            *) ARGS="$ARGS $arg" ;;
+        esac
+    done
 
-  if [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" == "null" ]; then
-      echo "Error: Could not fetch latest release tag from GitHub."
+    # Determine config dir dynamically
+    if [ -d "/etc/prism" ]; then
+        CONFIG_DIR="/etc/prism"
+    elif [ -d "$HOME/.config/prism" ]; then
+        CONFIG_DIR="$HOME/.config/prism"
+    else
+        CONFIG_DIR="''${1:-/etc/nixos}"
+    fi
+
+    if [ ! -f "$CONFIG_DIR/flake.nix" ]; then
+      echo "Error: No flake.nix found in '$CONFIG_DIR'"
       exit 1
-  fi
+    fi
 
-  echo "Found Release: $LATEST_TAG"
+    # Execute Reset if requested
+    if [ "$RESET" == "true" ]; then
+        reset_dotfiles "$CONFIG_DIR"
+    fi
 
-  # Override the input to pin the specific tag
-  # This modifies flake.lock to point to the tag instead of the branch
-  echo "[2/3] Locking dependencies..."
-  sudo nix flake lock --override-input prism "github:otaleghani/prism/$LATEST_TAG" --commit-lock-file "$CONFIG_DIR"
+    echo "=========================================="
+    echo "   Updating Prism (UNSTABLE / LATEST)     "
+    echo "=========================================="
 
-  # Rebuild
-  echo "[3/3] Rebuilding system..."
-  sudo nixos-rebuild switch --flake "$CONFIG_DIR#prism"
+    echo "[1/2] Fetching latest commits..."
+    sudo nix flake lock --update-input prism --commit-lock-file "$CONFIG_DIR"
 
-  echo "=========================================="
-  echo "   Update Complete! (Version: $LATEST_TAG)"
-  echo "=========================================="
-''
+    echo "[2/2] Rebuilding system..."
+    sudo nixos-rebuild switch --flake "$CONFIG_DIR#prism"
+
+    echo "=========================================="
+    echo "   Update Complete! (Unstable Channel)    "
+    echo "=========================================="
+  '';
+
+  # --- 2. STABLE UPDATE ---
+  updateStable = writeShellScriptBin "prism-update" ''
+    export PATH=${pkgs.lib.makeBinPath deps}:$PATH
+    ${resetScript}
+
+    RESET="false"
+    ARGS=""
+    for arg in "$@"; do
+        case $arg in
+            --reset-dotfiles) RESET="true" ;;
+            *) ARGS="$ARGS $arg" ;;
+        esac
+    done
+
+    # Determine config dir
+    if [ -d "/etc/prism" ]; then
+        CONFIG_DIR="/etc/prism"
+    elif [ -d "$HOME/.config/prism" ]; then
+        CONFIG_DIR="$HOME/.config/prism"
+    else
+        CONFIG_DIR="''${1:-/etc/nixos}"
+    fi
+
+    if [ ! -f "$CONFIG_DIR/flake.nix" ]; then
+      echo "Error: No flake.nix found in '$CONFIG_DIR'"
+      exit 1
+    fi
+
+    # Execute Reset if requested
+    if [ "$RESET" == "true" ]; then
+        reset_dotfiles "$CONFIG_DIR"
+    fi
+
+    echo "=========================================="
+    echo "   Updating Prism (STABLE RELEASE)        "
+    echo "=========================================="
+
+    echo "[1/3] Checking for updates..."
+    LATEST_TAG=$(curl -sL https://api.github.com/repos/otaleghani/prism/releases/latest | jq -r ".tag_name")
+
+    if [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" == "null" ]; then
+        echo "Error: Could not fetch latest release tag from GitHub."
+        exit 1
+    fi
+
+    echo "Found Release: $LATEST_TAG"
+
+    echo "[2/3] Locking dependencies..."
+    sudo nix flake lock --override-input prism "github:otaleghani/prism/$LATEST_TAG" --commit-lock-file "$CONFIG_DIR"
+
+    echo "[3/3] Rebuilding system..."
+    sudo nixos-rebuild switch --flake "$CONFIG_DIR#prism"
+
+    echo "=========================================="
+    echo "   Update Complete! (Version: $LATEST_TAG)"
+    echo "=========================================="
+  '';
+
+in
+symlinkJoin {
+  name = "prism-update-suite";
+  paths = [
+    updateUnstable
+    updateStable
+  ];
+}

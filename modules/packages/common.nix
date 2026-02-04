@@ -69,7 +69,6 @@ with pkgs;
   # prism.portal
   prism.sync
   prism.update
-  prism.update-unstable
   prism.install
   prism.delete
   prism.theme

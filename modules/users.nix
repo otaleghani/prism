@@ -128,14 +128,14 @@ in
              chown -R ${user}:users "$USER_HOME/.config" "$USER_HOME/.local"
              chmod -R u+rwX "$USER_HOME/.config" "$USER_HOME/.local"
 
-             # 1. Apply COMMON Defaults (Enforced)
+             # 1. Apply COMMON Defaults (Not enforced)
              if [ -d "$COMMON_SOURCE" ]; then
-               ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
+               ${rsync} --ignore-existing -rav --mkpath --chmod=u+rwX --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
              fi
 
-             # 2. Apply PROFILE Defaults (Enforced)
+             # 2. Apply PROFILE Defaults (Not enforced)
              if [ "${userCfg.profileType}" != "custom" ] && [ -d "$PROFILE_SOURCE" ]; then
-               ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
+               ${rsync} --ignore-existing -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
              # 3. Sync System Themes (Defaults)
