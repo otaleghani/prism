@@ -14,7 +14,7 @@ in
 writeShellScriptBin "prism-update" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  CONFIG_DIR="''${1:-$HOME/.config/prism}"
+  CONFIG_DIR="''${1:-/etc/nixos}"
 
   if [ ! -f "$CONFIG_DIR/flake.nix" ]; then
     echo "Error: No flake.nix found in '$CONFIG_DIR'"
