@@ -2,7 +2,7 @@
 
 let
   deps = [
-    pkgs.rofi-wayland
+    pkgs.rofi
     pkgs.systemd # for timedatectl
     pkgs.libnotify
   ];

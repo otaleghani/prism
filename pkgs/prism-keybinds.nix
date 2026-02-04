@@ -2,7 +2,7 @@
 
 let
   deps = [
-    pkgs.rofi-wayland
+    pkgs.rofi
     pkgs.gnugrep
     pkgs.gnused
     pkgs.gawk

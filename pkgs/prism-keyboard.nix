@@ -2,7 +2,7 @@
 
 let
   deps = [
-    pkgs.rofi-wayland
+    pkgs.rofi
     pkgs.hyprland
     pkgs.gnused
     pkgs.libnotify

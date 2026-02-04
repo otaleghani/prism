@@ -2,7 +2,7 @@
 
 let
   deps = [
-    pkgs.rofi-wayland
+    pkgs.rofi
     pkgs.libnotify
     # Note: power-profiles-daemon must be installed in system packages/services
   ];
