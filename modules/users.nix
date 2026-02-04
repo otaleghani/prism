@@ -123,6 +123,11 @@ in
           THEME_SOURCE="${defaultsPath}/themes/"
 
           if [ -d "$USER_HOME" ]; then
+            mkdir -p "$USER_HOME/.config" "$USER_HOME/.local/share"
+            chown -R ${user}:users "$USER_HOME/.config" "$USER_HOME/.local"
+            # Ensure write permissions so tools like Starship/Nvim don't see them as Read-Only
+            chmod -R u+rwX "$USER_HOME/.config" "$USER_HOME/.local"
+
             # Apply COMMON Defaults (Base Layer) - Enforced
             if [ -d "$COMMON_SOURCE" ]; then
               ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
