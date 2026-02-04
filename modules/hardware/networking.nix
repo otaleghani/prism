@@ -2,13 +2,12 @@
 
 {
   networking = {
-    wireless.enable = lib.mkDefault false;
-
+    # wireless.enable = lib.mkDefault false;
     # Enable NetworkManager (Standard for desktops)
     networkmanager = {
-      enable = lib.mkDefault true;
+      enable = lib.mkDefault false;
       # wifi.backend = lib.mkDefault "iwd";
-      unmanaged = [ "type:wifi" ];
+      # unmanaged = [ "type:wifi" ];
     };
 
     # Enable the IWD Service explicitly
