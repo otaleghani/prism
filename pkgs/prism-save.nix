@@ -33,7 +33,7 @@ writeShellScriptBin "prism-save" ''
   fi
 
   # Setup Prism Repo Location
-  REPO_DIR="$HOME/.config/prism"
+  REPO_DIR="/etc/prism"
   OVERRIDES_DIR="$REPO_DIR/overrides"
 
   if [ ! -d "$REPO_DIR" ]; then

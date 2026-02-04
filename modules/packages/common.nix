@@ -96,4 +96,5 @@ with pkgs;
   prism.keyboard
   prism.keybinds
   prism.power
+  prism.users
 ]

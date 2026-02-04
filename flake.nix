@@ -68,6 +68,7 @@
           prism-keyboard = pkgs.callPackage ./pkgs/prism-keyboard.nix { };
           prism-keybinds = pkgs.callPackage ./pkgs/prism-keybinds.nix { };
           prism-power = pkgs.callPackage ./pkgs/prism-power.nix { };
+          prism-users = pkgs.callPackage ./pkgs/prism-users.nix { };
         }
       );
 
@@ -139,6 +140,7 @@
                 keyboard = self.packages.${prev.system}.prism-keyboard;
                 keybinds = self.packages.${prev.system}.prism-keybinds;
                 power = self.packages.${prev.system}.prism-power;
+                users = self.packages.${prev.system}.prism-users;
               };
             })
           ];

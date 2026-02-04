@@ -19,16 +19,17 @@ writeShellScriptBin "prism-settings" ''
   OPT_AUDIO="  Audio Mixer"
   OPT_THEME="🎨  Switch Theme"
   OPT_WALL="  Wallpaper Picker"
+  OPT_USERS="  Manage Users"
 
   # Menu
   # We could customize the look by creating ~/.config/rofi/settings.rasi
-  SELECTED=$(echo -e "$OPT_CONFIG\n$OPT_WIFI\n$OPT_BLUETOOTH\n$OPT_MONITOR\n$OPT_AUDIO\n$OPT_THEME\n$OPT_WALL" | rofi -dmenu -p "Settings")
+  SELECTED=$(echo -e "$OPT_CONFIG\n$OPT_WIFI\n$OPT_BLUETOOTH\n$OPT_MONITOR\n$OPT_AUDIO\n$OPT_THEME\n$OPT_WALL\n$OPT_USERS" | rofi -dmenu -p "Settings")
 
   case "$SELECTED" in
     "$OPT_CONFIG")
       # Edit the Flake configuration
       # Assumes your config is at ~/.config/prism
-      FLAKE_DIR="$HOME/.config/prism"
+      FLAKE_DIR="/etc/prism"
       if [ -d "$FLAKE_DIR" ]; then
          # Launch editor using prism-focus-tui so it floats and centers
          # Using 'nvim' (or your preferred editor)
@@ -68,6 +69,10 @@ writeShellScriptBin "prism-settings" ''
       # Launch Wallpaper Picker
       exec prism-wall select
       ;;
+
+    "$OPT_USERS") 
+    exec prism-users 
+    ;;
       
     *)
       exit 0
