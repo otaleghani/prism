@@ -4,68 +4,112 @@ let
   deps = [
     pkgs.coreutils
     pkgs.findutils
+    pkgs.gnugrep
     pkgs.jq
   ];
 in
 writeShellScriptBin "prism-save" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  # Usage: prism-save <file_or_folder>
-  # Example: prism-save ~/.config/hypr/monitors.conf
-  # Example: prism-save ~/.config/nvim
+  # Usage: 
+  #   prism-save <file>   -> Track file and save it
+  #   prism-save          -> Save all tracked files (Sync)
 
-  TARGET_FILE="$1"
+  TRACKFILE="$HOME/.prismsave"
+  CURRENT_USER=$(whoami)
 
-  if [ -z "$TARGET_FILE" ]; then
-    echo "Usage: prism-save <file_or_folder_path>"
-    echo "Copies a file/folder from Home to Prism Flake overrides."
-    exit 1
-  fi
-
-  # Resolve Absolute Paths
-  ABS_FILE=$(realpath "$TARGET_FILE")
-  HOME_DIR=$(realpath "$HOME")
-
-  # Ensure file is actually in Home
-  if [[ "$ABS_FILE" != "$HOME_DIR"* ]]; then
-    echo "Error: Path must be inside your home directory."
-    exit 1
-  fi
-
-  # Setup Prism Repo Location
-  REPO_DIR="/etc/prism"
-  OVERRIDES_DIR="$REPO_DIR/overrides"
-
-  if [ ! -d "$REPO_DIR" ]; then
-      echo "Error: Prism repository not found at $REPO_DIR"
-      echo "Please move or clone your flake to ~/.config/prism"
+  # --- 1. SETUP REPO LOCATION ---
+  if [ -d "/etc/prism" ]; then
+      REPO_DIR="/etc/prism"
+  elif [ -d "$HOME/.config/prism" ]; then
+      REPO_DIR="$HOME/.config/prism"
+  else
+      echo "Error: Prism repository not found at /etc/prism or ~/.config/prism"
       exit 1
   fi
 
-  # Calculate Relative Path
-  # Remove $HOME/ prefix to get relative path (e.g. .config/nvim)
-  # FIX: We use ''${...} to escape the bash syntax from Nix interpolation
-  REL_PATH="''${ABS_FILE#$HOME_DIR/}"
-  DEST_PATH="$OVERRIDES_DIR/$REL_PATH"
-  DEST_DIR=$(dirname "$DEST_PATH")
+  # FIX: Save to overrides/<username>/...
+  OVERRIDES_DIR="$REPO_DIR/overrides/$CURRENT_USER"
 
-  # Copy File or Directory
-  if [ ! -d "$DEST_DIR" ]; then
-    echo "Creating parent directory: $DEST_DIR"
-    mkdir -p "$DEST_DIR"
+  # --- HELPER: COPY FUNCTION ---
+  sync_path() {
+      local TARGET="$1"
+      local ABS_FILE
+      ABS_FILE=$(realpath "$TARGET")
+      local HOME_DIR
+      HOME_DIR=$(realpath "$HOME")
+
+      # Validation
+      if [[ "$ABS_FILE" != "$HOME_DIR"* ]]; then
+          echo "Skipping $TARGET: Must be inside home directory."
+          return
+      fi
+
+      # Calculate Relative Path (e.g., .config/nvim)
+      local REL_PATH="''${ABS_FILE#$HOME_DIR/}"
+      local DEST_PATH="$OVERRIDES_DIR/$REL_PATH"
+      local DEST_DIR
+      DEST_DIR=$(dirname "$DEST_PATH")
+
+      if [ ! -d "$DEST_DIR" ]; then
+          mkdir -p "$DEST_DIR"
+      fi
+
+      if [ -e "$DEST_PATH" ]; then
+          rm -rf "$DEST_PATH"
+      fi
+
+      cp -r "$ABS_FILE" "$DEST_PATH"
+      echo "  -> Synced: $REL_PATH"
+  }
+
+  # --- MODE 1: SYNC ALL (No Args) ---
+  if [ -z "$1" ] || [ "$1" == "all" ]; then
+      echo "Saving tracked files to overrides/$CURRENT_USER/..."
+      
+      if [ ! -f "$TRACKFILE" ]; then
+          echo "No tracking file found."
+          echo "Run 'prism-save <file>' to start tracking a file."
+          exit 0
+      fi
+
+      while IFS= read -r line; do
+          # Skip empty/comments
+          [[ -z "$line" || "$line" =~ ^# ]] && continue
+          
+          # Expand tilde manually
+          EXPANDED_PATH="''${line/#\~/$HOME}"
+          
+          if [ -e "$EXPANDED_PATH" ]; then
+              sync_path "$EXPANDED_PATH"
+          else
+              echo "  x Warning: Tracked file not found: $line"
+          fi
+      done < "$TRACKFILE"
+      
+      echo "✅ Sync Complete."
+      exit 0
   fi
 
-  # FIX: Remove destination first to prevent nesting and ensure clean state
-  # If we don't do this, 'cp -r dir existing_dir' creates 'existing_dir/dir'
-  if [ -e "$DEST_PATH" ]; then
-      echo "Overwriting existing override..."
-      rm -rf "$DEST_PATH"
+  # --- MODE 2: TRACK & SAVE (Arg Provided) ---
+  TARGET_FILE="$1"
+
+  if [ ! -e "$TARGET_FILE" ]; then
+      echo "Error: File '$TARGET_FILE' does not exist."
+      exit 1
   fi
 
-  echo "Copying $REL_PATH -> overrides/..."
-  # -r allows copying directories recursively
-  cp -r "$ABS_FILE" "$DEST_PATH"
+  # 1. Save it immediately
+  sync_path "$TARGET_FILE"
 
-  echo "✅ Saved to $DEST_PATH"
-  echo "Don't forget to 'git add' and commit!"
+  # 2. Add to tracking list
+  ABS_TARGET=$(realpath "$TARGET_FILE")
+  touch "$TRACKFILE"
+
+  if ! grep -Fxq "$ABS_TARGET" "$TRACKFILE"; then
+      echo "$ABS_TARGET" >> "$TRACKFILE"
+      echo "➕ Added to tracking list ($TRACKFILE)"
+  else
+      echo "ℹ️  Already tracked."
+  fi
 ''
