@@ -8,14 +8,14 @@
 let
   cfg = config.prism.users;
 
-  # Import the package lists
+  # 1. Import the package lists
   commonPkgs = import ./packages/common.nix { inherit pkgs; };
   devPkgs = import ./packages/dev.nix { inherit pkgs; };
   gamerPkgs = import ./packages/gamer.nix { inherit pkgs; };
   pentesterPkgs = import ./packages/pentester.nix { inherit pkgs; };
   creatorPkgs = import ./packages/creator.nix { inherit pkgs; };
 
-  # Map profile strings to package lists
+  # 2. Map profile strings to package lists
   profilePackages = {
     dev = devPkgs;
     gamer = gamerPkgs;
@@ -128,39 +128,27 @@ in
              chown -R ${user}:users "$USER_HOME/.config" "$USER_HOME/.local"
              chmod -R u+rwX "$USER_HOME/.config" "$USER_HOME/.local"
 
-             # Apply COMMON Defaults (Enforced)
+             # 1. Apply COMMON Defaults (Enforced)
              if [ -d "$COMMON_SOURCE" ]; then
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
              fi
 
-             # Apply PROFILE Defaults (Enforced)
+             # 2. Apply PROFILE Defaults (Enforced)
              if [ "${userCfg.profileType}" != "custom" ] && [ -d "$PROFILE_SOURCE" ]; then
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
-             # Apply USER OVERRIDES (Enforced)
-             # Automatically looks in ../overrides/<username>
-             ${
-               if hasOverrides then
-                 ''
-                   USER_OVERRIDE="${overridesPath}/${user}"
-                   if [ -d "$USER_OVERRIDE" ]; then
-                       echo "[Prism] Applying user overrides from repo/overrides/${user}..."
-                       ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
-                   fi
-                 ''
-               else
-                 ""
-             }
-             
-             # Sync Themes
+             # 3. Sync System Themes (Defaults)
+             # We run this BEFORE overrides so the user can overwrite specific theme files if they want.
              THEME_DEST="$USER_HOME/.local/share/prism/themes"
              if [ -d "$THEME_SOURCE" ]; then
                 mkdir -p "$USER_HOME/.local/share/prism"
                 chown ${user}:users "$USER_HOME/.local/share/prism"
                 
+                # Copy defaults
                 ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$THEME_SOURCE" "$THEME_DEST/"
                 
+                # Set Default Theme Symlink
                 CURRENT_LINK="$USER_HOME/.local/share/prism/current"
                 DEFAULT_THEME="catppuccin-mocha"
                 
@@ -172,7 +160,42 @@ in
                 fi
              fi
 
-             # Fix Nvim Permissions
+             # 4. Apply USER OVERRIDES (Enforced)
+             # Automatically looks in ../overrides/<username>
+             ${
+               if hasOverrides then
+                 ''
+                   USER_OVERRIDE="${overridesPath}/${user}"
+
+                   # A. Standard Dotfiles Override
+                   if [ -d "$USER_OVERRIDE" ]; then
+                       echo "[Prism] Applying user overrides from repo/overrides/${user}..."
+                       # We exclude 'themes' and 'wallpapers' from the root sync to treat them specially below
+                       ${rsync} -rav --mkpath --chmod=u+rwX --exclude 'themes' --exclude 'wallpapers' --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
+                   fi
+
+                   # B. Custom Themes Override (overrides/<user>/themes)
+                   # Allows easy adding/patching of themes without the deep folder structure
+                   USER_THEME_OVERRIDE="$USER_OVERRIDE/themes"
+                   if [ -d "$USER_THEME_OVERRIDE" ]; then
+                       echo "[Prism] Applying custom user themes..."
+                       ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_THEME_OVERRIDE/" "$THEME_DEST/"
+                   fi
+
+                   # C. Custom Wallpapers Override (overrides/<user>/wallpapers)
+                   # Syncs to a dedicated wallpapers folder
+                   USER_WALL_OVERRIDE="$USER_OVERRIDE/wallpapers"
+                   WALL_DEST="$USER_HOME/.local/share/prism/wallpapers"
+                   if [ -d "$USER_WALL_OVERRIDE" ]; then
+                       echo "[Prism] Applying custom user wallpapers..."
+                       ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_WALL_OVERRIDE/" "$WALL_DEST/"
+                   fi
+                 ''
+               else
+                 ""
+             }
+
+             # 5. Fix Nvim Permissions
              if [ -d "$USER_HOME/.local/share/nvim" ]; then
                  chown -R ${user}:users "$USER_HOME/.local/share/nvim"
                  chmod -R u+rwX "$USER_HOME/.local/share/nvim"
