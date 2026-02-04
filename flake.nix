@@ -21,7 +21,7 @@
       nixpkgs,
       silentSDDM,
       ...
-    }:
+    }@inputs:
     let
       supportedSystems = [
         "x86_64-linux"
@@ -80,7 +80,6 @@
             silentSDDM.nixosModules.default
             ./modules/users.nix
             ./modules/packages.nix
-            ./modules/iso.nix
             ./modules/hardware/audio.nix
             ./modules/hardware/bluetooth.nix
             ./modules/hardware/boot.nix
@@ -136,6 +135,13 @@
           ];
         };
 
+      nixosConfigurations.iso = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./modules/iso.nix
+        ];
+      };
       # TODO: Create development shell
 
     };
