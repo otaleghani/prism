@@ -3,11 +3,16 @@
 - [ ] Create `prism-development-new` to create a project
 - [x] Create `prism-config` to edit the configuration
 - [x] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file
-- [x] Create `prism-timezone` to change the timezone in the flake
-- [x] Create `prism-keyboard` to change the keyboards in the flake
+- [x] Create `prism-timezone`
+- [x] Create `prism-keyboard`
 - [x] Create `prism-keybinds`
 - [x] Create `prism-power`
 - [x] Create `prism-users`
+- [ ] Test `prism-timezone`
+- [ ] Test `prism-keyboard`
+- [ ] Test `prism-keybinds`
+- [ ] Test `prism-power`
+- [ ] Test `prism-users`
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file

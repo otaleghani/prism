@@ -2,6 +2,8 @@
 
 {
   networking = {
+    wireless.enable = lib.mkDefault false;
+
     # Enable NetworkManager (Standard for desktops)
     networkmanager = {
       enable = lib.mkDefault true;
