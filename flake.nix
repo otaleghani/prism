@@ -65,6 +65,7 @@
           prism-clipboard = pkgs.callPackage ./pkgs/prism-clipboard.nix { };
           prism-installer = pkgs.callPackage ./pkgs/prism-installer.nix { };
           prism-timezone = pkgs.callPackage ./pkgs/prism-timezone.nix { };
+          prism-keyboard = pkgs.callPackage ./pkgs/prism-keyboard.nix { };
         }
       );
 
@@ -132,6 +133,7 @@
                 clipboard = self.packages.${prev.system}.prism-clipboard;
                 installer = self.packages.${prev.system}.prism-installer;
                 timezone = self.packages.${prev.system}.prism-timezone;
+                keyboard = self.packages.${prev.system}.prism-keyboard;
               };
             })
           ];

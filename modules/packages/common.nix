@@ -93,4 +93,5 @@ with pkgs;
   prism.settings
   prism.clipboard
   prism.timezone
+  prism.keyboard
 ]
