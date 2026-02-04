@@ -140,9 +140,24 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./modules/iso.nix
+          # Force 'nixos' user configuration to ensure login works on the ISO
+          ({ config, pkgs, lib, ... }: {
+            users.users.nixos = {
+              isNormalUser = true;
+              extraGroups = [ "wheel" "networkmanager" "video" ];
+              initialHashedPassword = ""; # Empty password allows easy login
+            };
+            
+            # Ensure sudo works without password on the ISO
+            security.sudo.wheelNeedsPassword = false;
+            
+            # Force auto-login to the 'nixos' user to bypass the display manager prompt
+            services.displayManager.autoLogin.enable = true;
+            services.displayManager.autoLogin.user = "nixos";
+          })
         ];
       };
+    };
       # TODO: Create development shell
-
     };
 }
