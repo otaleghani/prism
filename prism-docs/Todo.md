@@ -9,7 +9,6 @@
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file
 - [ ] `prism-wall select`  needs to open a terminal window
-- [ ] `hyprland` doesn't change styles on theme change
 
 ## Not important
 - [ ] Create dotfiles for `qbittorrent` | There are not many themes for qbittorrent
@@ -27,3 +26,4 @@
 - [x] Create `prism-wifi`
 - [x] Update `prism-update` to pick the latest release instead of the latest commit
 - [x] Create `prism-update-unstable` to update using the lastest commit
+- [x] `hyprland` doesn't change styles on theme change

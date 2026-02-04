@@ -3,11 +3,11 @@ name: Release
 on:
   push:
     tags:
-      - 'v*' # Triggers on tags like v1.0.0, v0.1.0, etc.
+      - 'v*' # Triggers on tags like v1.0.0, v0.1.0
 
 jobs:
   release:
-    name: Create Release
+    name: Build ISO & Create Release
     runs-on: ubuntu-latest
     permissions:
       contents: write # Required to create the release
@@ -15,10 +15,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Install nix
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      # Build the ISO
+      - name: Build PrismOS ISO
+        run: nix build .#nixosConfigurations.iso.config.system.build.isoImage
+
+      # Rename ISO
+      # We copy it out of the read-only Nix store to rename it based on the tag (v1.0.0)
+      - name: Rename ISO
+        run: |
+          VERSION="${{ github.ref_name }}"
+          ISO_PATH=$(find result/iso -name "*.iso" | head -n 1)
+          echo "Found ISO at: $ISO_PATH"
+          cp "$ISO_PATH" "prism-${VERSION}.iso"
+          echo "Renamed to: prism-${VERSION}.iso"
+
+      # Create release and upload ISO
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          # Automatically generate title and notes from merged PRs/commits
           generate_release_notes: true
-          # Optional: Mark as prerelease if the tag contains 'beta' or 'alpha'
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
+          files: |
+            prism-*.iso
