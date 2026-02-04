@@ -92,4 +92,5 @@ with pkgs;
   prism.ai
   prism.settings
   prism.clipboard
+  prism.timezone
 ]
