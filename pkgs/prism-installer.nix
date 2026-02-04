@@ -6,24 +6,30 @@ let
     pkgs.git
     pkgs.curl
     pkgs.jq
+    pkgs.nix # Added nix for flake lock
     pkgs.nixos-install-tools
     pkgs.parted
-    pkgs.util-linux # lsblk, mount
-    pkgs.dosfstools # mkfs.fat
-    pkgs.e2fsprogs # mkfs.ext4
+    pkgs.util-linux
+    pkgs.dosfstools
+    pkgs.e2fsprogs
   ];
 in
 writeShellScriptBin "prism-installer" ''
     export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-    # --- 1. INTRO ---
+    # --- 1. INTRO & DETECTION ---
     clear
-    gum style \
-  	--border double \
-  	--margin "1 2" \
-  	--padding "2 4" \
-  	--align center \
-  	--foreground 212 "PRISM OS INSTALLER (MINIMAL)" "Welcome to the Prism onboarding wizard."
+    gum style --border double --margin "1 2" --padding "2 4" --align center --foreground 212 "PRISM OS INSTALLER"
+    
+    # Detect Boot Mode
+    if [ -d /sys/firmware/efi/efivars ]; then
+        BOOT_MODE="uefi"
+        echo "System is booted in UEFI mode."
+    else
+        BOOT_MODE="legacy"
+        echo "System is booted in Legacy BIOS mode."
+    fi
+    sleep 1
 
     # --- 2. PARTITIONING ---
     
@@ -31,8 +37,6 @@ writeShellScriptBin "prism-installer" ''
       echo "Filesystem already mounted at /mnt. Skipping partitioning."
     else
       if gum confirm "Do you want to automatically partition a drive? (WIPES DATA)"; then
-         # List disks (exclude loops and roms)
-         # Format: NAME SIZE MODEL
          echo "Scanning disks..."
          DISKS=$(lsblk -d -n -o NAME,SIZE,MODEL -e 7,11)
          
@@ -41,93 +45,114 @@ writeShellScriptBin "prism-installer" ''
            exit 1
          fi
          
-         SELECTED_LINE=$(echo "$DISKS" | gum choose --header "Select Drive to Install Prism OS")
+         SELECTED_LINE=$(echo "$DISKS" | gum choose --header "Select Drive")
          DISK_NAME=$(echo "$SELECTED_LINE" | awk '{print $1}')
          TARGET_DISK="/dev/$DISK_NAME"
          
-         gum style --foreground 196 "WARNING: THIS WILL WIPE ALL DATA ON $TARGET_DISK"
-         if ! gum confirm "Are you absolutely sure?"; then
-           echo "Aborted."
-           exit 1
-         fi
+         gum style --foreground 196 "WARNING: WIPING $TARGET_DISK"
+         if ! gum confirm "Are you sure?"; then exit 1; fi
          
-         echo "Partitioning $TARGET_DISK..."
+         echo "Partitioning $TARGET_DISK for $BOOT_MODE..."
          
-         # 1. Create GPT Table
-         parted -s "$TARGET_DISK" -- mklabel gpt
+         # Wipe
+         wipefs -a "$TARGET_DISK"
          
-         # 2. Create EFI Partition (512MB)
-         parted -s "$TARGET_DISK" -- mkpart ESP fat32 1MiB 512MiB
-         parted -s "$TARGET_DISK" -- set 1 esp on
-         
-         # 3. Create Root Partition (Rest of disk)
-         parted -s "$TARGET_DISK" -- mkpart primary ext4 512MiB 100%
-         
-         # Wait for kernel to register partitions
-         sleep 2
-         
-         # Identify partitions (NVMe uses p1, p2 suffixes, SATA uses 1, 2)
-         if [[ "$TARGET_DISK" == *"nvme"* ]]; then
-           PART_BOOT="''${TARGET_DISK}p1"
-           PART_ROOT="''${TARGET_DISK}p2"
+         if [ "$BOOT_MODE" == "uefi" ]; then
+             # --- UEFI LAYOUT (GPT) ---
+             # 1. ESP (512MB)
+             # 2. Root (Rest)
+             parted -s "$TARGET_DISK" -- mklabel gpt
+             parted -s "$TARGET_DISK" -- mkpart ESP fat32 1MiB 512MiB
+             parted -s "$TARGET_DISK" -- set 1 esp on
+             parted -s "$TARGET_DISK" -- mkpart primary ext4 512MiB 100%
+             
+             # Naming
+             if [[ "$TARGET_DISK" == *"nvme"* ]]; then
+               PART_BOOT="''${TARGET_DISK}p1"
+               PART_ROOT="''${TARGET_DISK}p2"
+             else
+               PART_BOOT="''${TARGET_DISK}1"
+               PART_ROOT="''${TARGET_DISK}2"
+             fi
+             
+             # Formatting
+             mkfs.fat -F 32 -n boot "$PART_BOOT"
+             mkfs.ext4 -F -L nixos "$PART_ROOT"
+             
+             # Mounting
+             # Use direct paths to avoid race conditions with udev labels
+             mount "$PART_ROOT" /mnt
+             mkdir -p /mnt/boot
+             mount "$PART_BOOT" /mnt/boot
+
          else
-           PART_BOOT="''${TARGET_DISK}1"
-           PART_ROOT="''${TARGET_DISK}2"
+             # --- LEGACY BIOS LAYOUT (GPT + BIOS Boot) ---
+             # 1. BIOS Boot Partition (1MB, no FS) - Required for GRUB on GPT
+             # 2. Root (Rest)
+             parted -s "$TARGET_DISK" -- mklabel gpt
+             parted -s "$TARGET_DISK" -- mkpart non-fs 0% 2MiB
+             parted -s "$TARGET_DISK" -- set 1 bios_grub on
+             parted -s "$TARGET_DISK" -- mkpart primary ext4 2MiB 100%
+             
+             # Naming
+             if [[ "$TARGET_DISK" == *"nvme"* ]]; then
+               PART_ROOT="''${TARGET_DISK}p2"
+             else
+               PART_ROOT="''${TARGET_DISK}2"
+             fi
+             
+             # Formatting
+             mkfs.ext4 -F -L nixos "$PART_ROOT"
+             
+             # Mounting
+             # Use direct paths to avoid race conditions with udev labels
+             mount "$PART_ROOT" /mnt
          fi
-         
-         echo "Formatting partitions..."
-         mkfs.fat -F 32 -n boot "$PART_BOOT"
-         mkfs.ext4 -F -L nixos "$PART_ROOT"
-         
-         echo "Mounting..."
-         mount /dev/disk/by-label/nixos /mnt
-         mkdir -p /mnt/boot
-         mount /dev/disk/by-label/boot /mnt/boot
          
          gum style --foreground 212 "Partitioning Complete!"
       else
-         gum style --foreground 196 "Please manually mount your partitions to /mnt before continuing."
-         echo "Example: mount /dev/sda2 /mnt && mkdir /mnt/boot && mount /dev/sda1 /mnt/boot"
+         echo "Please mount partitions manually to /mnt."
          exit 1
       fi
     fi
 
-    # --- 3. ONBOARDING (Questions) ---
+    # --- 3. ONBOARDING ---
     
-    HOSTNAME=$(gum input --placeholder "Hostname (e.g. prism-pc)" --header "Choose a Hostname")
+    HOSTNAME=$(gum input --placeholder "prism-pc" --header "Hostname")
     [ -z "$HOSTNAME" ] && HOSTNAME="prism-pc"
 
-    USERNAME=$(gum input --placeholder "Username (e.g. oliviero)" --header "Create your User")
+    USERNAME=$(gum input --placeholder "user" --header "Username")
     [ -z "$USERNAME" ] && exit 1
     
-    FULLNAME=$(gum input --placeholder "Full Name" --header "Enter Full Name")
+    FULLNAME=$(gum input --placeholder "Full Name" --header "Full Name")
     [ -z "$FULLNAME" ] && FULLNAME="Prism User"
 
-    PASSWORD=$(gum input --password --placeholder "Password" --header "Set User Password")
+    PASSWORD=$(gum input --password --placeholder "Password" --header "Password")
     [ -z "$PASSWORD" ] && exit 1
 
-    gum style --foreground 212 "Select your Persona Profile:"
     PROFILE=$(gum choose "dev" "gamer" "creator" "pentester" "custom")
-
-    gum style --foreground 212 "Select Primary GPU:"
     GPU=$(gum choose "nvidia" "amd" "intel" "vm" "none")
 
-    # --- 4. CLONE & GENERATE ---
+    # --- 4. GENERATE CONFIG ---
     
-    echo ""
-    gum spin --title "Fetching latest Prism release..." -- sleep 2
-    
-    # Get latest tag
+    echo "Fetching Prism..."
     LATEST_TAG=$(curl -sL https://api.github.com/repos/otaleghani/prism/releases/latest | jq -r ".tag_name")
-    [ -z "$LATEST_TAG" ] && LATEST_TAG="main"
+    [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" == "null" ] && LATEST_TAG="main"
 
     TARGET_DIR="/mnt/etc/nixos"
     mkdir -p "$TARGET_DIR"
 
-    gum spin --title "Generating hardware-configuration.nix..." -- \
+    gum spin --title "Generating hardware config..." -- \
       nixos-generate-config --root /mnt --show-hardware-config > "$TARGET_DIR/hardware-configuration.nix"
 
-    # Generate flake.nix
+    # Prepare legacy config line in BASH (not Nix)
+    # If booting in legacy mode, we need to tell GRUB where to install.
+    BOOT_DEVICE_CONFIG=""
+    if [ "$BOOT_MODE" == "legacy" ] && [ -n "$TARGET_DISK" ]; then
+        BOOT_DEVICE_CONFIG="prism.hardware.boot.device = \"$TARGET_DISK\";"
+    fi
+
+    # Generate Flake
     cat > "$TARGET_DIR/flake.nix" <<EOF
   {
     description = "PrismOS System Config";
@@ -154,8 +179,10 @@ writeShellScriptBin "prism-installer" ''
             system.stateVersion = "24.05";
 
             prism.hardware.gpu = "$GPU";
-            # Auto-detect boot mode: /sys/firmware/efi exists -> uefi, else legacy
-            prism.hardware.boot.mode = "uefi"; # Installer defaults to UEFI layout above
+            
+            # AUTO-DETECTED BOOT MODE
+            prism.hardware.boot.mode = "$BOOT_MODE";
+            $BOOT_DEVICE_CONFIG
 
             prism.users.$USERNAME = {
               description = "$FULLNAME";
@@ -171,20 +198,18 @@ writeShellScriptBin "prism-installer" ''
   }
   EOF
 
-    # --- 5. INSTALLATION ---
+    # --- 5. INSTALL ---
     
-    gum style --foreground 212 --border double --padding "1 2" "Ready to Install!"
-    echo "Target: $HOSTNAME ($PROFILE) - Tag: $LATEST_TAG"
-    
-    if gum confirm "Start Installation?"; then
-        # --no-root-passwd because we set the user password in the config
+    if gum confirm "Start Installation? (Tag: $LATEST_TAG)"; then
+        # FIX: Generate lockfile BEFORE installing.
+        # nixos-install sometimes crashes when resolving flakes in the chroot.
+        # Pre-locking in the ISO environment avoids this.
+        gum spin --title "Generating flake.lock..." -- bash -c "cd $TARGET_DIR && nix flake lock --extra-experimental-features 'nix-command flakes'"
+        
         nixos-install --flake "$TARGET_DIR#$HOSTNAME" --no-root-passwd
         
         if gum confirm "Reboot now?"; then
             reboot
         fi
-    else
-        echo "Installation aborted."
-        exit 0
     fi
 ''

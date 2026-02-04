@@ -67,6 +67,26 @@ in
             default = null;
             description = "Path to the user's profile picture.";
           };
+          isNormalUser = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Whether this is a normal user account (default true).";
+          };
+          initialPassword = lib.mkOption {
+            type = lib.types.str;
+            default = "prism";
+            description = "Initial password for the user.";
+          };
+          extraGroups = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [
+              "wheel"
+              "networkmanager"
+              "video"
+              "audio"
+            ];
+            description = "Extra groups for the user.";
+          };
         };
       }
     );
