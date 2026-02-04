@@ -81,7 +81,7 @@ writeShellScriptBin "prism-installer-generate" ''
     };
 
     outputs = { self, nixpkgs, prism, silentSDDM, ... }@inputs: {
-      nixosConfigurations."$HOSTNAME" = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.prism = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [

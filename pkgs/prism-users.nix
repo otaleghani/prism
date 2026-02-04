@@ -68,7 +68,7 @@ writeShellScriptBin "prism-users" ''
         gum style --foreground 212 "User added to config."
         
         if gum confirm "Rebuild system now to apply changes?"; then
-            sudo nixos-rebuild switch --flake "$CONFIG_DIR"
+            sudo nixos-rebuild switch --flake "$CONFIG_DIR"#prism
         fi
         ;;
 
