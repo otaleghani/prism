@@ -1,13 +1,15 @@
-- [ ] Create default nix flakes for development
-- [x] Create `prism-development-open` to open a project
-- [x] Create `prism-development-new` to create a project
 - [ ] Find logo -> https://itoa.hex.dance/
 - [ ] Refine `defualts/templates`
 - [ ] Refine `defualts/themes`
+- [ ] Test `prism-project-open` and `prism-project-create`
+- [ ] Rework scripts by using `gum` and making them more 
+- [ ] When an error occurs, wait for an input instead of closing with with `read -r -p "Press Enter to close..."`
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file
 - [ ] `prism-wall select`  needs to open a terminal window
+- [ ] `prism-install` needs to open a terminal window
+- [ ] `prism-delete` needs to open a terminal window
 
 ## Not important
 - [ ] Create dotfiles for `qbittorrent` | There are not many themes for qbittorrent
@@ -38,3 +40,6 @@
 - [x] Test `prism-users`
 - [x] Create `prism-config` to edit the configuration
 - [x] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file
+- [x] Create default nix flakes for development
+- [x] Create `prism-development-open` to open a project
+- [x] Create `prism-development-new` to create a project

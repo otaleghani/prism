@@ -1,0 +1,29 @@
+// Import dynamic theme from Prism
+@import "../../../.local/share/prism/current/eww.scss";
+
+* {
+  all: unset;
+  font-family: "JetBrainsMono Nerd Font";
+}
+
+.bar {
+  background-color: $bg;
+  color: $fg;
+  padding: 10px;
+  border-bottom: 2px solid $surface;
+}
+
+.workspace {
+  color: $fg;
+  padding: 5px;
+}
+
+.workspace.active {
+  color: $accent;
+  font-weight: bold;
+}
+
+.time {
+  color: $accent;
+  font-weight: bold;
+}

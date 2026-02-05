@@ -35,6 +35,7 @@ with pkgs;
 
   # Window
   waybar
+  eww
   wl-clipboard
   hyprpicker # Color picker
   cliphist
