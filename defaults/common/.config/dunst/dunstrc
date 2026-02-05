@@ -4,25 +4,22 @@
     history_length = 20
     
     # Follow the mouse or stay in corner
-    follow = mouse
+    follow = none
     
     # Geometry: width x height - padding
     width = 350
     height = 300
-    origin = top-right
-    offset = 20x50
+    
+    # FIX: Move origin to bottom-right to avoid overlap with Eww bar/center
+    origin = bottom-right
+    offset = 20x20
     
     # Scale icons
     icon_position = left
     max_icon_size = 60
     
     # --- STYLING (Glassmorphism) ---
-    # We use a semi-transparent background.
-    # Note: 'transparency' here is fake transparency. 
-    # Real blur requires a compositor rule (Hyprland windowrule).
     transparency = 10
-    
-    # Spacing
     padding = 15
     horizontal_padding = 15
     text_icon_padding = 15
