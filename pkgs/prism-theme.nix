@@ -59,10 +59,16 @@ writeShellScriptBin "prism-theme" ''
   fi
 
   # Reload waybar
-  if pgrep waybar > /dev/null; then
-    echo "Reloading Waybar..."
-    pkill waybar
-    waybar & disown
+  # if pgrep waybar > /dev/null; then
+  #   echo "Reloading Waybar..."
+  #   pkill waybar
+  #   waybar & disown
+  # fi
+
+  # Reload eww
+  if pgrep eww > /dev/null; then
+    echo "Reloading eww..."
+    eww reload
   fi
 
   # Reload tmux
