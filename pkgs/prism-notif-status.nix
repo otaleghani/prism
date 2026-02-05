@@ -5,20 +5,37 @@ let
     pkgs.coreutils
     pkgs.swaynotificationcenter
     pkgs.gnugrep
+    pkgs.procps
   ];
 in
 
 writeShellScriptBin "prism-notif-status" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  swaync-client -s | grep --line-buffered "count" | while read -r line; do
-      COUNT=$(echo "$line" | jq '.count')
-      DND=$(echo "$line" | jq '.dnd')
+  get_status() {
+      # Check if dunst is running first to avoid errors
+      if ! pgrep -x "dunst" >/dev/null; then
+           echo "{\"count\": 0, \"icon\": \"\", \"class\": \"empty\", \"dnd\": false}"
+           return
+      fi
+
+      # Dunst waiting = unread notifications on screen
+      # Dunst history = past notifications
+      # We use || echo 0 to prevent script crash if dunstctl fails or returns empty
+      WAITING=$(dunstctl count waiting 2>/dev/null || echo 0)
+      HISTORY=$(dunstctl count history 2>/dev/null || echo 0)
+      PAUSED=$(dunstctl is-paused 2>/dev/null || echo "false")
       
-      if [ "$DND" == "true" ]; then
+      # Ensure values are integers
+      [[ "$WAITING" =~ ^[0-9]+$ ]] || WAITING=0
+      [[ "$HISTORY" =~ ^[0-9]+$ ]] || HISTORY=0
+      
+      TOTAL=$((WAITING + HISTORY))
+      
+      if [ "$PAUSED" == "true" ]; then
           CLASS="dnd"
           ICON=""
-      elif [ "$COUNT" -gt 0 ]; then
+      elif [ "$TOTAL" -gt 0 ]; then
           CLASS="active"
           ICON=""
       else
@@ -26,6 +43,14 @@ writeShellScriptBin "prism-notif-status" ''
           ICON=""
       fi
       
-      echo "{\"count\": $COUNT, \"icon\": \"$ICON\", \"class\": \"$CLASS\", \"dnd\": $DND}"
+      echo "{\"count\": $TOTAL, \"icon\": \"$ICON\", \"class\": \"$CLASS\", \"dnd\": $PAUSED}"
+  }
+
+  get_status
+  # There isn't a clean 'dunstctl subscribe' for count changes like SwayNC.
+  # We must poll efficiently.
+  while true; do
+      sleep 2
+      get_status
   done
 ''

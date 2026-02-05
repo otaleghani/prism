@@ -91,8 +91,13 @@ writeShellScriptBin "prism-theme" ''
   fi
 
   # Reload swaync
-  if pgrep swaync > /dev/null; then
-    swaync-client -rs;
+  # if pgrep swaync > /dev/null; then
+  #   swaync-client -rs;
+  # fi
+
+  # Reload dunst
+  if pgrep dunstctl > /dev/null; then
+    dunstctl reload
   fi
 
 
