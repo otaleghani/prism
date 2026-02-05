@@ -6,75 +6,97 @@ let
     pkgs.jq
     pkgs.coreutils
     pkgs.gnugrep
-    pkgs.procps # Added for pkill
+    pkgs.procps
   ];
 in
 writeShellScriptBin "prism-notifications" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
   CMD="$1"
+  LAST_ID_FILE="/tmp/prism-last-notif"
+
+  # Helper to format Dunst History JSON for Eww
+  # Extracts: id, app, summary, body, urgency, time, actions
+  get_history() {
+     dunstctl history | jq -c '[.data[][].id.data as $id | .data[][] | {
+       id: $id, 
+       app: .appname.data, 
+       summary: .summary.data, 
+       body: .body.data,
+       urgency: .urgency.data,
+       time: .timestamp.data,
+       actions: (if .actions.data then [.actions.data | range(0; length; 2) as $i | {id: .[$i], label: .[$i+1]}] else [] end)
+     }]'
+  }
 
   case "$CMD" in
     "listen")
-      update() {
-         # Dump history as JSON for Eww
-         # We extract actions to allow interactive buttons
-         # Dunst actions are stored as a flat array: [id, label, id, label...]
-         # We use jq to pair them up into objects: {id: "default", label: "Open"}
-         dunstctl history | jq -c '[.data[][].id.data as $id | .data[][] | {
-           id: $id, 
-           app: .appname.data, 
-           summary: .summary.data, 
-           body: .body.data,
-           urgency: .urgency.data,
-           time: .timestamp.data,
-           actions: (if .actions.data then [.actions.data | range(0; length; 2) as $i | {id: .[$i], label: .[$i+1]}] else [] end)
-         }]'
-      }
-      
-      # Initial update
-      update
-      
-      # Trap SIGUSR1 to force a manual refresh (used by 'clear' command)
-      trap update SIGUSR1
-      
-      # Subscribe to events in background
-      # We listen for 'notification' (new) and 'removed' (closed) events.
-      (
-        dunstctl subscribe | grep --line-buffered -E "notification|removed" | while read -r _; do
-          update
-        done
-      ) &
-      
-      # Wait loop to keep script running and handling signals
-      while true; do
-        wait
+      # 1. Output initial history on start
+      get_history
+
+      # 2. Listen to Dunst events stream
+      # We use jq to parse the event type and data in one go
+      dunstctl subscribe | jq --unbuffered -c '.' | while read -r event; do
+        
+        TYPE=$(echo "$event" | jq -r '.[0]')
+        
+        if [ "$TYPE" == "notification" ]; then
+            # --- NEW NOTIFICATION RECEIVED ---
+            DATA=$(echo "$event" | jq '.[1]')
+            NEW_ID=$(echo "$DATA" | jq -r '.id')
+            
+            # A. Prevent Pile-up: Close the previous notification
+            if [ -f "$LAST_ID_FILE" ]; then
+                OLD_ID=$(cat "$LAST_ID_FILE")
+                if [ "$OLD_ID" != "$NEW_ID" ] && [ -n "$OLD_ID" ]; then
+                    # Closing it moves it to history
+                    dunstctl close "$OLD_ID" >/dev/null 2>&1
+                fi
+            fi
+            echo "$NEW_ID" > "$LAST_ID_FILE"
+
+            # B. Construct "Live" JSON for Eww
+            # We take the new notification data and prepend it to the history
+            # This makes it appear in the widget INSTANTLY, even while on screen.
+            
+            # Format the single active notification to match history schema
+            ACTIVE_ITEM=$(echo "$DATA" | jq '{
+               id: .id,
+               app: .appname,
+               summary: .summary,
+               body: .body,
+               urgency: .urgency,
+               time: .timestamp,
+               actions: (if .actions then [.actions | range(0; length; 2) as $i | {id: .[$i], label: .[$i+1]}] else [] end)
+            }')
+            
+            # Fetch history (which contains everything EXCEPT the active one usually)
+            HISTORY=$(get_history)
+            
+            # Merge: [Active] + [History]
+            echo "$HISTORY" | jq --argjson new "$ACTIVE_ITEM" '[$new] + .'
+
+        elif [ "$TYPE" == "removed" ]; then
+            # --- NOTIFICATION CLOSED ---
+            # It is now in history (or gone). Refresh from history source.
+            get_history
+        fi
       done
       ;;
       
     "dismiss")
-      # Close specific ID if active
+      # Close active popup
       dunstctl close "$2"
-      
-      # Remove from history (Supported in newer Dunst versions)
+      # Also remove from history
       dunstctl history-rm "$2"
-      
-      # Force refresh immediately so UI updates
-      pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "clear")
-      # Close all active popups
       dunstctl close-all
-      # Clear the internal history
       dunstctl history-clear
-      # Signal the listener (running in Eww) to refresh the list immediately
-      pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "action")
-      # Trigger an action (default or specific)
-      # $2 = Notification ID, $3 = Action ID (optional, defaults to 'default')
       ACTION_ID="''${3:-default}"
       dunstctl action "$2" "$ACTION_ID"
       ;;
