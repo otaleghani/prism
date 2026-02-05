@@ -1,0 +1,46 @@
+;; --- VARIABLES ---
+;; Poll for time: Runs "date" every second
+(defpoll time :interval "1s" "date +'%H:%M'")
+(defpoll date :interval "1m" "date +'%A, %d %B'")
+
+;; --- WINDOW DEFINITION ---
+(defwindow dashboard
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "300px"
+                      :height "200px"
+                      :anchor "center")
+  :stacking "fg"
+  :windowtype "dialog"
+  :wm-ignore false
+  (dashboard_layout))
+
+;; --- WIDGET DEFINITION ---
+(defwidget dashboard_layout []
+  (box :class "dashboard-container"
+       :orientation "v"
+       :space-evenly false
+       :spacing 20
+    
+    ;; Time & Date
+    (box :class "time-container"
+         :orientation "v"
+         :space-evenly false
+      (label :class "big-time" :text time)
+      (label :class "small-date" :text date))
+
+    ;; Power Controls
+    (box :class "buttons-container"
+         :orientation "h"
+         :space-evenly true
+         :spacing 20
+      (button :class "btn-power" 
+              :onclick "systemctl poweroff" 
+              "")
+      (button :class "btn-reboot" 
+              :onclick "systemctl reboot" 
+              "")
+      (button :class "btn-logout" 
+              :onclick "hyprctl dispatch exit" 
+              "󰗽"))))

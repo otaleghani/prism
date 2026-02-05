@@ -1,3 +1,19 @@
+;; Import Dashboard
+(include "./dashboard.yuck")
+
+;; --- VARIABLES ---
+
+;; Clock
+(defpoll time_poll :interval "1s" "date +'%H:%M'")
+(defpoll date_tooltip :interval "1m" "date +'%A, %d %B %Y'")
+
+;; Workspaces Logic
+;; We use a poll to fetch the workspace list and determine which one is focused.
+;; JSON Format produced: [{"id": 1, "active": true}, {"id": 2, "active": false}]
+(defpoll workspaces_json :interval "0.3s"
+  `hyprctl workspaces -j | jq -c --argjson active "$(hyprctl monitors -j | jq -r '(.[] | select(.focused == true) | .activeWorkspace.id) // 1')" 'sort_by(.id) | map({id: .id, active: (.id == $active)})'`)
+
+;; --- WINDOW DEFINITION ---
 (defwindow bar
   :monitor 0
   :geometry (geometry :x "0%"
@@ -10,28 +26,32 @@
   :windowtype "dock"
   :wm-ignore false
   (centerbox :orientation "h"
-    (workspaces)
-    (time)
+    (workspaces_widget)
+    (time_widget)
     (sidestuff)))
 
-(defwidget workspaces []
+;; --- WIDGETS ---
+
+(defwidget workspaces_widget []
   (box :class "workspaces"
        :orientation "h"
-       :space-evenly true
+       :space-evenly false
        :halign "start"
-       :spacing 10
-    (button :class "workspace" "1")
-    (button :class "workspace active" "2")
-    (button :class "workspace" "3")))
+       :spacing 5
+    ;; Loop through the JSON list
+    (for ws in workspaces_json
+      (button :class {ws.active ? "workspace active" : "workspace"}
+              :onclick "hyprctl dispatch workspace ${ws.id}"
+              {ws.id}))))
 
-(defwidget time []
+(defwidget time_widget []
   (box :class "time"
        :orientation "h"
        :halign "center"
+       ;; Add the tooltip here
+       :tooltip date_tooltip
     time_poll))
 
 (defwidget sidestuff []
   (box :class "sidestuff" :orientation "h" :space-evenly false :halign "end"
-    (label :text "Battery: 100%")))
-
-(defpoll time_poll :interval "1s" "date +'%H:%M'")
+    (label :text "Prism OS")))
