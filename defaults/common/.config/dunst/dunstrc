@@ -1,24 +1,30 @@
 [global]
     # --- BEHAVIOR ---
-    # Critical: Enable history so Eww can read it
     history_length = 20
     
-    # Follow the mouse or stay in corner
-    follow = none
+    # FIX: Only show 1 notification at a time to prevent stacking
+    shown_limit = 1
     
-    # Geometry: width x height - padding
+    # Show how many are hidden "(1 more)"
+    indicate_hidden = yes
+    
+    # Sort by urgency, then time
+    sort = yes
+    
+    # Follow mouse
+    follow = mouse
+    
+    # Geometry (Bottom Right)
     width = 350
     height = 300
-    
-    # FIX: Move origin to bottom-right to avoid overlap with Eww bar/center
     origin = bottom-right
     offset = 20x20
     
-    # Scale icons
+    # Icons
     icon_position = left
     max_icon_size = 60
     
-    # --- STYLING (Glassmorphism) ---
+    # --- STYLING ---
     transparency = 10
     padding = 15
     horizontal_padding = 15
@@ -26,7 +32,6 @@
     frame_width = 2
     gap_size = 8
     
-    # Typography
     font = JetBrainsMono Nerd Font 10
     line_height = 4
     markup = full
@@ -35,10 +40,6 @@
     mouse_left_click = do_action, close_current
     mouse_middle_click = close_all
     mouse_right_click = close_current
-
-# --- THEME COLORS ---
-# These defaults will be overwritten by Prism Theme if you set up templating,
-# but for now we set a clean default base.
 
 [urgency_low]
     background = "#1e1e2e"
@@ -49,11 +50,11 @@
 [urgency_normal]
     background = "#1e1e2e"
     foreground = "#cdd6f4"
-    frame_color = "#cba6f7" # Mauve Accent
+    frame_color = "#cba6f7"
     timeout = 10
 
 [urgency_critical]
     background = "#1e1e2e"
     foreground = "#cdd6f4"
-    frame_color = "#f38ba8" # Red Urgent
+    frame_color = "#f38ba8"
     timeout = 0
