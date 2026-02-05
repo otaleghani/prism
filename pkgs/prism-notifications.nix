@@ -6,6 +6,7 @@ let
     pkgs.jq
     pkgs.coreutils
     pkgs.gnugrep
+    pkgs.procps # Added for pkill
   ];
 in
 writeShellScriptBin "prism-notifications" ''
@@ -27,24 +28,43 @@ writeShellScriptBin "prism-notifications" ''
          }]'
       }
       
+      # Initial update
       update
-      # Subscribe to events. Note: history-clear might not emit an event in older dunst versions,
-      # so the UI might need a manual refresh (close/open) if it doesn't clear instantly.
-      dunstctl subscribe | grep --line-buffered "notification" | while read -r _; do
-        update
-      done
+      
+      # Trap SIGUSR1 to force a manual refresh (used by 'clear' command)
+      trap update SIGUSR1
+      
+      # Subscribe to events in background
+      # We listen for 'notification' (new) and 'removed' (closed) events.
+      # This ensures the list updates instantly when popups close.
+      (
+        dunstctl subscribe | grep --line-buffered -E "notification|removed" | while read -r _; do
+          update
+        done
+      ) &
+      
+      # Wait keeps the script running so it can receive signals
+      wait
       ;;
       
     "dismiss")
-      # Close specific ID (Only works if notification is currently a popup on screen)
-      # Dunst does not support deleting individual items from history.
+      # Close specific ID if active
       dunstctl close "$2"
+      
+      # Remove from history (Supported in newer Dunst versions)
+      dunstctl history-rm "$2"
+      
+      # Force refresh immediately so UI updates
+      pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "clear")
-      # FIX: Close all popups AND clear the history log
+      # Close all active popups
       dunstctl close-all
+      # Clear the internal history
       dunstctl history-clear
+      # Signal the listener (running in Eww) to refresh the list immediately
+      pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "action")
