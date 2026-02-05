@@ -99,4 +99,8 @@ with pkgs;
   prism.users
   prism.project
   prism.workspaces
+  prism.active-window
+  prism.audio-status
+  prism.net-status
+  prism.notif-status
 ]

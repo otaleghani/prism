@@ -70,6 +70,10 @@
           prism-users = pkgs.callPackage ./pkgs/prism-users.nix { };
           prism-project = pkgs.callPackage ./pkgs/prism-project.nix { };
           prism-workspaces = pkgs.callPackage ./pkgs/prism-workspaces.nix { };
+          prism-active-window = pkgs.callPackage ./pkgs/prism-active-window.nix { };
+          prism-audio-status = pkgs.callPackage ./pkgs/prism-audio-status.nix { };
+          prism-net-status = pkgs.callPackage ./pkgs/prism-net-status.nix { };
+          prism-notif-status = pkgs.callPackage ./pkgs/prism-notif-status.nix { };
         }
       );
 
@@ -143,6 +147,10 @@
                 users = self.packages.${prev.system}.prism-users;
                 project = self.packages.${prev.system}.prism-project;
                 workspaces = self.packages.${prev.system}.prism-workspaces;
+                active-window = self.packages.${prev.system}.prism-active-window;
+                audio-status = self.packages.${prev.system}.prism-audio-status;
+                net-status = self.packages.${prev.system}.prism-net-status;
+                notif-status = self.packages.${prev.system}.prism-notif-status;
               };
             })
           ];

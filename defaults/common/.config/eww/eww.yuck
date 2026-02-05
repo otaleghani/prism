@@ -1,57 +1,167 @@
-;; Import Dashboard
+;; Import Dashboard (Power Menu)
 (include "./dashboard.yuck")
 
-;; --- VARIABLES ---
+;; =============================================================================
+;;  VARIABLES
+;; =============================================================================
 
-;; Clock
-(defpoll time_poll :interval "1s" "date +'%H:%M'")
-(defpoll date_tooltip :interval "1m" "date +'%A, %d %B %Y'")
-
-;; Workspaces Logic (Event Based)
-;; We listen to the prism-workspaces script which outputs JSON instantly on change
+;; --- Listeners (Instant Updates) ---
 (deflisten workspaces_json :initial "[]" "prism-workspaces")
+(deflisten window_title :initial "..." "prism-active-window")
+(deflisten audio_json :initial "{\"icon\": \"\", \"percent\": 50, \"class\": \"\"}" "prism-audio-status")
+(deflisten notif_json :initial "{\"count\": 0, \"icon\": \"\", \"class\": \"empty\"}" "prism-notif-status")
 
-;; --- WINDOW DEFINITION ---
+;; --- Polls (Interval Updates) ---
+(defpoll time :interval "1s" "date +'%H:%M'")
+(defpoll date_full :interval "1h" "date +'%A, %d %B %Y'")
+(defpoll date_day :interval "1h" "date +'%d'")
+(defpoll date_month :interval "1h" "date +'%b'")
+
+(defpoll net_json :interval "3s" "prism-net-status")
+(defpoll bt_status :interval "3s" "bluetoothctl show | grep 'Powered: yes' >/dev/null && echo 'on' || echo 'off'")
+
+;; --- System Vars (Eww Built-ins) ---
+(defpoll memory :interval "2s" {EWW_RAM.used_mem_perc})
+(defpoll cpu :interval "2s" {EWW_CPU.avg})
+(defpoll battery :interval "5s" {EWW_BATTERY.total_avg})
+(defpoll battery_status :interval "5s" {EWW_BATTERY.BAT0.status})
+
+;; --- Revealer State ---
+(defvar rev_sys false)
+
+;; =============================================================================
+;;  WINDOWS
+;; =============================================================================
+
 (defwindow bar
   :monitor 0
   :geometry (geometry :x "0%"
                       :y "0%"
                       :width "100%"
-                      :height "30px"
+                      :height "40px"
                       :anchor "top center")
   :stacking "fg"
-  
-  ;; FIX: exclusive true reserves space on Wayland so windows don't cover the bar
   :exclusive true
-  
   :windowtype "dock"
-  :wm-ignore false
   (centerbox :orientation "h"
-    (workspaces_widget)
-    (time_widget)
-    (sidestuff)))
+    (left_modules)
+    (center_modules)
+    (right_modules)))
 
-;; --- WIDGETS ---
+(defwindow calendar_win
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "50px" 
+                      :anchor "top center")
+  :stacking "fg"
+  :windowtype "dialog"
+  (box :class "cal-box"
+       (calendar :class "cal" 
+                 :day date_day 
+                 :year 2024)))
 
-(defwidget workspaces_widget []
-  (box :class "workspaces"
-       :orientation "h"
-       :space-evenly false
-       :halign "start"
-       :spacing 5
-    ;; Loop through the JSON list
+;; =============================================================================
+;;  MODULE GROUPS
+;; =============================================================================
+
+(defwidget left_modules []
+  (box :class "left" :orientation "h" :space-evenly false :halign "start" :spacing 10
+    (workspaces)
+    (window_name)))
+
+(defwidget center_modules []
+  (box :class "center" :orientation "h" :space-evenly false :halign "center"
+    (clock_module)))
+
+(defwidget right_modules []
+  (box :class "right" :orientation "h" :space-evenly false :halign "end" :spacing 10
+    (sys_revealer)
+    (usb_module)
+    (net_module)
+    (bt_module)
+    (vol_module)
+    (bat_module)
+    (notif_module)
+    (power_module)))
+
+;; =============================================================================
+;;  WIDGETS
+;; =============================================================================
+
+(defwidget workspaces []
+  (box :class "workspaces" :orientation "h" :spacing 5
     (for ws in workspaces_json
-      (button :class {ws.active ? "workspace active" : "workspace"}
+      (button :class {ws.active ? "active" : "inactive"}
               :onclick "hyprctl dispatch workspace ${ws.id}"
               {ws.id}))))
 
-(defwidget time_widget []
-  (box :class "time"
-       :orientation "h"
-       :halign "center"
-       :tooltip date_tooltip
-    time_poll))
+(defwidget window_name []
+  (label :class "window-title" 
+         :limit-width 40 
+         :text window_title))
 
-(defwidget sidestuff []
-  (box :class "sidestuff" :orientation "h" :space-evenly false :halign "end"
-    (label :text "Prism OS")))
+(defwidget clock_module []
+  (button :class "clock" 
+          :onclick "eww open --toggle calendar_win"
+          :tooltip date_full
+    (box :orientation "h" :spacing 5
+      (label :text "")
+      (label :text time))))
+
+;; --- System Resources (Collapsible) ---
+(defwidget sys_revealer []
+  (eventbox :onhover "eww update rev_sys=true"
+            :onhoverlost "eww update rev_sys=false"
+    (box :class "sys-module" :orientation "h" :space-evenly false :spacing 5
+      (label :class "sys-icon" :text "")
+      (revealer :transition "slideleft"
+                :reveal rev_sys
+                :duration "350ms"
+        (box :orientation "h" :spacing 10
+          (label :text "CPU ${round(cpu, 0)}%")
+          (label :text "RAM ${round(memory, 0)}%"))))))
+
+;; --- Connectivity ---
+(defwidget net_module []
+  (button :class "net ${net_json.class}" 
+          :onclick "prism-focus-tui impala"
+          :tooltip {net_json.text}
+    (label :text {net_json.icon})))
+
+(defwidget bt_module []
+  (button :class "bt ${bt_status == 'on' ? 'on' : 'off'}" 
+          :onclick "prism-focus-tui bluetui"
+    (label :text {bt_status == 'on' ? "" : "󰂲"})))
+
+;; --- Hardware ---
+(defwidget vol_module []
+  (eventbox :onscroll "pactl set-sink-volume @DEFAULT_SINK@ {}"
+    (button :class "vol ${audio_json.class}" 
+            :onclick "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+            :onrightclick "prism-focus-tui wiremix"
+            :tooltip "${audio_json.percent}%"
+      (label :text {audio_json.icon}))))
+
+(defwidget bat_module []
+  (box :class "bat" :tooltip "${round(battery, 0)}%"
+    (label :text {battery_status == 'Charging' ? "" : ""})))
+
+(defwidget usb_module []
+  (button :class "usb" 
+          :onclick "thunar" 
+          :tooltip "Open File Manager"
+    (label :text "")))
+
+(defwidget notif_module []
+  (button :class "notif ${notif_json.class}" 
+          :onclick "swaync-client -t -sw"
+    (box :orientation "h" :spacing 3
+      (label :text {notif_json.icon})
+      (revealer :reveal {notif_json.count > 0}
+                :transition "slideleft"
+        (label :text {notif_json.count})))))
+
+(defwidget power_module []
+  (button :class "power" 
+          :onclick "prism-session"
+    (label :text "⏻")))
