@@ -74,6 +74,7 @@
           prism-audio-status = pkgs.callPackage ./pkgs/prism-audio-status.nix { };
           prism-net-status = pkgs.callPackage ./pkgs/prism-net-status.nix { };
           prism-notif-status = pkgs.callPackage ./pkgs/prism-notif-status.nix { };
+          prism-notifications = pkgs.callPackage ./pkgs/prism-notifications.nix { };
         }
       );
 
@@ -151,6 +152,7 @@
                 audio-status = self.packages.${prev.system}.prism-audio-status;
                 net-status = self.packages.${prev.system}.prism-net-status;
                 notif-status = self.packages.${prev.system}.prism-notif-status;
+                notifications = self.packages.${prev.system}.prism-notifications;
               };
             })
           ];
