@@ -3,7 +3,7 @@
     history_length = 20
     
     # FIX: Only show 1 notification at a time to prevent stacking
-    shown_limit = 1
+    notification_limit = 1
     
     # Show how many are hidden "(1 more)"
     indicate_hidden = yes

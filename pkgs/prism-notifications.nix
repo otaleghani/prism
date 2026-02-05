@@ -16,37 +16,50 @@ writeShellScriptBin "prism-notifications" ''
 
   case "$CMD" in
     "listen")
-      # POLLING MODE
-      # Since subscribe is unavailable/unreliable, we poll history every second.
-      # This ensures the widget stays in sync with Dunst.
+      update() {
+         # Dump history as JSON for Eww
+         # FIX: Removed the double loop (.id.data as $id) that caused duplication.
+         # Added '| reverse' so the newest notifications appear at the top.
+         dunstctl history | jq -c '[.data[][] | {
+           id: .id.data, 
+           app: .appname.data, 
+           summary: .summary.data, 
+           body: .body.data,
+           urgency: .urgency.data,
+           time: .timestamp.data,
+           actions: (if .actions.data then [.actions.data | range(0; length; 2) as $i | {id: .[$i], label: .[$i+1]}] else [] end)
+         }] | reverse'
+      }
+      
+      # Initial update
+      update
+      
+      # Trap SIGUSR1 to force a manual refresh (used by 'clear' command)
+      trap update SIGUSR1
+      
+      # Subscribe to events in background
+      (
+        dunstctl subscribe | grep --line-buffered -E "notification|removed" | while read -r _; do
+          update
+        done
+      ) &
+      
+      # Wait loop
       while true; do
-         HISTORY=$(dunstctl history 2>/dev/null)
-         
-         if [ -n "$HISTORY" ]; then
-             echo "$HISTORY" | jq -c '[.data[][].id.data as $id | .data[][] | {
-               id: $id, 
-               app: .appname.data, 
-               summary: .summary.data, 
-               body: .body.data,
-               urgency: .urgency.data,
-               time: .timestamp.data,
-               actions: (if .actions.data then [.actions.data | range(0; length; 2) as $i | {id: .[$i], label: .[$i+1]}] else [] end)
-             }]'
-         else
-             echo "[]"
-         fi
-         sleep 1
+        wait
       done
       ;;
       
     "dismiss")
       dunstctl close "$2"
       dunstctl history-rm "$2"
+      pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "clear")
       dunstctl close-all
       dunstctl history-clear
+      pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "action")
