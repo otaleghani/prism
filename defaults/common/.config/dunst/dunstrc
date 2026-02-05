@@ -1,0 +1,62 @@
+[global]
+    # --- BEHAVIOR ---
+    # Critical: Enable history so Eww can read it
+    history_length = 20
+    
+    # Follow the mouse or stay in corner
+    follow = mouse
+    
+    # Geometry: width x height - padding
+    width = 350
+    height = 300
+    origin = top-right
+    offset = 20x50
+    
+    # Scale icons
+    icon_position = left
+    max_icon_size = 60
+    
+    # --- STYLING (Glassmorphism) ---
+    # We use a semi-transparent background.
+    # Note: 'transparency' here is fake transparency. 
+    # Real blur requires a compositor rule (Hyprland windowrule).
+    transparency = 10
+    
+    # Spacing
+    padding = 15
+    horizontal_padding = 15
+    text_icon_padding = 15
+    frame_width = 2
+    gap_size = 8
+    
+    # Typography
+    font = JetBrainsMono Nerd Font 10
+    line_height = 4
+    markup = full
+    
+    # Actions
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_all
+    mouse_right_click = close_current
+
+# --- THEME COLORS ---
+# These defaults will be overwritten by Prism Theme if you set up templating,
+# but for now we set a clean default base.
+
+[urgency_low]
+    background = "#1e1e2e"
+    foreground = "#cdd6f4"
+    frame_color = "#89b4fa"
+    timeout = 5
+
+[urgency_normal]
+    background = "#1e1e2e"
+    foreground = "#cdd6f4"
+    frame_color = "#cba6f7" # Mauve Accent
+    timeout = 10
+
+[urgency_critical]
+    background = "#1e1e2e"
+    foreground = "#cdd6f4"
+    frame_color = "#f38ba8" # Red Urgent
+    timeout = 0
