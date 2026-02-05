@@ -7,7 +7,7 @@
 let
   deps = [
     pkgs.gum
-    pkgs.rofi-wayland
+    pkgs.rofi
     pkgs.git
     pkgs.coreutils
     pkgs.findutils

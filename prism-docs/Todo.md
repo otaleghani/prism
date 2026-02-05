@@ -2,6 +2,7 @@
 - [ ] Refine `defualts/templates`
 - [ ] Refine `defualts/themes`
 - [ ] Test `prism-project-open` and `prism-project-create`
+- [ ] Test eww
 - [ ] Rework scripts by using `gum` and making them more 
 - [ ] When an error occurs, wait for an input instead of closing with with `read -r -p "Press Enter to close..."`
 
