@@ -51,6 +51,7 @@ with pkgs;
   libnotify
   brightnessctl
   playerctl
+  thunar # File manager
 
   # Terminal
   ghostty # Emulator
@@ -59,6 +60,7 @@ with pkgs;
   impala # Wifi
   bluetui # Bluetooth
   nload # Traffic monitor?
+  btop
 
   # Nix
   nil

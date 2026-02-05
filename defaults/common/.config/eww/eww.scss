@@ -15,13 +15,15 @@
   border-radius: 16px;
 }
 
-// Hover effect for interactive elements
+// Hover/Focus effect for interactive elements
+// Added :focus so keyboard tabbing is visible
 @mixin hover-effect {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  &:hover {
+  &:hover, &:focus {
     background-color: rgba($surface, 0.8);
     box-shadow: 0 0 10px rgba($accent, 0.3);
     color: $accent;
+    outline: none; // Remove default browser-style outline
   }
 }
 
@@ -62,7 +64,7 @@
   min-width: 20px;
 }
 
-.workspaces button:hover {
+.workspaces button:hover, .workspaces button:focus {
   color: $fg;
   background-color: rgba($surface, 0.5);
 }
@@ -93,7 +95,7 @@
   color: $fg;
   transition: all 0.2s;
   
-  &:hover {
+  &:hover, &:focus {
     background-color: rgba($surface, 0.5);
     // transform property removed as it is not supported in GTK3 CSS
   }
@@ -126,7 +128,7 @@
   background-color: rgba($urgent, 0.1);
   margin-left: 5px;
   
-  &:hover {
+  &:hover, &:focus {
     background-color: $urgent;
     color: $bg;
     box-shadow: 0 0 10px rgba($urgent, 0.5);

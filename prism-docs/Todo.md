@@ -2,9 +2,14 @@
 - [ ] Refine `defualts/templates`
 - [ ] Refine `defualts/themes`
 - [ ] Test `prism-project-open` and `prism-project-create`
-- [ ] Test eww
 - [ ] Rework scripts by using `gum` and making them more 
 - [ ] When an error occurs, wait for an input instead of closing with with `read -r -p "Press Enter to close..."`
+
+## Widgets to create
+- [ ] Top bar
+- [ ] Notifications
+- [ ] Session (shutdown, disconnect etc.)
+- [ ] Calendar
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file
@@ -44,3 +49,4 @@
 - [x] Create default nix flakes for development
 - [x] Create `prism-development-open` to open a project
 - [x] Create `prism-development-new` to create a project
+- [x] Test eww
