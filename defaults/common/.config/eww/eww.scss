@@ -1,5 +1,5 @@
 // Import dynamic theme from Prism
-@import "../../../.local/share/prism/current/eww.scss";
+@import "../../.local/share/prism/current/eww.scss";
 
 * {
   all: unset;
@@ -144,21 +144,21 @@
 calendar {
   color: $fg;
   
-  // Header
-  :header {
+  // Header (Month/Year) - Use .header class
+  .header {
     color: $accent;
     font-weight: bold;
   }
   
-  // Selected Day
-  :selected {
+  // Selected Day - Use .highlight class
+  .highlight {
     color: $bg;
     background-color: $accent;
     border-radius: 50%;
   }
   
-  // Today/Indication
-  :indeterminate { 
+  // Today/Indication - Use parent reference for pseudo-class
+  &:indeterminate { 
     color: $overlay;
   }
 }
