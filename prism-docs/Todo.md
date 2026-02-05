@@ -1,18 +1,9 @@
 - [ ] Create default nix flakes for development
-- [ ] Create `prism-development-open` to open a project
-- [ ] Create `prism-development-new` to create a project
-- [x] Create `prism-config` to edit the configuration
-- [x] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file
-- [x] Create `prism-timezone`
-- [x] Create `prism-keyboard`
-- [x] Create `prism-keybinds`
-- [x] Create `prism-power`
-- [x] Create `prism-users`
-- [ ] Test `prism-timezone`
-- [ ] Test `prism-keyboard`
-- [ ] Test `prism-keybinds`
-- [ ] Test `prism-power`
-- [ ] Test `prism-users`
+- [x] Create `prism-development-open` to open a project
+- [x] Create `prism-development-new` to create a project
+- [ ] Find logo -> https://itoa.hex.dance/
+- [ ] Refine `defualts/templates`
+- [ ] Refine `defualts/themes`
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file
@@ -35,3 +26,15 @@
 - [x] Update `prism-update` to pick the latest release instead of the latest commit
 - [x] Create `prism-update-unstable` to update using the lastest commit
 - [x] `hyprland` doesn't change styles on theme change
+- [x] Create `prism-timezone`
+- [x] Create `prism-keyboard`
+- [x] Create `prism-keybinds`
+- [x] Create `prism-power`
+- [x] Create `prism-users`
+- [x] Test `prism-timezone`
+- [x] Test `prism-keyboard`
+- [x] Test `prism-keybinds`
+- [x] Test `prism-power`
+- [x] Test `prism-users`
+- [x] Create `prism-config` to edit the configuration
+- [x] Create iso for it, which needs to have a simple system config and then create the flake for the user under ~/.config/prism - Also needs to copy over the hardware-configuration.nix file

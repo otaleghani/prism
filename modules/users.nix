@@ -120,6 +120,7 @@ in
           COMMON_SOURCE="${defaultsPath}/common/"
           PROFILE_SOURCE="${defaultsPath}/${userCfg.profileType}/"
           THEME_SOURCE="${defaultsPath}/themes/"
+          TEMPLATE_SOURCE="${defaultsPath}/templates/"
 
           if [ -d "$USER_HOME" ]; then
              
@@ -195,7 +196,17 @@ in
                  ""
              }
 
-             # 5. Fix Nvim Permissions
+             # 5. Sync Project Templates
+             # Copies defaults/templates to ~/.local/share/prism/templates
+             TEMPLATE_DEST="$USER_HOME/.local/share/prism/templates"
+             if [ -d "$TEMPLATE_SOURCE" ]; then
+                echo "[Prism] Syncing project templates..."
+                mkdir -p "$TEMPLATE_DEST"
+                chown ${user}:users "$TEMPLATE_DEST"
+                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$TEMPLATE_SOURCE" "$TEMPLATE_DEST/"
+             fi
+
+             # 6. Fix Nvim Permissions
              if [ -d "$USER_HOME/.local/share/nvim" ]; then
                  chown -R ${user}:users "$USER_HOME/.local/share/nvim"
                  chmod -R u+rwX "$USER_HOME/.local/share/nvim"

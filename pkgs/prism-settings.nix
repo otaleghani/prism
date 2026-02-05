@@ -13,6 +13,7 @@ writeShellScriptBin "prism-settings" ''
 
   # --- Options ---
   OPT_CONFIG="  Edit Configuration"
+  OPT_DOTFILES="  Edit Dotfiles"
   OPT_WIFI="  Wi-Fi"
   OPT_BLUETOOTH="  Bluetooth"
   OPT_MONITOR="  Monitors"
@@ -20,10 +21,13 @@ writeShellScriptBin "prism-settings" ''
   OPT_THEME="🎨  Switch Theme"
   OPT_WALL="  Wallpaper Picker"
   OPT_USERS="  Manage Users"
+  OPT_TIMEZONE="Change timezone"
+  OPT_KEYBOARD="Change keyboard layout"
+  OPT_POWER="Power profiles"
 
   # Menu
   # We could customize the look by creating ~/.config/rofi/settings.rasi
-  SELECTED=$(echo -e "$OPT_CONFIG\n$OPT_WIFI\n$OPT_BLUETOOTH\n$OPT_MONITOR\n$OPT_AUDIO\n$OPT_THEME\n$OPT_WALL\n$OPT_USERS" | rofi -dmenu -p "Settings")
+  SELECTED=$(echo -e "$OPT_CONFIG\n$OPT_DOTFILES\n$OPT_WIFI\n$OPT_BLUETOOTH\n$OPT_MONITOR\n$OPT_AUDIO\n$OPT_THEME\n$OPT_WALL\n$OPT_USERS\n$OPT_TIMEZONE\n$OPT_KEYBOARD\n$OPT_POWER" | rofi -dmenu -p "Settings")
 
   case "$SELECTED" in
     "$OPT_CONFIG")
@@ -38,6 +42,10 @@ writeShellScriptBin "prism-settings" ''
          notify-send "Prism Settings" "Config not found at ~/.config/prism" -u critical
       fi
       ;;
+
+    "$OPT_DOTFILES")
+      exec prism-focus-tui "nvim" "~/.config"
+      ;;
       
     "$OPT_WIFI")
       # Launch Impala (TUI Wifi)
@@ -51,7 +59,7 @@ writeShellScriptBin "prism-settings" ''
       
     "$OPT_MONITOR")
       # Launch Prism Monitor Wizard
-      exec prism-monitor
+      exec prism-focus-tui prism-monitor
       ;;
       
     "$OPT_AUDIO")
@@ -71,9 +79,26 @@ writeShellScriptBin "prism-settings" ''
       ;;
 
     "$OPT_USERS") 
-    exec prism-users 
-    ;;
+      exec prism-users 
+      ;;
+
+    "$OPT_TIMEZONE") 
+      exec prism-timezone
+      ;;
+
+    "$OPT_KEYBOARD") 
+      exec prism-keyboard
+      ;;
+
+    "$OPT_POWER") 
+      exec prism-power
+      ;;
       
+    "$OPT_KEYBINDS") 
+      exec prism-keybinds
+      ;;
+    
+
     *)
       exit 0
       ;;
