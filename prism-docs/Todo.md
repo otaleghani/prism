@@ -4,9 +4,11 @@
 - [ ] Test `prism-project-open` and `prism-project-create`
 - [ ] Rework scripts by using `gum` and making them more 
 - [ ] When an error occurs, wait for an input instead of closing with with `read -r -p "Press Enter to close..."`
+- [ ] Setup `thunar`
+- [ ] Setup `btop`
 
 ## Widgets to create
-- [ ] Top bar
+- [x] Top bar
 - [ ] Notifications
 - [ ] Session (shutdown, disconnect etc.)
 - [ ] Calendar

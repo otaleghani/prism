@@ -1,0 +1,39 @@
+;; Listen to Prism Notifications
+(deflisten notifications :initial "[]" "prism-notifications listen")
+
+(defwindow notif_win
+  :monitor 0
+  :geometry (geometry :x "0%" 
+                      :y "50px" 
+                      :anchor "top right" 
+                      :width "400px")
+  :stacking "fg"
+  :windowtype "dialog"
+  (notif_layout))
+
+(defwidget notif_layout []
+  (box :class "notif-center" :orientation "v" :space-evenly false :spacing 10
+    ;; Header
+    (box :orientation "h" :space-evenly true
+      (label :text "Notifications" :halign "start" :class "window-title")
+      (button :class "notif-clear-btn" :onclick "prism-notifications clear" "Clear All"))
+    
+    ;; Scrollable List
+    (scroll :vscroll true :hscroll false :height 400
+      (box :orientation "v" :spacing 10 :space-evenly false
+        ;; Loop through notifications
+        (for n in notifications
+          (eventbox :onclick "prism-notifications action ${n.id}"
+            (box :class "notif-card" :orientation "v" :space-evenly false
+              ;; Card Header (App Name + Close Button)
+              (box :class "notif-header" :orientation "h" :space-evenly true
+                (label :class "notif-app" :halign "start" :text {n.app})
+                (button :class "notif-close-btn" :halign "end" :onclick "prism-notifications dismiss ${n.id}" "✕"))
+              ;; Content
+              (label :class "notif-summary" :halign "start" :wrap true :text {n.summary})
+              (label :class "notif-body" :halign "start" :wrap true :text {n.body}))))
+        
+        ;; Empty State
+        (label :visible {arraylength(notifications) == 0} 
+               :class "notif-empty" 
+               :text "No new notifications")))))

@@ -1,0 +1,81 @@
+.notif-center {
+  @include glass-panel;
+  background-color: rgba($bg, 0.85);
+  padding: 20px;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.notif-clear-btn {
+  color: $urgent;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: rgba($urgent, 0.1);
+  }
+}
+
+.notif-scroll {
+  min-height: 300px;
+}
+
+.notif-card {
+  background-color: rgba($surface, 0.5);
+  border: 1px solid rgba($fg, 0.05);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 5px;
+  transition: all 0.2s;
+}
+
+.notif-card:hover {
+  background-color: rgba($surface, 0.8);
+  border-color: $accent;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.notif-header {
+  border-bottom: 1px solid rgba($fg, 0.1);
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+
+.notif-app {
+  font-weight: bold;
+  font-size: 12px;
+  color: $accent;
+}
+
+.notif-close-btn {
+  color: $overlay;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 12px;
+  
+  &:hover {
+    color: $urgent;
+    background-color: rgba($surface, 1);
+  }
+}
+
+.notif-summary {
+  font-weight: bold;
+  color: $fg;
+  font-size: 14px;
+}
+
+.notif-body {
+  color: rgba($fg, 0.8);
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.notif-empty {
+  color: $overlay;
+  font-style: italic;
+  font-size: 14px;
+  margin-top: 20px;
+}

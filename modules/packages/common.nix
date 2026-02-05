@@ -47,7 +47,8 @@ with pkgs;
   rofi # Application runner
   swww # Wallpaper engine
   hyprpolkitagent # Needed for prism-portal
-  swaynotificationcenter # Notification manager
+  # swaynotificationcenter # Notification manager
+  dunst # Notification manager
   libnotify
   brightnessctl
   playerctl

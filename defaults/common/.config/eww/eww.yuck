@@ -1,5 +1,6 @@
 ;; Import Dashboard (Provides 'time' and 'date' variables)
 (include "./dashboard.yuck")
+(include "./notifications.yuck")
 
 ;; =============================================================================
 ;;  VARIABLES
