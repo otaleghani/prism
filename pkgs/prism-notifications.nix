@@ -43,8 +43,11 @@ writeShellScriptBin "prism-notifications" ''
         done
       ) &
       
-      # Wait keeps the script running so it can receive signals
-      wait
+      # Wait loop to keep script running and handling signals
+      # FIX: 'wait' exits when a signal is trapped, so we must loop it to keep the listener alive.
+      while true; do
+        wait
+      done
       ;;
       
     "dismiss")
