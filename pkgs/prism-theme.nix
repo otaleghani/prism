@@ -96,8 +96,17 @@ writeShellScriptBin "prism-theme" ''
   # fi
 
   # Reload dunst
-  if pgrep dunstctl > /dev/null; then
-    dunstctl reload
+  # Symlink the theme config to 99-theme.conf so it overrides base settings
+  DUNST_DROPIN_DIR="$HOME/.config/dunst/dunstrc.d"
+  if [ -f "$TARGET_THEME/dunst.conf" ]; then
+      echo "Updating Dunst theme..."
+      mkdir -p "$DUNST_DROPIN_DIR"
+      ln -sf "$CURRENT_LINK/dunst.conf" "$DUNST_DROPIN_DIR/99-theme.conf"
+      
+      # Reload Dunst
+      if pgrep -x dunst > /dev/null; then
+          dunstctl reload
+      fi
   fi
 
 
