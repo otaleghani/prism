@@ -1,4 +1,4 @@
-;; Import Dashboard (Power Menu)
+;; Import Dashboard (Provides 'time' and 'date' variables)
 (include "./dashboard.yuck")
 
 ;; =============================================================================
@@ -11,20 +11,18 @@
 (deflisten audio_json :initial "{\"icon\": \"\", \"percent\": 50, \"class\": \"\"}" "prism-audio-status")
 (deflisten notif_json :initial "{\"count\": 0, \"icon\": \"\", \"class\": \"empty\"}" "prism-notif-status")
 
-;; --- Polls (Interval Updates) ---
-(defpoll time :interval "1s" "date +'%H:%M'")
+;; --- Polls ---
 (defpoll date_full :interval "1h" "date +'%A, %d %B %Y'")
 (defpoll date_day :interval "1h" "date +'%d'")
-(defpoll date_month :interval "1h" "date +'%b'")
+(defpoll date_month :interval "1h" "date +'%m'")
+(defpoll date_year :interval "1h" "date +'%Y'")
 
 (defpoll net_json :interval "3s" "prism-net-status")
 (defpoll bt_status :interval "3s" "bluetoothctl show | grep 'Powered: yes' >/dev/null && echo 'on' || echo 'off'")
 
-;; --- System Vars (Eww Built-ins) ---
-(defpoll memory :interval "2s" {EWW_RAM.used_mem_perc})
-(defpoll cpu :interval "2s" {EWW_CPU.avg})
-(defpoll battery :interval "5s" {EWW_BATTERY.total_avg})
-(defpoll battery_status :interval "5s" {EWW_BATTERY.BAT0.status})
+;; --- System Vars ---
+;; REMOVED: Invalid defpolls for EWW_RAM/CPU/BATTERY. 
+;; These are built-in variables we access directly in the widgets below.
 
 ;; --- Revealer State ---
 (defvar rev_sys false)
@@ -43,6 +41,7 @@
   :stacking "fg"
   :exclusive true
   :windowtype "dock"
+  :wm-ignore false
   (centerbox :orientation "h"
     (left_modules)
     (center_modules)
@@ -58,7 +57,7 @@
   (box :class "cal-box"
        (calendar :class "cal" 
                  :day date_day 
-                 :year 2024)))
+                 :year date_year)))
 
 ;; =============================================================================
 ;;  MODULE GROUPS
@@ -108,7 +107,6 @@
       (label :text "")
       (label :text time))))
 
-;; --- System Resources (Collapsible) ---
 (defwidget sys_revealer []
   (eventbox :onhover "eww update rev_sys=true"
             :onhoverlost "eww update rev_sys=false"
@@ -118,10 +116,10 @@
                 :reveal rev_sys
                 :duration "350ms"
         (box :orientation "h" :spacing 10
-          (label :text "CPU ${round(cpu, 0)}%")
-          (label :text "RAM ${round(memory, 0)}%"))))))
+          ;; FIX: Use EWW_CPU and EWW_RAM directly here
+          (label :text "CPU ${round(EWW_CPU.avg, 0)}%")
+          (label :text "RAM ${round(EWW_RAM.used_mem_perc, 0)}%"))))))
 
-;; --- Connectivity ---
 (defwidget net_module []
   (button :class "net ${net_json.class}" 
           :onclick "prism-focus-tui impala"
@@ -133,7 +131,6 @@
           :onclick "prism-focus-tui bluetui"
     (label :text {bt_status == 'on' ? "" : "󰂲"})))
 
-;; --- Hardware ---
 (defwidget vol_module []
   (eventbox :onscroll "pactl set-sink-volume @DEFAULT_SINK@ {}"
     (button :class "vol ${audio_json.class}" 
@@ -143,14 +140,15 @@
       (label :text {audio_json.icon}))))
 
 (defwidget bat_module []
-  (box :class "bat" :tooltip "${round(battery, 0)}%"
-    (label :text {battery_status == 'Charging' ? "" : ""})))
+  ;; FIX: Use EWW_BATTERY directly. 
+  ;; Note: This might return empty on desktops without a battery.
+  ;; We check if the battery array is empty first to be safe (optional logic).
+  (box :class "bat" :tooltip "${round(EWW_BATTERY.total_avg, 0)}%"
+       :visible {EWW_BATTERY != ""}
+    (label :text {EWW_BATTERY.BAT0.status == 'Charging' ? "" : ""})))
 
 (defwidget usb_module []
-  (button :class "usb" 
-          :onclick "thunar" 
-          :tooltip "Open File Manager"
-    (label :text "")))
+  (button :class "usb" :onclick "thunar" :tooltip "Open File Manager" ""))
 
 (defwidget notif_module []
   (button :class "notif ${notif_json.class}" 
@@ -162,6 +160,4 @@
         (label :text {notif_json.count})))))
 
 (defwidget power_module []
-  (button :class "power" 
-          :onclick "prism-session"
-    (label :text "⏻")))
+  (button :class "power" :onclick "prism-session" "⏻"))
