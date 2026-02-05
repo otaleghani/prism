@@ -10,10 +10,10 @@ let
     pkgs.jq
     pkgs.coreutils
     pkgs.findutils
+    pkgs.nix
   ];
 
   # --- RESET LOGIC ---
-  # Shared function to clean up dotfiles before rebuilding
   resetScript = ''
     reset_dotfiles() {
       CONFIG_DIR="$1"
@@ -28,20 +28,27 @@ let
           exit 1
       fi
 
-      echo "Cleaning up local dotfiles..."
-      DEFAULTS_DIR="$CONFIG_DIR/defaults"
+      echo "Locating Prism defaults..."
+      # FIX: We need to find where the 'prism' input is stored in the Nix Store.
+      # We use nix eval to get the outPath of the input defined in flake.nix
+      PRISM_SRC=$(nix eval --raw --extra-experimental-features 'nix-command flakes' --expr "(builtins.getFlake \"$CONFIG_DIR\").inputs.prism.outPath")
+      
+      DEFAULTS_DIR="$PRISM_SRC/defaults"
+      echo "Scanning defaults at: $DEFAULTS_DIR"
       
       if [ -d "$DEFAULTS_DIR" ]; then
-          # Find all files in defaults and delete their counterparts in HOME
-          # We check common, dev, gamer, etc. recursively
-          find "$DEFAULTS_DIR" -type f | while read -r file; do
-              # Strip the path up to defaults/LAYER/ to get the relative path in HOME
-              # Example: .../defaults/common/.config/hypr/hyprland.conf -> .config/hypr/hyprland.conf
-              
-              # First remove prefix up to defaults/
+          # Find files, EXCLUDING themes, wallpapers, and templates
+          # (These map to .local/share, not root of home, so the path logic below would be wrong for them)
+          find "$DEFAULTS_DIR" -type f \
+            -not -path "*/themes/*" \
+            -not -path "*/wallpapers/*" \
+            -not -path "*/templates/*" \
+            | while read -r file; do
+            
+              # Strip prefix: .../defaults/common/.config/foo -> common/.config/foo
               REL_PATH="''${file#$DEFAULTS_DIR/}"
               
-              # Remove the first directory (common, dev, etc.)
+              # Strip first directory (layer): common/.config/foo -> .config/foo
               TARGET_REL="''${REL_PATH#*/}"
               
               TARGET_ABS="$HOME/$TARGET_REL"
@@ -51,6 +58,8 @@ let
                   echo "  - Deleted: $TARGET_REL"
               fi
           done
+      else
+          echo "Error: Could not locate defaults directory."
       fi
       echo "Cleanup complete. Rebuilding will generate fresh defaults."
     }
@@ -61,7 +70,6 @@ let
     export PATH=${pkgs.lib.makeBinPath deps}:$PATH
     ${resetScript}
 
-    # Parse Flags
     RESET="false"
     ARGS=""
     for arg in "$@"; do
@@ -71,7 +79,6 @@ let
         esac
     done
 
-    # Determine config dir dynamically
     if [ -d "/etc/prism" ]; then
         CONFIG_DIR="/etc/prism"
     elif [ -d "$HOME/.config/prism" ]; then
@@ -85,7 +92,6 @@ let
       exit 1
     fi
 
-    # Execute Reset if requested
     if [ "$RESET" == "true" ]; then
         reset_dotfiles "$CONFIG_DIR"
     fi
@@ -119,7 +125,6 @@ let
         esac
     done
 
-    # Determine config dir
     if [ -d "/etc/prism" ]; then
         CONFIG_DIR="/etc/prism"
     elif [ -d "$HOME/.config/prism" ]; then
@@ -133,7 +138,6 @@ let
       exit 1
     fi
 
-    # Execute Reset if requested
     if [ "$RESET" == "true" ]; then
         reset_dotfiles "$CONFIG_DIR"
     fi
