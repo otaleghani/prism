@@ -104,9 +104,7 @@ writeShellScriptBin "prism-theme" ''
       ln -sf "$CURRENT_LINK/dunst.conf" "$DUNST_DROPIN_DIR/99-theme.conf"
       
       # Reload Dunst
-      if pgrep -x dunst-wrapped > /dev/null; then
-          dunstctl reload
-      fi
+      dunstctl reload
   fi
 
 
