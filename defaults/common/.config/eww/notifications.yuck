@@ -31,7 +31,14 @@
                 (button :class "notif-close-btn" :halign "end" :onclick "prism-notifications dismiss ${n.id}" "✕"))
               ;; Content
               (label :class "notif-summary" :halign "start" :wrap true :text {n.summary})
-              (label :class "notif-body" :halign "start" :wrap true :text {n.body}))))
+              (label :class "notif-body" :halign "start" :wrap true :text {n.body})
+
+              ;; Action!
+              (box :class "notif-actions" :orientation "h" :spacing 10
+                (for action in {n.actions}
+                  (button :class "action-btn" 
+                          :onclick "prism-notifications action ${n.id} ${action.id}"
+                          {action.label}))) )))
         
         ;; Empty State
         (label :visible {arraylength(notifications) == 0} 

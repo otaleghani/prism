@@ -6,21 +6,18 @@ let
     pkgs.jq
     pkgs.coreutils
     pkgs.gnugrep
-    pkgs.procps # Added for pkill
+    pkgs.procps
   ];
 in
 writeShellScriptBin "prism-notifications" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
   CMD="$1"
+  STATE_FILE="/tmp/prism-notif-state"
 
   case "$CMD" in
     "listen")
       update() {
-         # Dump history as JSON for Eww
-         # We now extract actions to allow interactive buttons
-         # Dunst actions are stored as a flat array: [id, label, id, label...]
-         # We use jq to pair them up into objects: {id: "default", label: "Open"}
          dunstctl history | jq -c '[.data[][].id.data as $id | .data[][] | {
            id: $id, 
            app: .appname.data, 
@@ -32,65 +29,58 @@ writeShellScriptBin "prism-notifications" ''
          }]'
       }
       
-      # Initial update
       update
-      
-      # Trap SIGUSR1 to force a manual refresh (used by 'clear' command)
       trap update SIGUSR1
       
-      # Subscribe to events in background
       (
         dunstctl subscribe | grep --line-buffered -E "notification|removed" | while read -r _; do
           update
         done
       ) &
       
-      # Wait loop to keep script running and handling signals
-      while true; do
-        wait
-      done
+      while true; do wait; done
       ;;
       
     "dismiss")
-      # Close specific ID if active
       dunstctl close "$2"
-      
-      # Remove from history (Supported in newer Dunst versions)
       dunstctl history-rm "$2"
-      
-      # Force refresh immediately so UI updates
       pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "clear")
-      # Close all active popups
       dunstctl close-all
-      # Clear the internal history
       dunstctl history-clear
-      # Signal the listener to refresh
       pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "action")
-      # Trigger an action (default or specific)
-      # $2 = Notification ID, $3 = Action ID (optional, defaults to 'default')
       ACTION_ID="''${3:-default}"
       dunstctl action "$2" "$ACTION_ID"
       ;;
 
     "toggle-center")
-      # Helper to handle the "Open/Close Widget" logic
-      # Usage: prism-notifications toggle-center <open|close>
       STATE="$2"
       
       if [ "$STATE" == "open" ]; then
-          # When opening: Pause popups (so they go straight to history) and clear screen
-          # This makes them "disappear" from the screen and "appear" in the widget
+          # 1. Save current state
+          IS_PAUSED=$(dunstctl is-paused)
+          echo "$IS_PAUSED" > "$STATE_FILE"
+
+          # 2. Pause and clear screen
           dunstctl set-paused true
           dunstctl close-all
       else
-          # When closing: Unpause popups so new ones show up normally
-          dunstctl set-paused false
+          # 3. Restore previous state
+          if [ -f "$STATE_FILE" ]; then
+              WAS_PAUSED=$(cat "$STATE_FILE")
+              if [ "$WAS_PAUSED" == "false" ]; then
+                  dunstctl set-paused false
+              fi
+              # FIX: Delete the state file so we know the center is closed
+              rm "$STATE_FILE"
+          else
+              dunstctl set-paused false
+          fi
       fi
       ;;
   esac

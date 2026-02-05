@@ -13,32 +13,41 @@ writeShellScriptBin "prism-notif-status" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
   get_status() {
-      # FIX: Use dunstctl to check status instead of pgrep.
-      # pgrep -x "dunst" fails on NixOS because the process is often named ".dunst-wrapped".
-      # checking is-paused is a reliable way to see if the daemon is responding.
       if ! dunstctl is-paused >/dev/null 2>&1; then
            echo "{\"count\": 0, \"icon\": \"\", \"class\": \"empty\", \"dnd\": false}"
            return
       fi
 
-      # Dunst waiting = unread notifications on screen
-      # Dunst history = past notifications
+      # Dunst Counters
       WAITING=$(dunstctl count waiting 2>/dev/null || echo 0)
       HISTORY=$(dunstctl count history 2>/dev/null || echo 0)
       PAUSED=$(dunstctl is-paused 2>/dev/null || echo "false")
       
-      # Ensure values are integers
       [[ "$WAITING" =~ ^[0-9]+$ ]] || WAITING=0
       [[ "$HISTORY" =~ ^[0-9]+$ ]] || HISTORY=0
       
       TOTAL=$((WAITING + HISTORY))
       
+      # --- ICON LOGIC ---
+      
+      # 1. If Center is Open (State file exists) -> Show List Icon
+      if [ -f "/tmp/prism-notif-state" ]; then
+          CLASS="open"
+          ICON=""  # List icon
+          # We treat it as DND true for styling, but distinct icon
+          echo "{\"count\": $TOTAL, \"icon\": \"$ICON\", \"class\": \"$CLASS\", \"dnd\": true}"
+          return
+      fi
+
+      # 2. If Paused (User DND) -> Show Slashed Bell
       if [ "$PAUSED" == "true" ]; then
           CLASS="dnd"
           ICON=""
+      # 3. Normal Active
       elif [ "$TOTAL" -gt 0 ]; then
           CLASS="active"
           ICON=""
+      # 4. Empty
       else
           CLASS="empty"
           ICON=""
@@ -48,7 +57,6 @@ writeShellScriptBin "prism-notif-status" ''
   }
 
   get_status
-  # Poll every 2 seconds
   while true; do
       sleep 2
       get_status
