@@ -31,7 +31,7 @@ let
       echo "Locating Prism defaults..."
       # FIX: We need to find where the 'prism' input is stored in the Nix Store.
       # We use nix eval to get the outPath of the input defined in flake.nix
-      PRISM_SRC=$(nix eval --raw --extra-experimental-features 'nix-command flakes' --expr "(builtins.getFlake \"$CONFIG_DIR\").inputs.prism.outPath")
+      PRISM_SRC=$(nix eval --impure --raw --extra-experimental-features 'nix-command flakes' --expr "(builtins.getFlake \"$CONFIG_DIR\").inputs.prism.outPath")
       
       DEFAULTS_DIR="$PRISM_SRC/defaults"
       echo "Scanning defaults at: $DEFAULTS_DIR"
