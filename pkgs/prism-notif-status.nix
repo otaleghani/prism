@@ -3,7 +3,7 @@ let
   deps = [
     pkgs.jq
     pkgs.coreutils
-    pkgs.swaynotificationcenter
+    pkgs.dunst
     pkgs.gnugrep
     pkgs.procps
   ];
@@ -13,15 +13,16 @@ writeShellScriptBin "prism-notif-status" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
   get_status() {
-      # Check if dunst is running first to avoid errors
-      if ! pgrep -x "dunst" >/dev/null; then
+      # FIX: Use dunstctl to check status instead of pgrep.
+      # pgrep -x "dunst" fails on NixOS because the process is often named ".dunst-wrapped".
+      # checking is-paused is a reliable way to see if the daemon is responding.
+      if ! dunstctl is-paused >/dev/null 2>&1; then
            echo "{\"count\": 0, \"icon\": \"\", \"class\": \"empty\", \"dnd\": false}"
            return
       fi
 
       # Dunst waiting = unread notifications on screen
       # Dunst history = past notifications
-      # We use || echo 0 to prevent script crash if dunstctl fails or returns empty
       WAITING=$(dunstctl count waiting 2>/dev/null || echo 0)
       HISTORY=$(dunstctl count history 2>/dev/null || echo 0)
       PAUSED=$(dunstctl is-paused 2>/dev/null || echo "false")
@@ -47,8 +48,7 @@ writeShellScriptBin "prism-notif-status" ''
   }
 
   get_status
-  # There isn't a clean 'dunstctl subscribe' for count changes like SwayNC.
-  # We must poll efficiently.
+  # Poll every 2 seconds
   while true; do
       sleep 2
       get_status

@@ -15,10 +15,8 @@ writeShellScriptBin "prism-notifications" ''
 
   case "$CMD" in
     "listen")
-      # Function to dump history as Eww-friendly JSON
       update() {
-         # dunstctl history returns complex JSON. We simplify it.
-         # We map: id, appname, summary, body, urgency
+         # Dump history as JSON for Eww
          dunstctl history | jq -c '[.data[][].id.data as $id | .data[][] | {
            id: $id, 
            app: .appname.data, 
@@ -29,27 +27,27 @@ writeShellScriptBin "prism-notifications" ''
          }]'
       }
       
-      # Initial output
       update
-      
-      # Subscribe to events and update on change
+      # Subscribe to events. Note: history-clear might not emit an event in older dunst versions,
+      # so the UI might need a manual refresh (close/open) if it doesn't clear instantly.
       dunstctl subscribe | grep --line-buffered "notification" | while read -r _; do
         update
       done
       ;;
       
     "dismiss")
-      # Close specific ID
+      # Close specific ID (Only works if notification is currently a popup on screen)
+      # Dunst does not support deleting individual items from history.
       dunstctl close "$2"
       ;;
       
     "clear")
-      # Close all
+      # FIX: Close all popups AND clear the history log
       dunstctl close-all
+      dunstctl history-clear
       ;;
       
     "action")
-      # Invoke default action (open app)
       dunstctl action "$2"
       ;;
   esac
