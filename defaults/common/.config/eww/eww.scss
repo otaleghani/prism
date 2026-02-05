@@ -95,7 +95,7 @@
   
   &:hover {
     background-color: rgba($surface, 0.5);
-    transform: translateY(-1px);
+    // transform property removed as it is not supported in GTK3 CSS
   }
 }
 
