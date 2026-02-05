@@ -7,11 +7,14 @@
 (defpoll time_poll :interval "1s" "date +'%H:%M'")
 (defpoll date_tooltip :interval "1m" "date +'%A, %d %B %Y'")
 
-;; Workspaces Logic
-;; We use a poll to fetch the workspace list and determine which one is focused.
-;; JSON Format produced: [{"id": 1, "active": true}, {"id": 2, "active": false}]
+;; Workspaces Logic (Split for stability)
+;; 1. Get list of workspace IDs that exist (sorted)
 (defpoll workspaces_json :interval "0.3s"
-  `hyprctl workspaces -j | jq -c --argjson active "$(hyprctl monitors -j | jq -r '(.[] | select(.focused == true) | .activeWorkspace.id) // 1')" 'sort_by(.id) | map({id: .id, active: (.id == $active)})'`)
+  "hyprctl workspaces -j | jq -c 'sort_by(.id) | map({id: .id})'")
+
+;; 2. Get current active workspace ID
+(defpoll active_ws :interval "0.1s" 
+  "hyprctl monitors -j | jq -r '(.[] | select(.focused == true) | .activeWorkspace.id)'")
 
 ;; --- WINDOW DEFINITION ---
 (defwindow bar
@@ -22,7 +25,10 @@
                       :height "30px"
                       :anchor "top center")
   :stacking "fg"
-  :reserve (struts :distance "40px" :side "top")
+  
+  ;; FIX: exclusive true reserves space on Wayland so windows don't cover the bar
+  :exclusive true
+  
   :windowtype "dock"
   :wm-ignore false
   (centerbox :orientation "h"
@@ -40,7 +46,7 @@
        :spacing 5
     ;; Loop through the JSON list
     (for ws in workspaces_json
-      (button :class {ws.active ? "workspace active" : "workspace"}
+      (button :class {ws.id == active_ws ? "workspace active" : "workspace"}
               :onclick "hyprctl dispatch workspace ${ws.id}"
               {ws.id}))))
 
@@ -48,7 +54,6 @@
   (box :class "time"
        :orientation "h"
        :halign "center"
-       ;; Add the tooltip here
        :tooltip date_tooltip
     time_poll))
 

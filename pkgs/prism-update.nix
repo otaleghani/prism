@@ -17,6 +17,7 @@ let
   resetScript = ''
     reset_dotfiles() {
       CONFIG_DIR="$1"
+      echo "!!! WARNING: DEPRECATED FEATURE. IT WILL REQUIRE YOU TO SHUTDOWN YOUR SYSTEM TO RE-APPLY THE DOTFILES!"
       echo "!!! WARNING: You are about to reset Prism dotfiles to defaults. !!!"
       echo "This will delete local modifications to files managed by Prism."
       echo "Files in 'overrides/' will be preserved and reapplied."
