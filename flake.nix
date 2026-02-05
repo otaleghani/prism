@@ -69,6 +69,7 @@
           prism-power = pkgs.callPackage ./pkgs/prism-power.nix { };
           prism-users = pkgs.callPackage ./pkgs/prism-users.nix { };
           prism-project = pkgs.callPackage ./pkgs/prism-project.nix { };
+          prism-workspaces = pkgs.callPackage ./pkgs/prism-workspaces.nix { };
         }
       );
 
@@ -141,6 +142,7 @@
                 power = self.packages.${prev.system}.prism-power;
                 users = self.packages.${prev.system}.prism-users;
                 project = self.packages.${prev.system}.prism-project;
+                workspaces = self.packages.${prev.system}.prism-workspaces;
               };
             })
           ];

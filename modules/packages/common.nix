@@ -98,4 +98,5 @@ with pkgs;
   prism.power
   prism.users
   prism.project
+  prism.workspaces
 ]
