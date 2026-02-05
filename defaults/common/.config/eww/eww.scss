@@ -1,29 +1,164 @@
 // Import dynamic theme from Prism
-@import "../../.local/share/prism/current/eww.scss";
+@import "../../../.local/share/prism/current/eww.scss";
 
 * {
   all: unset;
   font-family: "JetBrainsMono Nerd Font";
 }
 
+// --- MIXINS ---
+// Glass effect with a subtle border for depth
+@mixin glass-panel {
+  background-color: rgba($bg, 0.65);
+  border: 1px solid rgba($fg, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+}
+
+// Hover effect for interactive elements
+@mixin hover-effect {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  &:hover {
+    background-color: rgba($surface, 0.8);
+    box-shadow: 0 0 10px rgba($accent, 0.3);
+    color: $accent;
+  }
+}
+
+// --- BAR CONTAINER ---
+// We make the bar transparent so the widgets look like floating islands
 .bar {
-  background-color: $bg;
-  color: $fg;
-  padding: 10px;
-  border-bottom: 2px solid $surface;
+  background-color: transparent;
+  padding: 5px 15px; 
 }
 
-.workspace {
-  color: $fg;
-  padding: 5px;
+// --- WIDGET GROUPS (Islands) ---
+.left, .center, .right {
+  @include glass-panel;
+  padding: 0 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-.workspace.active {
-  color: $accent;
+// --- INDIVIDUAL WIDGETS ---
+
+// Workspaces
+.workspaces {
+    padding: 5px 0;
+}
+
+.workspaces button {
+  padding: 4px 8px;
+  color: rgba($fg, 0.5);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.workspaces button.active {
+  color: $bg;
+  background-color: $accent;
+  box-shadow: 0 2px 10px rgba($accent, 0.4);
   font-weight: bold;
+  min-width: 20px;
 }
 
-.time {
-  color: $accent;
+.workspaces button:hover {
+  color: $fg;
+  background-color: rgba($surface, 0.5);
+}
+
+// Window Title
+.window-title {
+  color: rgba($fg, 0.8);
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+// Clock
+.clock {
   font-weight: bold;
+  font-size: 15px;
+  color: $fg;
+  padding: 5px 10px;
+  border-radius: 10px;
+  @include hover-effect;
+}
+
+// --- SYSTEM MODULES ---
+// Base style for icons/buttons
+.sys-module, .net, .bt, .vol, .bat, .usb, .notif, .power {
+  padding: 5px 10px;
+  font-size: 16px;
+  border-radius: 10px;
+  color: $fg;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: rgba($surface, 0.5);
+    transform: translateY(-1px);
+  }
+}
+
+// Revealer Box (CPU/RAM)
+.sys-module {
+  background-color: rgba($surface, 0.3);
+  color: $accent;
+  border-radius: 12px;
+}
+
+// Status Colors
+.net.wifi { color: $success; }
+.net.disconnected { color: $urgent; }
+
+.bt.on { color: $accent; }
+.bt.off { color: rgba($fg, 0.4); }
+
+.vol.muted { color: $urgent; }
+
+// Battery
+.bat {
+    padding: 5px 10px;
+}
+
+// Power Button
+.power {
+  color: $urgent;
+  background-color: rgba($urgent, 0.1);
+  margin-left: 5px;
+  
+  &:hover {
+    background-color: $urgent;
+    color: $bg;
+    box-shadow: 0 0 10px rgba($urgent, 0.5);
+  }
+}
+
+// --- POPUP WINDOWS (Calendar) ---
+.cal-box {
+  @include glass-panel;
+  background-color: rgba($bg, 0.85); // Slightly more opaque for readability
+  padding: 20px;
+  margin-top: 10px;
+}
+
+calendar {
+  color: $fg;
+  
+  // Header
+  :header {
+    color: $accent;
+    font-weight: bold;
+  }
+  
+  // Selected Day
+  :selected {
+    color: $bg;
+    background-color: $accent;
+    border-radius: 50%;
+  }
+  
+  // Today/Indication
+  :indeterminate { 
+    color: $overlay;
+  }
 }
