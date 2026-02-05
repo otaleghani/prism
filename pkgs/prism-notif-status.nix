@@ -19,35 +19,31 @@ writeShellScriptBin "prism-notif-status" ''
       fi
 
       # Dunst Counters
+      # displayed: currently shown as popup
+      # waiting: queued/unread
+      # history: past notifications
+      DISPLAYED=$(dunstctl count displayed 2>/dev/null || echo 0)
       WAITING=$(dunstctl count waiting 2>/dev/null || echo 0)
       HISTORY=$(dunstctl count history 2>/dev/null || echo 0)
       PAUSED=$(dunstctl is-paused 2>/dev/null || echo "false")
       
+      [[ "$DISPLAYED" =~ ^[0-9]+$ ]] || DISPLAYED=0
       [[ "$WAITING" =~ ^[0-9]+$ ]] || WAITING=0
       [[ "$HISTORY" =~ ^[0-9]+$ ]] || HISTORY=0
       
-      TOTAL=$((WAITING + HISTORY))
+      TOTAL=$((DISPLAYED + WAITING + HISTORY))
       
       # --- ICON LOGIC ---
-      
-      # 1. If Center is Open (State file exists) -> Show List Icon
-      if [ -f "/tmp/prism-notif-state" ]; then
-          CLASS="open"
-          ICON=""  # List icon
-          # We treat it as DND true for styling, but distinct icon
-          echo "{\"count\": $TOTAL, \"icon\": \"$ICON\", \"class\": \"$CLASS\", \"dnd\": true}"
-          return
-      fi
 
-      # 2. If Paused (User DND) -> Show Slashed Bell
+      # 1. If Paused (User DND) -> Show Slashed Bell
       if [ "$PAUSED" == "true" ]; then
           CLASS="dnd"
           ICON=""
-      # 3. Normal Active
+      # 2. Normal Active
       elif [ "$TOTAL" -gt 0 ]; then
           CLASS="active"
           ICON=""
-      # 4. Empty
+      # 3. Empty
       else
           CLASS="empty"
           ICON=""
