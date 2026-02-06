@@ -1,0 +1,100 @@
+.mixer-container {
+  @include glass-panel;
+  background-color: rgba($bg, 0.95);
+  padding: 20px;
+  margin-right: 10px;
+}
+
+.mixer-title {
+  color: $fg;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.section-title {
+  color: $accent;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid rgba($fg, 0.1);
+  width: 100%;
+}
+
+.mixer-close {
+  color: $urgent;
+  background: transparent;
+  padding: 5px;
+  border-radius: 5px;
+  &:hover { background-color: rgba($urgent, 0.2); }
+}
+
+// --- SINKS ---
+.sink-btn {
+  background-color: rgba($surface, 0.5);
+  color: $fg;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  
+  &:hover, &:focus {
+    background-color: rgba($surface, 0.9);
+    border: 1px solid $accent;
+  }
+}
+
+.sink-btn.active {
+  background-color: $accent;
+  color: $bg;
+  font-weight: bold;
+}
+
+// --- APPS ---
+.app-row {
+  background-color: rgba($surface, 0.3);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.app-name {
+  font-weight: bold;
+  color: $fg;
+}
+
+.app-vol-text {
+  color: $subtext0;
+  font-size: 12px;
+}
+
+// --- SLIDER ---
+scale trough {
+  background-color: $surface;
+  border-radius: 10px;
+  min-height: 6px;
+}
+
+scale highlight {
+  background-color: $accent;
+  border-radius: 10px;
+}
+
+scale slider {
+  background-color: $fg;
+  border-radius: 50%;
+  min-height: 16px;
+  min-width: 16px;
+  margin: -5px 0;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+// Keyboard Focus for Slider
+scale:focus slider {
+  background-color: $accent; // Turn accent color when focused
+  box-shadow: 0 0 0 3px rgba($accent, 0.3); // Glow effect
+}
+
+.mixer-empty {
+  color: $subtext0;
+  margin-top: 20px;
+  font-style: italic;
+}

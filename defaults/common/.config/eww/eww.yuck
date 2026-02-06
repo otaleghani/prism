@@ -4,6 +4,8 @@
 (include "./notifications.yuck")
 ;; Import Session
 (include "./session.yuck")
+;; Import Audio mixer
+(include "./mixer.yuck")
 
 
 ;; =============================================================================

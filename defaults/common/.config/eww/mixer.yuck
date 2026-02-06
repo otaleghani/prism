@@ -1,0 +1,48 @@
+;; Listen to Audio State
+(deflisten audio_mixer :initial "{\"sinks\":[], \"apps\":[]}" "prism-audio-mixer listen")
+
+(defwindow mixer_win
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "50px" 
+                      :width "400px"
+                      :anchor "top right")
+  :stacking "overlay"
+  :windowtype "dialog"
+  :focusable true
+  (mixer_layout))
+
+(defwidget mixer_layout []
+  (box :class "mixer-container" :orientation "v" :space-evenly false :spacing 15
+    (box :class "mixer-header" :space-evenly true
+      (label :text "Audio Mixer" :halign "start" :class "mixer-title")
+      (button :class "mixer-close" :onclick "eww close mixer_win" "✕"))
+    
+    ;; --- OUTPUT DEVICES ---
+    (label :text "Outputs" :class "section-title" :halign "start")
+    (box :class "sinks-list" :orientation "v" :spacing 5
+      (for sink in {audio_mixer.sinks}
+        (button :class "sink-btn ${sink.is_default ? 'active' : ''}" 
+                :onclick "prism-audio-mixer set-default ${sink.name}"
+          (box :orientation "h" :space-evenly false :spacing 10
+            (label :text {sink.is_default ? "" : ""})
+            (label :text {sink.desc} :limit-width 30)))))
+    
+    ;; --- APPLICATIONS ---
+    (label :text "Applications" :class "section-title" :halign "start")
+    (scroll :vscroll true :hscroll false :height 250
+      (box :orientation "v" :spacing 10
+        (for app in {audio_mixer.apps}
+          (box :class "app-row" :orientation "v" :space-evenly false :spacing 5
+            (box :orientation "h" :space-evenly true
+               (label :text "${app.icon}  ${app.name}" :halign "start" :class "app-name")
+               (label :text "${app.vol}%" :halign "end" :class "app-vol-text"))
+            (scale :class "app-slider"
+                   :value {app.vol}
+                   :min 0 :max 150
+                   :onchange "prism-audio-mixer set-volume ${app.id} {}")))))
+    
+    ;; Empty State
+    (label :visible {arraylength(audio_mixer.apps) == 0} 
+           :class "mixer-empty" 
+           :text "No apps playing audio")))

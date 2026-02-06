@@ -110,4 +110,5 @@ with pkgs;
   prism.net-status
   prism.notif-status
   prism.notifications
+  prism.audio-mixer
 ]
