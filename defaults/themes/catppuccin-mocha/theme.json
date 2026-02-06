@@ -1,6 +1,6 @@
 {
   "name": "Catppuccin Mocha",
-  "gtk": "Adwaita-Dark",
+  "gtk": "adw-gtk3-dark",
   "icon": "rose-pine",
   "cursor": "Bibata-Modern-Ice"
 }

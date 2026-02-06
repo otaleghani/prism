@@ -54,6 +54,7 @@ with pkgs;
   playerctl
   thunar # File manager
   nemo-with-extensions
+  adw-gtk3
 
   # Terminal
   ghostty # Emulator
