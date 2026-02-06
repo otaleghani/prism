@@ -1,7 +1,12 @@
+## Before 1.0
 - [ ] Find logo -> https://itoa.hex.dance/
+- [ ] Create documentation
+- [ ] Create landing page
+
+## TODO
 - [ ] Refine `defualts/templates`
 - [ ] Refine `defualts/themes`
-- [ ] Test `prism-project-open` and `prism-project-create`
+- [x] Test `prism-project-new` and `prism-project-create`
 - [ ] Rework scripts by using `gum` and making them more 
 - [ ] When an error occurs, wait for an input instead of closing with with `read -r -p "Press Enter to close..."`
 - [ ] Create dotfiles `thunar`
@@ -9,15 +14,17 @@
 
 ## Widgets to create
 - [x] Top bar
-- [ ] Notifications
+- [x] Notifications
 - [ ] Session (shutdown, disconnect etc.)
-- [ ] Calendar
+- [ ] Calendar (maybe not)
+- [ ] 
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file
 - [ ] `prism-wall select`  needs to open a terminal window
 - [ ] `prism-install` needs to open a terminal window
 - [ ] `prism-delete` needs to open a terminal window
+- [x] `prism-project-new` needs to track `flake.nix`
 
 ## Not important
 - [ ] Create dotfiles for `qbittorrent` | There are not many themes for qbittorrent

@@ -129,6 +129,16 @@ writeShellScriptBin "prism-theme" ''
       fi
   fi
 
+  # Apply GTK CSS Overrides
+  # This makes Adwaita-Dark look like your theme!
+  if [ -f "$TARGET_THEME/gtk.css" ]; then
+      mkdir -p "$HOME/.config/gtk-3.0"
+      mkdir -p "$HOME/.config/gtk-4.0"
+      
+      ln -sf "$CURRENT_LINK/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
+      ln -sf "$CURRENT_LINK/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
+  fi
+
   # Apply GTK Theme (if theme.json exists)
   THEME_CONFIG="$TARGET_THEME/theme.json"
   if [ -f "$THEME_CONFIG" ]; then

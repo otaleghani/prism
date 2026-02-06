@@ -74,6 +74,7 @@ let
     # Git init
     if gum confirm "Initialize Git Repository?"; then
         git init "$TARGET_DIR"
+        git add $TARGET_DIR/flake.nix
         echo ".direnv/" >> "$TARGET_DIR/.gitignore"
         echo "result" >> "$TARGET_DIR/.gitignore"
     fi

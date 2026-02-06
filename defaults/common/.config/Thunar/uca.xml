@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+  <action>
+    <icon>utilities-terminal</icon>
+    <name>Open Terminal Here</name>
+    <unique-id>1700000000000001-1</unique-id>
+    <!-- Launch Ghostty in the current folder -->
+    <command>ghostty --working-directory %f</command>
+    <description>Open terminal in this folder</description>
+    <patterns>*</patterns>
+    <startup-notify/>
+    <directories/>
+  </action>
+  
+  <action>
+    <icon>nvim</icon>
+    <name>Edit with Neovim</name>
+    <unique-id>1700000000000002-2</unique-id>
+    <!-- Use Prism TUI wrapper to open it floating and centered! -->
+    <command>prism-focus-tui nvim %f</command>
+    <description>Edit file with Neovim</description>
+    <patterns>*</patterns>
+    <text-files/>
+    <other-files/>
+  </action>
+  
+  <action>
+    <icon>system-search</icon>
+    <name>Search Here</name>
+    <unique-id>1700000000000003-3</unique-id>
+    <!-- Opens Catfish or a terminal search -->
+    <command>prism-focus-tui "find . | fzf"</command>
+    <description>Search files in this folder</description>
+    <patterns>*</patterns>
+    <directories/>
+  </action>
+</actions>

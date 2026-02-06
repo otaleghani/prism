@@ -1,0 +1,29 @@
+[Configuration]
+# --- VISUALS ---
+# Hide the old-school Menu Bar (Ctrl+M to toggle temporarily)
+LastShowMenubar=FALSE
+
+# Use Breadcrumbs (Buttons) instead of text path
+LastLocationBar=ThunarLocationButtons
+
+# Show status bar (file count/size)
+LastShowStatusbar=TRUE
+
+# Sidebar styling
+LastShowSidePane=TRUE
+TreeIconEmblems=TRUE
+TreeIconSize=THUNAR_ICON_SIZE_SMALL
+
+# --- BEHAVIOR ---
+# Sort folders before files
+MiscFoldersFirst=TRUE
+
+# Single click to activate items (optional, set to FALSE for double click)
+MiscSingleClick=FALSE
+
+# Window size defaults
+LastWindowWidth=900
+LastWindowHeight=600
+
+# View Mode (Detailed List is usually best for productivity)
+LastView=ThunarDetailsView
