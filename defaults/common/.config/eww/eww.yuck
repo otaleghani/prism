@@ -23,10 +23,8 @@
 (defpoll bt_status :interval "3s" "bluetoothctl show | grep 'Powered: yes' >/dev/null && echo 'on' || echo 'off'")
 
 ;; --- System Vars ---
-(defpoll memory :interval "2s" {EWW_RAM.used_mem_perc})
-(defpoll cpu :interval "2s" {EWW_CPU.avg})
-(defpoll battery :interval "5s" {EWW_BATTERY.total_avg})
-(defpoll battery_status :interval "5s" {EWW_BATTERY.BAT0.status})
+;; REMOVED: Invalid defpolls for EWW_RAM/CPU/BATTERY. 
+;; These are built-in variables we access directly in the widgets below.
 
 ;; --- Revealer State ---
 (defvar rev_sys false)
@@ -121,7 +119,7 @@
                 :duration "350ms"
         (box :orientation "h" :spacing 10
           (label :text "CPU ${round(EWW_CPU.avg, 0)}%")
-          (label :text "RAM ${round(memory, 0)}%"))))))
+          (label :text "RAM ${round(EWW_RAM.used_mem_perc, 0)}%"))))))
 
 (defwidget net_module []
   (button :class "net ${net_json.class}" 
@@ -145,9 +143,9 @@
       (label :text {audio_json.icon}))))
 
 (defwidget bat_module []
-  (box :class "bat" :tooltip "${round(battery, 0)}%"
+  (box :class "bat" :tooltip "${round(EWW_BATTERY.total_avg, 0)}%"
        :visible {EWW_BATTERY != ""}
-    (label :text {battery_status == 'Charging' ? "" : ""})))
+    (label :text {EWW_BATTERY.BAT0.status == 'Charging' ? "" : ""})))
 
 (defwidget usb_module []
   (button :class "usb" :onclick "thunar" :tooltip "Open File Manager" ""))
