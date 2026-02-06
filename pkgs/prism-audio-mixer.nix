@@ -19,8 +19,6 @@ writeShellScriptBin "prism-audio-mixer" ''
       DEFAULT_SINK=$(pactl get-default-sink)
       
       # 1. Get Sinks (Outputs)
-      # We check if the name matches default to mark it active
-      # We parse volume from string "100%" to int 100
       SINKS=$(pactl -f json list sinks | jq -c --arg def "$DEFAULT_SINK" '[.[] | {
           id: .index, 
           name: .name,
@@ -30,14 +28,15 @@ writeShellScriptBin "prism-audio-mixer" ''
       }]')
 
       # 2. Get Sink Inputs (Apps)
-      # We use a fallback for name (app name -> media name -> "Unknown")
+      # FIX: Use 'elif' for cleaner logic and ' // "" ' to prevent null errors
       APPS=$(pactl -f json list sink-inputs | jq -c '[.[] | {
           id: .index, 
           name: (.properties."application.name" // .properties."media.name" // "Unknown"),
           vol: (.volume."front-left".value_percent | sub("%";"") | tonumber),
           icon: (
-            if (.properties."application.name" | test("Spotify")) then "" 
-            else if (.properties."application.name" | test("Firefox|Chrome|Brave")) then ""
+            (.properties."application.name" // "") as $name |
+            if ($name | test("Spotify"; "i")) then "" 
+            elif ($name | test("Firefox|Chrome|Brave"; "i")) then ""
             else "" end
           )
       }]')
