@@ -6,6 +6,8 @@
 (include "./session.yuck")
 ;; Import Audio mixer
 (include "./mixer.yuck")
+;; Import brightness
+(include "./brightness.yuck")
 
 
 ;; =============================================================================
