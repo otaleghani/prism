@@ -112,4 +112,5 @@ with pkgs;
   prism.notifications
   prism.audio-mixer
   prism.brightness
+  prism.wallpaper-list
 ]

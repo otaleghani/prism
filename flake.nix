@@ -77,6 +77,7 @@
           prism-notifications = pkgs.callPackage ./pkgs/prism-notifications.nix { };
           prism-audio-mixer = pkgs.callPackage ./pkgs/prism-audio-mixer.nix { };
           prism-brightness = pkgs.callPackage ./pkgs/prism-brightness.nix { };
+          prism-wallpaper-list = pkgs.callPackage ./pkgs/prism-wallpaper-list.nix { };
         }
       );
 
@@ -157,6 +158,7 @@
                 notifications = self.packages.${prev.system}.prism-notifications;
                 audio-mixer = self.packages.${prev.system}.prism-audio-mixer;
                 brightness = self.packages.${prev.system}.prism-brightness;
+                wallpaper-list = self.packages.${prev.system}.prism-wallpaper-list;
               };
             })
           ];

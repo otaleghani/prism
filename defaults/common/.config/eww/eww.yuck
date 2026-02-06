@@ -8,6 +8,8 @@
 (include "./mixer.yuck")
 ;; Import brightness
 (include "./brightness.yuck")
+;; Import wallpapers picker
+(include "./wallpapers.yuck")
 
 
 ;; =============================================================================

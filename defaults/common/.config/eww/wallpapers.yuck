@@ -1,0 +1,42 @@
+;; Poll available wallpapers on open (manual refresh via script if needed)
+(defpoll wall_list :interval "5s" "prism-wallpaper-list")
+
+(defwindow wallpaper_win
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "800px"
+                      :height "600px"
+                      :anchor "center")
+  :stacking "overlay"
+  :windowtype "dialog"
+  :focusable true
+  (wallpaper_layout))
+
+(defwidget wallpaper_layout []
+  (box :class "wall-container" :orientation "v" :space-evenly false :spacing 20
+    
+    (box :class "wall-header" :space-evenly true
+      (label :text "Wallpaper Picker" :halign "start" :class "wall-title")
+      (button :class "wall-close" :onclick "eww close wallpaper_win" "✕"))
+
+    (scroll :vscroll true :hscroll false :height 520
+      (box :class "wall-grid" :orientation "v" :spacing 15 :space-evenly false
+        ;; Rows
+        (for row in wall_list
+          (box :orientation "h" :spacing 15 :space-evenly true
+            ;; Items in Row
+            (for wall in row
+              (button :class "wall-card" 
+                      ;; Apply wallpaper directly using swww
+                      :onclick "swww img '${wall.path}' --transition-type grow --transition-pos 0.5,0.5 --transition-step 90 --transition-fps 60"
+                      :tooltip "${wall.name}"
+                (box :orientation "v" :space-evenly false :spacing 0
+                   ;; Image Preview
+                   (box :class "wall-preview" 
+                        :style "background-image: url('${wall.path}');")
+                   ;; Label
+                   (label :class "wall-label" 
+                          :text {wall.name} 
+                          :limit-width 20 
+                          :wrap true))))))))))

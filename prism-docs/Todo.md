@@ -13,9 +13,9 @@
 ## Widgets to create
 - [x] Top bar
 - [x] Notifications
-- [ ] Session (shutdown, disconnect etc.)
-- [ ] Volume
-- [ ] Brightness
+- [x] Session (shutdown, disconnect etc.)
+- [x] Volume
+- [x] Brightness
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file
