@@ -10,6 +10,8 @@
 (include "./brightness.yuck")
 ;; Import wallpapers picker
 (include "./wallpapers.yuck")
+;; Import theme picker
+(include "./themes.yuck")
 
 
 ;; =============================================================================

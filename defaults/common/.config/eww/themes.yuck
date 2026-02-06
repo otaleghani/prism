@@ -1,0 +1,44 @@
+;; Poll themes list (runs script once every 5s)
+(defpoll theme_list :interval "5s" "prism-theme-list")
+
+(defwindow theme_win
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "800px"
+                      :height "500px"
+                      :anchor "center")
+  :stacking "overlay"
+  :windowtype "dialog"
+  :focusable true
+  (theme_layout))
+
+(defwidget theme_layout []
+  (box :class "theme-container" :orientation "v" :space-evenly false :spacing 20
+    
+    (box :class "theme-header" :space-evenly true
+      (label :text "Theme Picker" :halign "start" :class "theme-title")
+      (button :class "theme-close" :onclick "eww close theme_win" "✕"))
+
+    (scroll :vscroll true :hscroll false :height 420
+      (box :class "theme-grid" :orientation "v" :spacing 15 :space-evenly false
+        ;; Rows
+        (for row in theme_list
+          (box :orientation "h" :spacing 15 :space-evenly true
+            ;; Cards
+            (for theme in row
+              (button :class "theme-card" 
+                      :onclick "prism-theme ${theme.name}"
+                      :tooltip "Apply ${theme.name}"
+                (box :orientation "v" :space-evenly false :spacing 10
+                   
+                   ;; Theme Name
+                   (label :class "theme-label" :text {theme.name} :halign "center")
+                   
+                   ;; Palette Preview
+                   (box :orientation "h" :spacing 5 :halign "center" :class "theme-palette"
+                     (box :class "color-swatch" :style "background-color: ${theme.colors.base};" :tooltip "Base")
+                     (box :class "color-swatch" :style "background-color: ${theme.colors.surface};" :tooltip "Surface")
+                     (box :class "color-swatch" :style "background-color: ${theme.colors.text};" :tooltip "Text")
+                     (box :class "color-swatch" :style "background-color: ${theme.colors.accent};" :tooltip "Accent")
+                     (box :class "color-swatch" :style "background-color: ${theme.colors.urgent};" :tooltip "Urgent")))))))))))

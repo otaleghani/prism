@@ -1,0 +1,55 @@
+.theme-container {
+  @include glass-panel;
+  background-color: rgba($bg, 0.95);
+  padding: 20px;
+}
+
+.theme-title {
+  color: $fg;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.theme-close {
+  color: $urgent;
+  background: transparent;
+  padding: 5px;
+  border-radius: 5px;
+  &:hover, &:focus { 
+      background-color: rgba($urgent, 0.2); 
+      outline: none;
+      box-shadow: 0 0 0 2px $urgent;
+  }
+}
+
+// --- CARD ---
+.theme-card {
+  background-color: rgba($surface, 0.5);
+  border-radius: 12px;
+  padding: 15px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+
+  &:hover, &:focus {
+    background-color: rgba($surface, 0.9);
+    border-color: $accent;
+    // transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    outline: none;
+  }
+}
+
+.theme-label {
+  color: $fg;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+// --- COLOR CIRCLES ---
+.color-swatch {
+  // width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
