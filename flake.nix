@@ -13,6 +13,8 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     silentSDDM.url = "github:uiriansan/SilentSDDM";
     silentSDDM.inputs.nixpkgs.follows = "nixpkgs";
+    quickshell.url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+    quickshell.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -20,6 +22,7 @@
       self,
       nixpkgs,
       silentSDDM,
+      quickshell,
       ...
     }@inputs:
     let
@@ -162,6 +165,7 @@
                 wallpaper-list = self.packages.${prev.system}.prism-wallpaper-list;
                 themes-list = self.packages.${prev.system}.prism-themes-list;
               };
+              quickshell = quickshell.packages.${prev.system}.default;
             })
           ];
         };

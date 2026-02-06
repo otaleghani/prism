@@ -56,6 +56,7 @@ with pkgs;
   thunar # File manager
   adw-gtk3
   pulseaudio
+  quickshell
 
   # Terminal
   ghostty # Emulator
