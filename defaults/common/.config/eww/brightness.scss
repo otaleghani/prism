@@ -1,0 +1,91 @@
+.bright-container {
+  @include glass-panel;
+  background-color: rgba($bg, 0.95);
+  padding: 20px;
+  margin-right: 10px;
+}
+
+.bright-title {
+  color: $fg;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.bright-close {
+  color: $urgent;
+  background: transparent;
+  padding: 5px;
+  border-radius: 5px;
+  &:hover, &:focus { 
+      background-color: rgba($urgent, 0.2); 
+      outline: none;
+      box-shadow: 0 0 0 2px $urgent;
+  }
+}
+
+.bright-icon {
+  font-size: 24px;
+  color: $accent;
+}
+
+.bright-text {
+  font-size: 14px;
+  color: $fg;
+  font-weight: bold;
+}
+
+// --- SLIDER ---
+.bright-slider trough {
+  background-color: $surface;
+  border-radius: 12px;
+  min-height: 12px;
+}
+
+.bright-slider highlight {
+  background-color: $accent;
+  border-radius: 12px;
+  // Gradient effect for brightness
+  background-image: linear-gradient(to right, $surface, $accent);
+}
+
+.bright-slider slider {
+  background-color: $fg;
+  border-radius: 50%;
+  min-height: 24px;
+  min-width: 24px;
+  margin: -6px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  transition: all 0.2s;
+}
+
+// Keyboard Focus
+.bright-slider:focus slider {
+  background-color: $accent;
+  box-shadow: 0 0 0 4px rgba($accent, 0.4);
+  // transform: scale(1.1);
+}
+
+// Reuse Button Style from Mixer (copied for consistency)
+.vol-btn {
+  background-color: rgba($surface, 0.5);
+  color: $fg;
+  border-radius: 8px;
+  min-width: 30px;
+  min-height: 30px;
+  font-size: 14px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+
+  &:hover, &:focus {
+    background-color: rgba($surface, 0.9);
+    border-color: $accent;
+    color: $accent;
+    box-shadow: 0 0 10px rgba($accent, 0.2);
+    outline: none;
+  }
+  
+  &:active {
+    background-color: $accent;
+    color: $bg;
+  }
+}

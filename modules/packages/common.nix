@@ -111,4 +111,5 @@ with pkgs;
   prism.notif-status
   prism.notifications
   prism.audio-mixer
+  prism.brightness
 ]

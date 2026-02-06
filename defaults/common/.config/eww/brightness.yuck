@@ -1,0 +1,40 @@
+;; Listen to Brightness State
+(deflisten brightness_state :initial "{\"percent\": 100, \"icon\": \"󰃠\"}" "prism-brightness listen")
+
+(defwindow brightness_win
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "50px" 
+                      :width "400px"
+                      :anchor "top right")
+  :stacking "overlay"
+  :windowtype "dialog"
+  :focusable true
+  (brightness_layout))
+
+(defwidget brightness_layout []
+  (box :class "bright-container" :orientation "v" :space-evenly false :spacing 20
+    
+    ;; Header
+    (box :class "bright-header" :space-evenly true
+      (label :text "Brightness" :halign "start" :class "bright-title")
+      (button :class "bright-close" :onclick "eww close brightness_win" "✕"))
+    
+    ;; Info Row
+    (box :orientation "h" :space-evenly true
+         (label :text {brightness_state.icon} :halign "start" :class "bright-icon")
+         (label :text "${brightness_state.percent}%" :halign "end" :class "bright-text"))
+      
+    ;; Controls
+    (box :orientation "h" :space-evenly false :spacing 15
+        (button :class "vol-btn" 
+                :onclick "prism-brightness set 5%-" 
+                "")
+        (scale :class "bright-slider"
+               :value {brightness_state.percent}
+               :hexpand true
+               :min 0 :max 100
+               :onchange "prism-brightness set {}")
+        (button :class "vol-btn" 
+                :onclick "prism-brightness set 5%+" 
+                ""))))

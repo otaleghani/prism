@@ -76,6 +76,7 @@
           prism-notif-status = pkgs.callPackage ./pkgs/prism-notif-status.nix { };
           prism-notifications = pkgs.callPackage ./pkgs/prism-notifications.nix { };
           prism-audio-mixer = pkgs.callPackage ./pkgs/prism-audio-mixer.nix { };
+          prism-brightness = pkgs.callPackage ./pkgs/prism-brightness.nix { };
         }
       );
 
@@ -155,6 +156,7 @@
                 notif-status = self.packages.${prev.system}.prism-notif-status;
                 notifications = self.packages.${prev.system}.prism-notifications;
                 audio-mixer = self.packages.${prev.system}.prism-audio-mixer;
+                brightness = self.packages.${prev.system}.prism-brightness;
               };
             })
           ];
