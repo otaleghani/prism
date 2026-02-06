@@ -116,6 +116,12 @@ writeShellScriptBin "prism-theme" ''
       ln -sf "$CURRENT_LINK/yazi.toml" "$HOME/.config/yazi/theme.toml"
   fi
 
+  # Reload btop
+  if [ -f "$TARGET_THEME/btop.theme" ]; then
+      mkdir -p "$HOME/.config/btop/themes"
+      ln -sf "$CURRENT_LINK/btop.theme" "$HOME/.config/btop/themes/prism.theme"
+  fi
+
   # Generate mpv conf
   # Combines the Theme Colors with the Base Settings
   MPV_CONFIG_DIR="$HOME/.config/mpv"
@@ -154,6 +160,11 @@ writeShellScriptBin "prism-theme" ''
       echo "Setting Icon Theme: $ICON_THEME"
       gsettings set org.gnome.desktop.interface icon-theme "$ICON_THEME"
     fi
+  fi
+
+  # Reload thunar
+  if pgrep thunar > /dev/null; then 
+      pkill thunar
   fi
 
   # Reset Wallpaper

@@ -52,8 +52,8 @@ with pkgs;
   libnotify
   brightnessctl
   playerctl
+  glib # Needed for gsettings
   thunar # File manager
-  nemo-with-extensions
   adw-gtk3
 
   # Terminal

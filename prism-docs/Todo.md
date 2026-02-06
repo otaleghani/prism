@@ -9,7 +9,7 @@
 - [x] Test `prism-project-new` and `prism-project-create`
 - [ ] Rework scripts by using `gum` and making them more 
 - [ ] When an error occurs, wait for an input instead of closing with with `read -r -p "Press Enter to close..."`
-- [ ] Create dotfiles `thunar`
+- [x] Create dotfiles `thunar`
 - [ ] Create dotfiles `btop`
 
 ## Widgets to create
