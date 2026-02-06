@@ -62,7 +62,7 @@
 }
 
 .app-vol-text {
-  color: $subtext0;
+  color: $overlay; // Replaced $subtext0
   font-size: 12px;
 }
 
@@ -94,7 +94,7 @@ scale:focus slider {
 }
 
 .mixer-empty {
-  color: $subtext0;
+  color: $overlay; // Replaced $subtext0
   margin-top: 20px;
   font-style: italic;
 }
