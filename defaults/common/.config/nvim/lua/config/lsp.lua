@@ -1,6 +1,7 @@
 vim.lsp.enable({
 	"clangd",
 	"lua_ls",
+	"qmlls",
 	"gopls",
 	"nil",
 	"bash-language-server",

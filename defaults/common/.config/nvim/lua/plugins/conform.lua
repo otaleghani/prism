@@ -22,6 +22,8 @@ return {
 				gotmpl = { "djlint" },
 				html = { "prettier" },
 				astro = { "prettier" },
+				qml = { "qmlformat" },
+				qmljs = { "qmlformat" },
 			},
 			format_on_save = {
 				lsp_fallback = true,
