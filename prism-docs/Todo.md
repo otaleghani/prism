@@ -10,14 +10,13 @@
 - [ ] Rework scripts by using `gum` and making them more 
 - [ ] When an error occurs, wait for an input instead of closing with with `read -r -p "Press Enter to close..."`
 - [x] Create dotfiles `thunar`
-- [ ] Create dotfiles `btop`
+- [x] Create dotfiles `btop`
 
 ## Widgets to create
 - [x] Top bar
 - [x] Notifications
 - [ ] Session (shutdown, disconnect etc.)
-- [ ] Calendar (maybe not)
-- [ ] 
+- [ ] Volume
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file
@@ -28,6 +27,7 @@
 
 ## Not important
 - [ ] Create dotfiles for `qbittorrent` | There are not many themes for qbittorrent
+- [ ] Create widget for calendar (maybe not)
 
 ## Done
 - [x] Setup github actions for automatic releases

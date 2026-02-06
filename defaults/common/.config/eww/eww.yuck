@@ -1,5 +1,6 @@
 ;; Import Dashboard (Provides 'time' and 'date' variables)
 (include "./dashboard.yuck")
+;; Import Notifications
 (include "./notifications.yuck")
 
 ;; =============================================================================
@@ -22,8 +23,10 @@
 (defpoll bt_status :interval "3s" "bluetoothctl show | grep 'Powered: yes' >/dev/null && echo 'on' || echo 'off'")
 
 ;; --- System Vars ---
-;; REMOVED: Invalid defpolls for EWW_RAM/CPU/BATTERY. 
-;; These are built-in variables we access directly in the widgets below.
+(defpoll memory :interval "2s" {EWW_RAM.used_mem_perc})
+(defpoll cpu :interval "2s" {EWW_CPU.avg})
+(defpoll battery :interval "5s" {EWW_BATTERY.total_avg})
+(defpoll battery_status :interval "5s" {EWW_BATTERY.BAT0.status})
 
 ;; --- Revealer State ---
 (defvar rev_sys false)
@@ -117,9 +120,8 @@
                 :reveal rev_sys
                 :duration "350ms"
         (box :orientation "h" :spacing 10
-          ;; FIX: Use EWW_CPU and EWW_RAM directly here
           (label :text "CPU ${round(EWW_CPU.avg, 0)}%")
-          (label :text "RAM ${round(EWW_RAM.used_mem_perc, 0)}%"))))))
+          (label :text "RAM ${round(memory, 0)}%"))))))
 
 (defwidget net_module []
   (button :class "net ${net_json.class}" 
@@ -133,7 +135,9 @@
     (label :text {bt_status == 'on' ? "" : "󰂲"})))
 
 (defwidget vol_module []
-  (eventbox :onscroll "pactl set-sink-volume @DEFAULT_SINK@ {}"
+  ;; FIX: Scroll Logic
+  ;; Eww passes "up" or "down" as {}. We pipe this to grep to decide direction.
+  (eventbox :onscroll "echo {} | grep -q 'up' && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%"
     (button :class "vol ${audio_json.class}" 
             :onclick "pactl set-sink-mute @DEFAULT_SINK@ toggle"
             :onrightclick "prism-focus-tui wiremix"
@@ -141,19 +145,17 @@
       (label :text {audio_json.icon}))))
 
 (defwidget bat_module []
-  ;; FIX: Use EWW_BATTERY directly. 
-  ;; Note: This might return empty on desktops without a battery.
-  ;; We check if the battery array is empty first to be safe (optional logic).
-  (box :class "bat" :tooltip "${round(EWW_BATTERY.total_avg, 0)}%"
+  (box :class "bat" :tooltip "${round(battery, 0)}%"
        :visible {EWW_BATTERY != ""}
-    (label :text {EWW_BATTERY.BAT0.status == 'Charging' ? "" : ""})))
+    (label :text {battery_status == 'Charging' ? "" : ""})))
 
 (defwidget usb_module []
   (button :class "usb" :onclick "thunar" :tooltip "Open File Manager" ""))
 
 (defwidget notif_module []
   (button :class "notif ${notif_json.class}" 
-          :onclick "swaync-client -t -sw"
+          ;; FIX: Open our custom notification window instead of swaync
+          :onclick "eww open --toggle notif_win"
     (box :orientation "h" :spacing 3
       (label :text {notif_json.icon})
       (revealer :reveal {notif_json.count > 0}
