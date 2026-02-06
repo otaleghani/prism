@@ -1,0 +1,39 @@
+(defwindow session_win
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "400px"
+                      :height "240px"
+                      :anchor "center")
+  :stacking "overlay"
+  :windowtype "dialog"
+  :focusable true
+  (session_layout))
+
+(defwidget session_layout []
+  (box :class "session-container"
+       :orientation "v"
+       :space-evenly true
+       :spacing 15
+    
+    (label :class "session-title" :text "Session Control")
+
+    ;; Top Row: Lock, Suspend, Logout, Reboot
+    (box :orientation "h" :space-evenly true :spacing 15
+      (button :class "sess-btn lock" 
+              :onclick "loginctl lock-session; eww close session_win" 
+              :tooltip "Lock" "")
+      (button :class "sess-btn suspend" 
+              :onclick "systemctl suspend; eww close session_win" 
+              :tooltip "Suspend" "󰤄")
+      (button :class "sess-btn logout" 
+              :onclick "pkill -x ghostty; hyprctl dispatch exit" 
+              :tooltip "Logout" "󰗽")
+      (button :class "sess-btn reboot" 
+              :onclick "systemctl reboot" 
+              :tooltip "Reboot" ""))
+    
+    ;; Bottom Row: Shutdown (Big)
+    (button :class "sess-btn shutdown" 
+            :onclick "systemctl poweroff" 
+            :tooltip "Shutdown" "")))

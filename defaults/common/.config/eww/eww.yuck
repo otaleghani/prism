@@ -2,6 +2,9 @@
 (include "./dashboard.yuck")
 ;; Import Notifications
 (include "./notifications.yuck")
+;; Import Session
+(include "./session.yuck")
+
 
 ;; =============================================================================
 ;;  VARIABLES

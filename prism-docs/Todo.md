@@ -15,6 +15,7 @@
 - [x] Notifications
 - [ ] Session (shutdown, disconnect etc.)
 - [ ] Volume
+- [ ] Brightness
 
 ## Fixes
 - [ ] `prism-monitor` doesn't open the file

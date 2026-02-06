@@ -1,0 +1,44 @@
+.session-container {
+  @include glass-panel;
+  background-color: rgba($bg, 0.95);
+  padding: 30px;
+}
+
+.session-title {
+  color: $fg;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.sess-btn {
+  border-radius: 12px;
+  font-size: 24px;
+  color: $fg;
+  background-color: $surface;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+
+  &:hover, &:focus {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba($accent, 0.2);
+  }
+}
+
+.lock:hover, .lock:focus { background-color: $accent; color: $bg; }
+.suspend:hover, .suspend:focus { background-color: $warning; color: $bg; }
+.logout:hover, .logout:focus { background-color: $info; color: $bg; }
+.reboot:hover, .reboot:focus { background-color: $success; color: $bg; }
+
+.shutdown {
+  font-size: 32px;
+  background-color: rgba($urgent, 0.15);
+  color: $urgent;
+  border: 1px solid rgba($urgent, 0.5);
+
+  &:hover, &:focus {
+    background-color: $urgent;
+    color: $bg;
+    box-shadow: 0 0 20px rgba($urgent, 0.4);
+  }
+}
