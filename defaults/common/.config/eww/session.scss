@@ -1,7 +1,12 @@
+// Import dynamic theme from Prism
+@import "../../../.local/share/prism/current/eww.scss";
+
 .session-container {
-  @include glass-panel;
   background-color: rgba($bg, 0.95);
+  border: 1px solid rgba($fg, 0.1);
+  border-radius: 16px;
   padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .session-title {
@@ -18,27 +23,47 @@
   background-color: $surface;
   transition: all 0.2s;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  border: 2px solid transparent; // Reserve space for border
 
+  // KEYBOARD NAVIGATION (Tab) & MOUSE HOVER
   &:hover, &:focus {
-    transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba($accent, 0.2);
+    background-color: rgba($surface, 0.9);
+    border-color: $accent; // Visual highlight for keyboard
+    box-shadow: 0 0 15px rgba($accent, 0.2);
+    outline: none;
   }
 }
 
-.lock:hover, .lock:focus { background-color: $accent; color: $bg; }
-.suspend:hover, .suspend:focus { background-color: $warning; color: $bg; }
-.logout:hover, .logout:focus { background-color: $info; color: $bg; }
-.reboot:hover, .reboot:focus { background-color: $success; color: $bg; }
+// Specific Colors (Using only available Prism vars)
+.lock:hover, .lock:focus { 
+    color: $accent; 
+}
 
+.suspend:hover, .suspend:focus { 
+    color: $fg; 
+}
+
+.logout:hover, .logout:focus { 
+    color: $accent; 
+}
+
+.reboot:hover, .reboot:focus { 
+    background-color: $success; 
+    color: $bg; 
+    border-color: $success;
+}
+
+// Big Shutdown Button
 .shutdown {
   font-size: 32px;
   background-color: rgba($urgent, 0.15);
   color: $urgent;
-  border: 1px solid rgba($urgent, 0.5);
+  border: 2px solid rgba($urgent, 0.5);
 
   &:hover, &:focus {
     background-color: $urgent;
     color: $bg;
+    border-color: $urgent;
     box-shadow: 0 0 20px rgba($urgent, 0.4);
   }
 }

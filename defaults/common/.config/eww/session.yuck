@@ -3,7 +3,7 @@
   :geometry (geometry :x "0%"
                       :y "0%"
                       :width "400px"
-                      :height "240px"
+                      :height "260px"
                       :anchor "center")
   :stacking "overlay"
   :windowtype "dialog"
@@ -14,7 +14,7 @@
   (box :class "session-container"
        :orientation "v"
        :space-evenly true
-       :spacing 15
+       :spacing 20
     
     (label :class "session-title" :text "Session Control")
 
