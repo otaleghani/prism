@@ -28,7 +28,7 @@
             ;; Cards
             (for theme in row
               (button :class "theme-card" 
-                      :onclick "prism-theme ${theme.name}"
+                      :onclick "prism-theme ${theme.name} &"
                       :tooltip "Apply ${theme.name}"
                 (box :orientation "v" :space-evenly false :spacing 10
                    
