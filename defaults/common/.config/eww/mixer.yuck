@@ -23,10 +23,20 @@
       (box :orientation "h" :space-evenly true
          (label :text {audio_mixer.master.muted ? "󰝟 Master (Muted)" : " Master"} :halign "start" :class "section-title")
          (label :text "${audio_mixer.master.vol}%" :halign "end" :class "app-vol-text"))
-      (scale :class "master-slider ${audio_mixer.master.muted ? 'muted' : ''}"
-             :value {audio_mixer.master.vol}
-             :min 0 :max 150
-             :onchange "prism-audio-mixer set-master {}"))
+      
+      ;; Slider with Buttons
+      (box :orientation "h" :space-evenly false :spacing 10
+        (button :class "vol-btn" 
+                :onclick "prism-audio-mixer set-master ${audio_mixer.master.vol - 5 < 0 ? 0 : audio_mixer.master.vol - 5}" 
+                "")
+        (scale :class "master-slider ${audio_mixer.master.muted ? 'muted' : ''}"
+               :value {audio_mixer.master.vol}
+               :hexpand true
+               :min 0 :max 150
+               :onchange "prism-audio-mixer set-master {}")
+        (button :class "vol-btn" 
+                :onclick "prism-audio-mixer set-master ${audio_mixer.master.vol + 5 > 150 ? 150 : audio_mixer.master.vol + 5}" 
+                "")))
 
     ;; --- OUTPUT DEVICES ---
     (label :text "Outputs" :class "section-title" :halign "start")
@@ -47,10 +57,20 @@
             (box :orientation "h" :space-evenly true
                (label :text "${app.icon}  ${app.name}" :halign "start" :class "app-name")
                (label :text "${app.vol}%" :halign "end" :class "app-vol-text"))
-            (scale :class "app-slider"
-                   :value {app.vol}
-                   :min 0 :max 150
-                   :onchange "prism-audio-mixer set-volume ${app.id} {}")))))
+            
+            ;; App Slider with Buttons
+            (box :orientation "h" :space-evenly false :spacing 10
+               (button :class "vol-btn" 
+                       :onclick "prism-audio-mixer set-volume ${app.id} ${app.vol - 5 < 0 ? 0 : app.vol - 5}" 
+                       "")
+               (scale :class "app-slider"
+                      :value {app.vol}
+                      :hexpand true
+                      :min 0 :max 150
+                      :onchange "prism-audio-mixer set-volume ${app.id} {}")
+               (button :class "vol-btn" 
+                       :onclick "prism-audio-mixer set-volume ${app.id} ${app.vol + 5 > 150 ? 150 : app.vol + 5}" 
+                       ""))))))
     
     ;; Empty State
     (label :visible {arraylength(audio_mixer.apps) == 0} 
