@@ -125,7 +125,7 @@ scale slider {
 scale:focus slider {
   background-color: $accent; 
   box-shadow: 0 0 0 4px rgba($accent, 0.4); 
-  transform: scale(1.2); 
+  // transform: scale(1.2); 
 }
 
 .mixer-empty {
