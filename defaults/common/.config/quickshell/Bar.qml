@@ -1,70 +1,81 @@
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Io
 import QtQuick
+import QtQuick.Layouts
+import "./components"
 
 PanelWindow {
-    // 1. Positioning
     anchors {
         top: true
         bottom: true
         right: true
     }
 
-    // 2. Geometry
-    // Width includes the bar + the gap
-    width: 60 
-    height: Screen.height
-
-    // 3. Layer Shell behavior
-    // Exclusive: Pushes windows aside
-    // Overlay: Floats above windows
+    width: 60
     exclusionMode: ExclusionMode.Exclusive
-    
-    // Transparent window background so the gap is invisible
     color: "transparent"
 
-    // 4. The Visible Bar
+    // Process for the session button
+    Process {
+        id: sessionProc
+        command: ["prism-session"]
+    }
+
     Rectangle {
-        id: background
-        
-        // This creates the "Gap" effect
-        // We fill the window but leave 10px margin on all sides
         anchors.fill: parent
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.rightMargin: 10
-        anchors.leftMargin: 5 
-
-        // Style (Glassmorphism placeholder)
-        color: "#cc1e1e2e" // Semi-transparent base
-        radius: 20
+        anchors.margins: 5
+        
+        // Styling from Theme Singleton
+        color: Qt.rgba(Theme.background.r, Theme.background.g, Theme.background.b, 0.85)
         border.width: 1
-        border.color: "#30cba6f7" // Subtle border
+        border.color: Qt.rgba(Theme.foreground.r, Theme.foreground.g, Theme.foreground.b, 0.1)
+        radius: 16
 
-        // Content Container
-        Column {
-            anchors.centerIn: parent
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.topMargin: 15
+            anchors.bottomMargin: 15
             spacing: 15
-            
-            // Placeholder Icon (Distro Logo)
-            Text { 
-                text: "" 
-                color: "#cba6f7"
-                font.pixelSize: 24
-                font.family: "JetBrainsMono Nerd Font"
+
+            // --- TOP: Workspaces ---
+            Workspaces {
+                Layout.alignment: Qt.AlignHCenter
             }
             
-            // Spacer to push content
-            Item { height: 20; width: 1 }
+            // Spacer ( pushes content apart )
+            Item { Layout.fillHeight: true }
 
-            // Placeholder Workspaces
-            Repeater {
-                model: 5
-                Rectangle {
-                    width: 8; height: 8
-                    radius: 4
-                    color: "white"
-                    opacity: 0.5
+            // --- MIDDLE: Clock (Placeholder for now) ---
+            Text {
+                text: ""
+                color: Theme.foreground
+                font: Theme.fontFace
+                Layout.alignment: Qt.AlignHCenter
+            }
+
+            // Spacer
+            Item { Layout.fillHeight: true }
+
+            // --- BOTTOM: System Info ---
+            // We will add the BottomGroup here later
+            Rectangle {
+                width: 40; height: 40
+                radius: 20
+                color: Theme.surface
+                Layout.alignment: Qt.AlignHCenter
+                
+                Text {
+                   anchors.centerIn: parent
+                   text: "⏻"
+                   color: Theme.urgent
+                   font: Theme.fontFace
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: sessionProc.running = true
+                    cursorShape: Qt.PointingHandCursor
                 }
             }
         }
