@@ -55,6 +55,7 @@ with pkgs;
   glib # Needed for gsettings
   thunar # File manager
   adw-gtk3
+  pulseaudio
 
   # Terminal
   ghostty # Emulator

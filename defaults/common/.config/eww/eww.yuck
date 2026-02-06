@@ -133,9 +133,9 @@
     (label :text {bt_status == 'on' ? "" : "󰂲"})))
 
 (defwidget vol_module []
-  ;; FIX: Scroll Logic
-  ;; Eww passes "up" or "down" as {}. We pipe this to grep to decide direction.
-  (eventbox :onscroll "echo {} | grep -q 'up' && pactl set-sink-volume @DEFAULT_SINK@ +5% || pactl set-sink-volume @DEFAULT_SINK@ -5%"
+  ;; FIX: Scroll Logic with Limit (Cap at 100%)
+  ;; We check if volume is already >= 100% (matches "1xx%") before increasing.
+  (eventbox :onscroll "echo {} | grep -q 'up' && { pactl get-sink-volume @DEFAULT_SINK@ | grep -q '1[0-9][0-9]%' || pactl set-sink-volume @DEFAULT_SINK@ +5%; } || pactl set-sink-volume @DEFAULT_SINK@ -5%"
     (button :class "vol ${audio_json.class}" 
             :onclick "pactl set-sink-mute @DEFAULT_SINK@ toggle"
             :onrightclick "prism-focus-tui wiremix"

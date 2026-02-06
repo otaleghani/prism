@@ -6,11 +6,9 @@
 ## TODO
 - [ ] Refine `defualts/templates`
 - [ ] Refine `defualts/themes`
-- [x] Test `prism-project-new` and `prism-project-create`
 - [ ] Rework scripts by using `gum` and making them more 
 - [ ] When an error occurs, wait for an input instead of closing with with `read -r -p "Press Enter to close..."`
-- [x] Create dotfiles `thunar`
-- [x] Create dotfiles `btop`
+- [ ] Custom autostart script
 
 ## Widgets to create
 - [x] Top bar
@@ -59,3 +57,6 @@
 - [x] Create `prism-development-open` to open a project
 - [x] Create `prism-development-new` to create a project
 - [x] Test eww
+- [x] Test `prism-project-new` and `prism-project-create`
+- [x] Create dotfiles `thunar`
+- [x] Create dotfiles `btop`
