@@ -53,6 +53,7 @@ with pkgs;
   brightnessctl
   playerctl
   thunar # File manager
+  nemo-with-extensions
 
   # Terminal
   ghostty # Emulator
