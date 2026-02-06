@@ -49,30 +49,47 @@
             (label :text {sink.desc} :limit-width 30)))))
     
     ;; --- APPLICATIONS ---
+    ;; FIX: Use Static Slots to preserve keyboard focus
+    ;; Dynamic loops (for) destroy and recreate widgets on update, killing focus.
+    ;; Static slots update their properties but remain in the DOM.
     (label :text "Applications" :class "section-title" :halign "start")
     (scroll :vscroll true :hscroll false :height 250
       (box :orientation "v" :spacing 15
-        (for app in {audio_mixer.apps}
-          (box :class "app-row" :orientation "v" :space-evenly false :spacing 5
-            (box :orientation "h" :space-evenly true
-               (label :text "${app.icon}  ${app.name}" :halign "start" :class "app-name")
-               (label :text "${app.vol}%" :halign "end" :class "app-vol-text"))
-            
-            ;; App Slider with Buttons
-            (box :orientation "h" :space-evenly false :spacing 10
-               (button :class "vol-btn" 
-                       :onclick "prism-audio-mixer set-volume ${app.id} ${app.vol - 5 < 0 ? 0 : app.vol - 5}" 
-                       "")
-               (scale :class "app-slider"
-                      :value {app.vol}
-                      :hexpand true
-                      :min 0 :max 150
-                      :onchange "prism-audio-mixer set-volume ${app.id} {}")
-               (button :class "vol-btn" 
-                       :onclick "prism-audio-mixer set-volume ${app.id} ${app.vol + 5 > 150 ? 150 : app.vol + 5}" 
-                       ""))))))
+        (app_slot :i 0)
+        (app_slot :i 1)
+        (app_slot :i 2)
+        (app_slot :i 3)
+        (app_slot :i 4)
+        (app_slot :i 5)
+      ))
     
     ;; Empty State
     (label :visible {arraylength(audio_mixer.apps) == 0} 
            :class "mixer-empty" 
            :text "No apps playing audio")))
+
+;; --- Widget: Application Slot ---
+(defwidget app_slot [i]
+  (box :class "app-row" 
+       :orientation "v" 
+       :space-evenly false 
+       :spacing 5
+       ;; Only show this slot if an app exists at this index
+       :visible {arraylength(audio_mixer.apps) > i}
+    (box :orientation "h" :space-evenly true
+       (label :text "${audio_mixer.apps[i].icon}  ${audio_mixer.apps[i].name}" :halign "start" :class "app-name")
+       (label :text "${audio_mixer.apps[i].vol}%" :halign "end" :class "app-vol-text"))
+    
+    (box :orientation "h" :space-evenly false :spacing 10
+       (button :class "vol-btn" 
+               ;; Use ?: 0 to handle nulls safely during potential race conditions
+               :onclick "prism-audio-mixer set-volume ${audio_mixer.apps[i].id} ${(audio_mixer.apps[i].vol ?: 0) - 5 < 0 ? 0 : (audio_mixer.apps[i].vol ?: 0) - 5}" 
+               "")
+       (scale :class "app-slider"
+              :value {audio_mixer.apps[i].vol ?: 0}
+              :hexpand true
+              :min 0 :max 150
+              :onchange "prism-audio-mixer set-volume ${audio_mixer.apps[i].id} {}")
+       (button :class "vol-btn" 
+               :onclick "prism-audio-mixer set-volume ${audio_mixer.apps[i].id} ${(audio_mixer.apps[i].vol ?: 0) + 5 > 150 ? 150 : (audio_mixer.apps[i].vol ?: 0) + 5}" 
+               ""))))
