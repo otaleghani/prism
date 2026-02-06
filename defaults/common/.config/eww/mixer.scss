@@ -16,9 +16,6 @@
   font-size: 12px;
   font-weight: bold;
   margin-top: 10px;
-  margin-bottom: 5px;
-  border-bottom: 1px solid rgba($fg, 0.1);
-  // width: 100%;
 }
 
 .mixer-close {
@@ -26,7 +23,38 @@
   background: transparent;
   padding: 5px;
   border-radius: 5px;
-  &:hover { background-color: rgba($urgent, 0.2); }
+  &:hover, &:focus { 
+      background-color: rgba($urgent, 0.2); 
+      outline: none;
+      box-shadow: 0 0 0 2px $urgent;
+  }
+}
+
+// --- MASTER SLIDER ---
+.master-slider trough {
+    min-height: 12px; // Bigger for master
+    border-radius: 12px;
+    background-color: $surface;
+}
+
+.master-slider highlight {
+    border-radius: 12px;
+    background-color: $accent;
+    background-image: linear-gradient(to right, $accent, $success);
+}
+
+.master-slider slider {
+    min-height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    background-color: $fg;
+    margin: -6px 0;
+}
+
+// Muted State
+.master-slider.muted highlight {
+    background-color: $overlay;
+    background-image: none;
 }
 
 // --- SINKS ---
@@ -35,11 +63,14 @@
   color: $fg;
   padding: 8px;
   border-radius: 8px;
+  border: 1px solid transparent;
   transition: all 0.2s;
   
   &:hover, &:focus {
     background-color: rgba($surface, 0.9);
-    border: 1px solid $accent;
+    border-color: $accent;
+    box-shadow: 0 0 10px rgba($accent, 0.2);
+    outline: none;
   }
 }
 
@@ -54,6 +85,7 @@
   background-color: rgba($surface, 0.3);
   padding: 10px;
   border-radius: 12px;
+  border: 1px solid rgba($fg, 0.05);
 }
 
 .app-name {
@@ -62,11 +94,11 @@
 }
 
 .app-vol-text {
-  color: $overlay; // Replaced $subtext0
+  color: $overlay;
   font-size: 12px;
 }
 
-// --- SLIDER ---
+// --- GENERIC SLIDER STYLING & FOCUS ---
 scale trough {
   background-color: $surface;
   border-radius: 10px;
@@ -84,17 +116,20 @@ scale slider {
   min-height: 16px;
   min-width: 16px;
   margin: -5px 0;
-  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  transition: all 0.2s;
 }
 
-// Keyboard Focus for Slider
+// KEYBOARD FOCUS FOR SLIDERS
+// When a slider is focused via Tab, we make the handle glow and grow
 scale:focus slider {
-  background-color: $accent; // Turn accent color when focused
-  box-shadow: 0 0 0 3px rgba($accent, 0.3); // Glow effect
+  background-color: $accent; 
+  box-shadow: 0 0 0 4px rgba($accent, 0.4); 
+  transform: scale(1.2); 
 }
 
 .mixer-empty {
-  color: $overlay; // Replaced $subtext0
+  color: $overlay;
   margin-top: 20px;
   font-style: italic;
 }

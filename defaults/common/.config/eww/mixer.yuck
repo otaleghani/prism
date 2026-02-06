@@ -1,11 +1,11 @@
 ;; Listen to Audio State
-(deflisten audio_mixer :initial "{\"sinks\":[], \"apps\":[]}" "prism-audio-mixer listen")
+(deflisten audio_mixer :initial "{\"master\": {\"vol\": 50, \"muted\": false}, \"sinks\":[], \"apps\":[]}" "prism-audio-mixer listen")
 
 (defwindow mixer_win
   :monitor 0
   :geometry (geometry :x "0%"
                       :y "50px" 
-                      :width "400px"
+                      :width "420px"
                       :anchor "top right")
   :stacking "overlay"
   :windowtype "dialog"
@@ -13,11 +13,21 @@
   (mixer_layout))
 
 (defwidget mixer_layout []
-  (box :class "mixer-container" :orientation "v" :space-evenly false :spacing 15
+  (box :class "mixer-container" :orientation "v" :space-evenly false :spacing 20
     (box :class "mixer-header" :space-evenly true
       (label :text "Audio Mixer" :halign "start" :class "mixer-title")
       (button :class "mixer-close" :onclick "eww close mixer_win" "✕"))
     
+    ;; --- MASTER VOLUME ---
+    (box :class "master-section" :orientation "v" :space-evenly false :spacing 5
+      (box :orientation "h" :space-evenly true
+         (label :text {audio_mixer.master.muted ? "󰝟 Master (Muted)" : " Master"} :halign "start" :class "section-title")
+         (label :text "${audio_mixer.master.vol}%" :halign "end" :class "app-vol-text"))
+      (scale :class "master-slider ${audio_mixer.master.muted ? 'muted' : ''}"
+             :value {audio_mixer.master.vol}
+             :min 0 :max 150
+             :onchange "prism-audio-mixer set-master {}"))
+
     ;; --- OUTPUT DEVICES ---
     (label :text "Outputs" :class "section-title" :halign "start")
     (box :class "sinks-list" :orientation "v" :spacing 5
@@ -31,7 +41,7 @@
     ;; --- APPLICATIONS ---
     (label :text "Applications" :class "section-title" :halign "start")
     (scroll :vscroll true :hscroll false :height 250
-      (box :orientation "v" :spacing 10
+      (box :orientation "v" :spacing 15
         (for app in {audio_mixer.apps}
           (box :class "app-row" :orientation "v" :space-evenly false :spacing 5
             (box :orientation "h" :space-evenly true

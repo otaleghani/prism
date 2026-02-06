@@ -18,6 +18,15 @@ writeShellScriptBin "prism-audio-mixer" ''
   get_state() {
       DEFAULT_SINK=$(pactl get-default-sink)
       
+      # Master Volume & Mute
+      # grep -Po '\d+(?=%)' extracts the number before the % sign
+      MASTER_VOL=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '\d+(?=%)' | head -n 1)
+      if pactl get-sink-mute @DEFAULT_SINK@ | grep -q "yes"; then
+          MASTER_MUTED="true"
+      else
+          MASTER_MUTED="false"
+      fi
+
       # 1. Get Sinks (Outputs)
       SINKS=$(pactl -f json list sinks | jq -c --arg def "$DEFAULT_SINK" '[.[] | {
           id: .index, 
@@ -28,7 +37,6 @@ writeShellScriptBin "prism-audio-mixer" ''
       }]')
 
       # 2. Get Sink Inputs (Apps)
-      # FIX: Use 'elif' for cleaner logic and ' // "" ' to prevent null errors
       APPS=$(pactl -f json list sink-inputs | jq -c '[.[] | {
           id: .index, 
           name: (.properties."application.name" // .properties."media.name" // "Unknown"),
@@ -41,7 +49,8 @@ writeShellScriptBin "prism-audio-mixer" ''
           )
       }]')
 
-      echo "{\"sinks\": $SINKS, \"apps\": $APPS}"
+      # Return combined JSON
+      echo "{\"master\": {\"vol\": $MASTER_VOL, \"muted\": $MASTER_MUTED}, \"sinks\": $SINKS, \"apps\": $APPS}"
   }
 
   case "$CMD" in
@@ -57,6 +66,15 @@ writeShellScriptBin "prism-audio-mixer" ''
       # $2 = id, $3 = volume
       pactl set-sink-input-volume "$2" "$3%"
       ;;
+
+    "set-master")
+      # $2 = volume
+      pactl set-sink-volume @DEFAULT_SINK@ "$2%"
+      ;;
+
+    "toggle-mute")
+       pactl set-sink-mute @DEFAULT_SINK@ toggle
+       ;;
       
     "set-default")
       # $2 = name
