@@ -146,42 +146,6 @@ in
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
-             # 4. Sync Themes (Data)
-             THEME_DEST="$USER_HOME/.local/share/prism/themes"
-             if [ -d "$THEME_SOURCE" ]; then
-                mkdir -p "$USER_HOME/.local/share/prism"
-                chown ${user}:users "$USER_HOME/.local/share/prism"
-                
-                echo "  -> Syncing Themes..."
-                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$THEME_SOURCE" "$THEME_DEST/"
-                
-                # Set Default Theme
-                CURRENT_LINK="$USER_HOME/.local/share/prism/current"
-                DEFAULT_THEME="catppuccin-mocha"
-                
-                if [ ! -e "$CURRENT_LINK" ]; then
-                   if [ -d "$THEME_DEST/$DEFAULT_THEME" ]; then
-                       echo "     -> Setting default theme: $DEFAULT_THEME"
-                       ln -sfn "$THEME_DEST/$DEFAULT_THEME" "$CURRENT_LINK"
-                       chown -h ${user}:users "$CURRENT_LINK"
-                   fi
-                fi
-             fi
-             
-             # 5. Sync Project Templates
-             TEMPLATE_DEST="$USER_HOME/.local/share/prism/templates"
-             if [ -d "$TEMPLATE_SOURCE" ]; then
-                echo "  -> Syncing Project Templates..."
-                mkdir -p "$TEMPLATE_DEST"
-                chown ${user}:users "$TEMPLATE_DEST"
-                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$TEMPLATE_SOURCE" "$TEMPLATE_DEST/"
-             fi
-
-             # 6. Fix Nvim Permissions
-             if [ -d "$USER_HOME/.local/share/nvim" ]; then
-                 chown -R ${user}:users "$USER_HOME/.local/share/nvim"
-                 chmod -R u+rwX "$USER_HOME/.local/share/nvim"
-             fi
 
              # 3. Apply USER OVERRIDES (Enforced)
              # Automatically looks in ../overrides/<username>
@@ -213,6 +177,45 @@ in
                    echo "  -> [INFO] Overrides directory does not exist in the flake source (git add overrides/ ?)"
                  ''
              }
+
+             # 4. Sync Themes (Data)
+             THEME_DEST="$USER_HOME/.local/share/prism/themes"
+             if [ -d "$THEME_SOURCE" ]; then
+                mkdir -p "$USER_HOME/.local/share/prism"
+                chown ${user}:users "$USER_HOME/.local/share/prism"
+                
+                echo "  -> Syncing Themes..."
+                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$THEME_SOURCE" "$THEME_DEST/"
+                
+                # Set Default Theme
+                CURRENT_LINK="$USER_HOME/.local/share/prism/current"
+                DEFAULT_THEME="catppuccin-mocha"
+                
+                if [ ! -e "$CURRENT_LINK" ]; then
+                   if [ -d "$THEME_DEST/$DEFAULT_THEME" ]; then
+                       echo "     -> Setting default theme: $DEFAULT_THEME"
+                       ln -sfn "$THEME_DEST/$DEFAULT_THEME" "$CURRENT_LINK"
+                       chown -h ${user}:users "$CURRENT_LINK"
+                   fi
+                fi
+             else 
+                echo "NO THEMES FOLDER!"
+             fi
+             
+             # 5. Sync Project Templates
+             TEMPLATE_DEST="$USER_HOME/.local/share/prism/templates"
+             if [ -d "$TEMPLATE_SOURCE" ]; then
+                echo "  -> Syncing Project Templates..."
+                mkdir -p "$TEMPLATE_DEST"
+                chown ${user}:users "$TEMPLATE_DEST"
+                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$TEMPLATE_SOURCE" "$TEMPLATE_DEST/"
+             fi
+
+             # 6. Fix Nvim Permissions
+             if [ -d "$USER_HOME/.local/share/nvim" ]; then
+                 chown -R ${user}:users "$USER_HOME/.local/share/nvim"
+                 chmod -R u+rwX "$USER_HOME/.local/share/nvim"
+             fi
              
           fi
         '') cfg
