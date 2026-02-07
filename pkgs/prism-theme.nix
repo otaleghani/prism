@@ -136,8 +136,8 @@ writeShellScriptBin "prism-theme" ''
       # Quickshell usually hot-reloads files, but if not, we restart it.
       # if pgrep quickshell > /dev/null; then
           # Try soft reload if supported, or restart
-          # pkill quickshell
-          # quickshell -p "$HOME/.config/quickshell" >/dev/null 2>&1 & disown
+          pkill quickshell
+          quickshell -p "$HOME/.config/quickshell" >/dev/null 2>&1 & disown
       # fi
   fi
 
