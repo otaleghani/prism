@@ -123,23 +123,23 @@ writeShellScriptBin "prism-theme" ''
   fi
 
   # Reload quickshell
-  # QS_THEME_DIR="$HOME/.config/quickshell/theme"
-  #
-  # if [ -f "$TARGET_THEME/Theme.qml" ]; then
-  #     echo "Updating Quickshell theme..."
-  #     mkdir -p "$QS_THEME_DIR"
-  #
-  #     # Link the active theme's QML to the module location
-  #     ln -sf "$CURRENT_LINK/Theme.qml" "$QS_THEME_DIR/Theme.qml"
-  #
-  #     # Reload Quickshell (if running)
-  #     # Quickshell usually hot-reloads files, but if not, we restart it.
-  #     if pgrep quickshell > /dev/null; then
-  #         # Try soft reload if supported, or restart
-  #         pkill quickshell
-  #         quickshell -p "$HOME/.config/quickshell" >/dev/null 2>&1 & disown
-  #     fi
-  # fi
+  QS_THEME_DIR="$HOME/.config/quickshell/theme"
+
+  if [ -f "$TARGET_THEME/Theme.qml" ]; then
+      echo "Updating Quickshell theme..."
+      mkdir -p "$QS_THEME_DIR"
+
+      # Link the active theme's QML to the module location
+      ln -sf "$CURRENT_LINK/Theme.qml" "$QS_THEME_DIR/Theme.qml"
+
+      # Reload Quickshell (if running)
+      # Quickshell usually hot-reloads files, but if not, we restart it.
+      if pgrep quickshell > /dev/null; then
+          # Try soft reload if supported, or restart
+          # pkill quickshell
+          # quickshell -p "$HOME/.config/quickshell" >/dev/null 2>&1 & disown
+      fi
+  fi
 
 
 
