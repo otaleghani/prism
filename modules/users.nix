@@ -146,7 +146,6 @@ in
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
-
              # 3. Apply USER OVERRIDES (Enforced)
              # Automatically looks in ../overrides/<username>
              ${
@@ -177,7 +176,7 @@ in
                    echo "  -> [INFO] Overrides directory does not exist in the flake source (git add overrides/ ?)"
                  ''
              }
-
+             
              # 4. Sync Themes (Data)
              THEME_DEST="$USER_HOME/.local/share/prism/themes"
              if [ -d "$THEME_SOURCE" ]; then
@@ -198,8 +197,6 @@ in
                        chown -h ${user}:users "$CURRENT_LINK"
                    fi
                 fi
-             else 
-                echo "NO THEMES FOLDER!"
              fi
              
              # 5. Sync Project Templates
@@ -216,7 +213,6 @@ in
                  chown -R ${user}:users "$USER_HOME/.local/share/nvim"
                  chmod -R u+rwX "$USER_HOME/.local/share/nvim"
              fi
-             
           fi
         '') cfg
       )
