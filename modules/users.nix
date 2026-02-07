@@ -146,37 +146,6 @@ in
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
-             # 3. Apply USER OVERRIDES (Enforced)
-             # Automatically looks in ../overrides/<username>
-             ${
-               if hasOverrides then
-                 ''
-                   USER_OVERRIDE="${overridesPath}/${user}"
-
-                   if [ -d "$USER_OVERRIDE" ]; then
-                       echo "  -> Applying User Overrides from repo/overrides/${user}..."
-                       ${rsync} -rav --mkpath --chmod=u+rwX --exclude 'themes' --exclude 'wallpapers' --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
-                       
-                       # Sub-overrides for themes
-                       if [ -d "$USER_OVERRIDE/themes" ]; then
-                           echo "     -> Applying custom themes..."
-                           ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/themes/" "$USER_HOME/.local/share/prism/themes/"
-                       fi
-                       # Sub-overrides for wallpapers
-                       if [ -d "$USER_OVERRIDE/wallpapers" ]; then
-                           echo "     -> Applying custom wallpapers..."
-                           ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/wallpapers/" "$USER_HOME/.local/share/prism/wallpapers/"
-                       fi
-                   else
-                       echo "  -> [INFO] No overrides found for user ${user} in overrides/"
-                   fi
-                 ''
-               else
-                 ''
-                   echo "  -> [INFO] Overrides directory does not exist in the flake source (git add overrides/ ?)"
-                 ''
-             }
-             
              # 4. Sync Themes (Data)
              THEME_DEST="$USER_HOME/.local/share/prism/themes"
              if [ -d "$THEME_SOURCE" ]; then
@@ -213,6 +182,38 @@ in
                  chown -R ${user}:users "$USER_HOME/.local/share/nvim"
                  chmod -R u+rwX "$USER_HOME/.local/share/nvim"
              fi
+
+             # 3. Apply USER OVERRIDES (Enforced)
+             # Automatically looks in ../overrides/<username>
+             ${
+               if hasOverrides then
+                 ''
+                   USER_OVERRIDE="${overridesPath}/${user}"
+
+                   if [ -d "$USER_OVERRIDE" ]; then
+                       echo "  -> Applying User Overrides from repo/overrides/${user}..."
+                       ${rsync} -rav --mkpath --chmod=u+rwX --exclude 'themes' --exclude 'wallpapers' --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
+                       
+                       # Sub-overrides for themes
+                       if [ -d "$USER_OVERRIDE/themes" ]; then
+                           echo "     -> Applying custom themes..."
+                           ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/themes/" "$USER_HOME/.local/share/prism/themes/"
+                       fi
+                       # Sub-overrides for wallpapers
+                       if [ -d "$USER_OVERRIDE/wallpapers" ]; then
+                           echo "     -> Applying custom wallpapers..."
+                           ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/wallpapers/" "$USER_HOME/.local/share/prism/wallpapers/"
+                       fi
+                   else
+                       echo "  -> [INFO] No overrides found for user ${user} in overrides/"
+                   fi
+                 ''
+               else
+                 ''
+                   echo "  -> [INFO] Overrides directory does not exist in the flake source (git add overrides/ ?)"
+                 ''
+             }
+             
           fi
         '') cfg
       )
