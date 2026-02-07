@@ -6,7 +6,7 @@ import ".." // Import root to access Theme
 
 ColumnLayout {
     spacing: 5
-    
+
     // Store workspace data
     property var workspaces: []
 
@@ -15,33 +15,38 @@ ColumnLayout {
         id: proc
         command: ["prism-workspaces"]
         running: true
-        
-        // When script outputs JSON line, parse it
-        onStdout: (data) => {
-            try {
-                workspaces = JSON.parse(data)
-            } catch(e) {
-                console.log("Error parsing workspaces:", e)
+
+        stdout: SplitParser {
+            onRead: data => {
+                try {
+                    workspaces = JSON.parse(data);
+                } catch (e) {
+                    console.log("Error parsing JSON:", e);
+                }
             }
         }
     }
 
     Repeater {
         model: workspaces
-        
+
         Rectangle {
             // Data from the model (the JSON object)
             readonly property var ws: modelData
-            
+
             width: 30
             height: 30
             radius: 8
-            
+
             // Active vs Inactive Color
             color: ws.active ? Theme.accent : Theme.surface
-            
+
             // Animation for color change
-            Behavior on color { ColorAnimation { duration: 200 } }
+            Behavior on color {
+                ColorAnimation {
+                    duration: 200
+                }
+            }
 
             Text {
                 anchors.centerIn: parent
@@ -54,7 +59,7 @@ ColumnLayout {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    var p = Quickshell.process("hyprctl", ["dispatch", "workspace", ws.id])
+                    var p = Quickshell.process("hyprctl", ["dispatch", "workspace", ws.id]);
                 }
                 cursorShape: Qt.PointingHandCursor
             }

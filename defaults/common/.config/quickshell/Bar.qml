@@ -4,6 +4,7 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import "./components"
+import "theme"
 
 PanelWindow {
     anchors {
@@ -25,7 +26,7 @@ PanelWindow {
     Rectangle {
         anchors.fill: parent
         anchors.margins: 5
-        
+
         // Styling from Theme Singleton
         color: Qt.rgba(Theme.background.r, Theme.background.g, Theme.background.b, 0.85)
         border.width: 1
@@ -42,9 +43,11 @@ PanelWindow {
             Workspaces {
                 Layout.alignment: Qt.AlignHCenter
             }
-            
+
             // Spacer ( pushes content apart )
-            Item { Layout.fillHeight: true }
+            Item {
+                Layout.fillHeight: true
+            }
 
             // --- MIDDLE: Clock (Placeholder for now) ---
             Text {
@@ -55,23 +58,26 @@ PanelWindow {
             }
 
             // Spacer
-            Item { Layout.fillHeight: true }
+            Item {
+                Layout.fillHeight: true
+            }
 
             // --- BOTTOM: System Info ---
             // We will add the BottomGroup here later
             Rectangle {
-                width: 40; height: 40
+                width: 40
+                height: 40
                 radius: 20
                 color: Theme.surface
                 Layout.alignment: Qt.AlignHCenter
-                
+
                 Text {
-                   anchors.centerIn: parent
-                   text: "⏻"
-                   color: Theme.urgent
-                   font: Theme.fontFace
+                    anchors.centerIn: parent
+                    text: "⏻"
+                    color: Theme.urgent
+                    font: Theme.fontFace
                 }
-                
+
                 MouseArea {
                     anchors.fill: parent
                     onClicked: sessionProc.running = true
