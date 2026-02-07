@@ -3,6 +3,7 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import ".." // Import root to access Theme
+import "../theme"
 
 ColumnLayout {
     spacing: 5
