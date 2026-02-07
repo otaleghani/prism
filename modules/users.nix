@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -24,9 +25,11 @@ let
     custom = [ ];
   };
 
-  # Paths (Relative to this file)
-  defaultsPath = ../defaults;
-  overridesPath = ../overrides;
+  # Paths
+  # Use inputs.self to reliably get the flake root, avoiding relative path issues
+  flakeRoot = inputs.self;
+  defaultsPath = flakeRoot + /defaults;
+  overridesPath = flakeRoot + /overrides;
 
   # Check if overrides exist in the source tree to avoid errors during interpolation
   hasOverrides = builtins.pathExists overridesPath;
@@ -151,7 +154,7 @@ in
                    USER_OVERRIDE="${overridesPath}/${user}"
 
                    if [ -d "$USER_OVERRIDE" ]; then
-                       echo "  -> Applying User Overrides from overrides/${user}..."
+                       echo "  -> Applying User Overrides from repo/overrides/${user}..."
                        ${rsync} -rav --mkpath --chmod=u+rwX --exclude 'themes' --exclude 'wallpapers' --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
                        
                        # Sub-overrides for themes
