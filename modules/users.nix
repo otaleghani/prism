@@ -26,12 +26,12 @@ let
   };
 
   # Paths
-  # Use inputs.self to reliably get the flake root, avoiding relative path issues
+  # FIX: Use inputs.self to reliably find the flake root
   flakeRoot = inputs.self;
   defaultsPath = flakeRoot + /defaults;
   overridesPath = flakeRoot + /overrides;
 
-  # Check if overrides exist in the source tree to avoid errors during interpolation
+  # Check if overrides exist in the source tree to avoid errors
   hasOverrides = builtins.pathExists overridesPath;
 
   rsync = "${pkgs.rsync}/bin/rsync";
