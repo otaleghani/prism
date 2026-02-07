@@ -28,7 +28,7 @@ let
   defaultsPath = ../defaults;
   overridesPath = ../overrides;
 
-  # Check if overrides exist in the source tree to avoid errors
+  # Check if overrides exist in the source tree to avoid errors during interpolation
   hasOverrides = builtins.pathExists overridesPath;
 
   rsync = "${pkgs.rsync}/bin/rsync";
@@ -131,11 +131,15 @@ in
              # 1. Apply COMMON Defaults (Enforced - Steamroll)
              # Defaults will overwrite local changes to enforce state.
              if [ -d "$COMMON_SOURCE" ]; then
+               echo "  -> Applying Common Defaults..."
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
+             else
+               echo "  -> [INFO] No Common Defaults found."
              fi
 
              # 2. Apply PROFILE Defaults (Enforced - Steamroll)
              if [ "${userCfg.profileType}" != "custom" ] && [ -d "$PROFILE_SOURCE" ]; then
+               echo "  -> Applying Profile Defaults (${userCfg.profileType})..."
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
@@ -147,25 +151,27 @@ in
                    USER_OVERRIDE="${overridesPath}/${user}"
 
                    if [ -d "$USER_OVERRIDE" ]; then
-                       echo "[Prism] Applying user overrides from repo/overrides/${user}..."
+                       echo "  -> Applying User Overrides from overrides/${user}..."
                        ${rsync} -rav --mkpath --chmod=u+rwX --exclude 'themes' --exclude 'wallpapers' --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
                        
                        # Sub-overrides for themes
                        if [ -d "$USER_OVERRIDE/themes" ]; then
-                           echo "[Prism] Applying custom themes from overrides..."
+                           echo "     -> Applying custom themes..."
                            ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/themes/" "$USER_HOME/.local/share/prism/themes/"
                        fi
                        # Sub-overrides for wallpapers
                        if [ -d "$USER_OVERRIDE/wallpapers" ]; then
-                           echo "[Prism] Applying custom wallpapers from overrides..."
+                           echo "     -> Applying custom wallpapers..."
                            ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/wallpapers/" "$USER_HOME/.local/share/prism/wallpapers/"
                        fi
                    else
-                       echo "[Prism] No overrides found for user ${user} (looked in overrides/${user})"
+                       echo "  -> [INFO] No overrides found for user ${user} in overrides/"
                    fi
                  ''
                else
-                 ""
+                 ''
+                   echo "  -> [INFO] Overrides directory does not exist in the flake source (git add overrides/ ?)"
+                 ''
              }
              
              # 4. Sync Themes (Data)
@@ -174,6 +180,7 @@ in
                 mkdir -p "$USER_HOME/.local/share/prism"
                 chown ${user}:users "$USER_HOME/.local/share/prism"
                 
+                echo "  -> Syncing Themes..."
                 ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$THEME_SOURCE" "$THEME_DEST/"
                 
                 # Set Default Theme
@@ -182,6 +189,7 @@ in
                 
                 if [ ! -e "$CURRENT_LINK" ]; then
                    if [ -d "$THEME_DEST/$DEFAULT_THEME" ]; then
+                       echo "     -> Setting default theme: $DEFAULT_THEME"
                        ln -sfn "$THEME_DEST/$DEFAULT_THEME" "$CURRENT_LINK"
                        chown -h ${user}:users "$CURRENT_LINK"
                    fi
@@ -191,6 +199,7 @@ in
              # 5. Sync Project Templates
              TEMPLATE_DEST="$USER_HOME/.local/share/prism/templates"
              if [ -d "$TEMPLATE_SOURCE" ]; then
+                echo "  -> Syncing Project Templates..."
                 mkdir -p "$TEMPLATE_DEST"
                 chown ${user}:users "$TEMPLATE_DEST"
                 ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$TEMPLATE_SOURCE" "$TEMPLATE_DEST/"
