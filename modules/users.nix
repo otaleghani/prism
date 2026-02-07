@@ -25,13 +25,20 @@ let
     custom = [ ];
   };
 
-  # Paths
-  # FIX: Use inputs.self to reliably find the flake root
-  flakeRoot = inputs.self;
-  defaultsPath = flakeRoot + /defaults;
-  overridesPath = flakeRoot + /overrides;
+  # --- PATH RESOLUTION LOGIC ---
+  # 1. User Root (For Overrides)
+  # This is always the flake currently being built (the user's config).
+  userFlakeRoot = inputs.self;
 
-  # Check if overrides exist in the source tree to avoid errors
+  # 2. Prism Root (For Defaults/Themes)
+  # If 'prism' is in inputs, we are a consumer -> Use inputs.prism
+  # If not, we are likely building Prism itself -> Use inputs.self
+  prismFlakeRoot = if inputs ? prism then inputs.prism else inputs.self;
+
+  defaultsPath = prismFlakeRoot + /defaults;
+  overridesPath = userFlakeRoot + /overrides;
+
+  # Check if overrides exist in the source tree
   hasOverrides = builtins.pathExists overridesPath;
 
   rsync = "${pkgs.rsync}/bin/rsync";
@@ -137,7 +144,7 @@ in
                echo "  -> Applying Common Defaults..."
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
              else
-               echo "  -> [INFO] No Common Defaults found."
+               echo "  -> [INFO] No Common Defaults found at $COMMON_SOURCE"
              fi
 
              # 2. Apply PROFILE Defaults (Enforced - Steamroll)
@@ -147,7 +154,7 @@ in
              fi
 
              # 3. Apply USER OVERRIDES (Enforced)
-             # Automatically looks in ../overrides/<username>
+             # Automatically looks in user-flake/overrides/<username>
              ${
                if hasOverrides then
                  ''
