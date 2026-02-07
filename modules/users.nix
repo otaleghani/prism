@@ -10,7 +10,7 @@ let
 
   # 1. Import the package lists
   commonPkgs = import ./packages/common.nix { inherit pkgs; };
-  devPkgs = import ./packages/developer.nix { inherit pkgs; };
+  devPkgs = import ./packages/dev.nix { inherit pkgs; };
   gamerPkgs = import ./packages/gamer.nix { inherit pkgs; };
   pentesterPkgs = import ./packages/pentester.nix { inherit pkgs; };
   creatorPkgs = import ./packages/creator.nix { inherit pkgs; };
@@ -62,7 +62,6 @@ in
             default = "custom";
             description = "The persona profile for this user.";
           };
-          # Removed 'extraFiles' option as it is now handled automatically via /overrides/USERNAME
           packages = lib.mkOption {
             type = lib.types.listOf lib.types.package;
             default = [ ];
@@ -129,29 +128,55 @@ in
              chown -R ${user}:users "$USER_HOME/.config" "$USER_HOME/.local"
              chmod -R u+rwX "$USER_HOME/.config" "$USER_HOME/.local"
 
-             # 1. Apply COMMON Defaults (Enforced)
+             # 1. Apply COMMON Defaults (Enforced - Steamroll)
+             # Defaults will overwrite local changes to enforce state.
              if [ -d "$COMMON_SOURCE" ]; then
-               # If you wish to not enforce this, just add the --ignore-existing flag here
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$COMMON_SOURCE" "$USER_HOME/"
              fi
 
-             # 2. Apply PROFILE Defaults (Not enforced)
+             # 2. Apply PROFILE Defaults (Enforced - Steamroll)
              if [ "${userCfg.profileType}" != "custom" ] && [ -d "$PROFILE_SOURCE" ]; then
-               # If you wish to not enforce this, just add the --ignore-existing flag here
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
-             # 3. Sync System Themes (Defaults)
-             # We run this BEFORE overrides so the user can overwrite specific theme files if they want.
+             # 3. Apply USER OVERRIDES (Enforced)
+             # Automatically looks in ../overrides/<username>
+             ${
+               if hasOverrides then
+                 ''
+                   USER_OVERRIDE="${overridesPath}/${user}"
+
+                   if [ -d "$USER_OVERRIDE" ]; then
+                       echo "[Prism] Applying user overrides from repo/overrides/${user}..."
+                       ${rsync} -rav --mkpath --chmod=u+rwX --exclude 'themes' --exclude 'wallpapers' --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
+                       
+                       # Sub-overrides for themes
+                       if [ -d "$USER_OVERRIDE/themes" ]; then
+                           echo "[Prism] Applying custom themes from overrides..."
+                           ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/themes/" "$USER_HOME/.local/share/prism/themes/"
+                       fi
+                       # Sub-overrides for wallpapers
+                       if [ -d "$USER_OVERRIDE/wallpapers" ]; then
+                           echo "[Prism] Applying custom wallpapers from overrides..."
+                           ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_OVERRIDE/wallpapers/" "$USER_HOME/.local/share/prism/wallpapers/"
+                       fi
+                   else
+                       echo "[Prism] No overrides found for user ${user} (looked in overrides/${user})"
+                   fi
+                 ''
+               else
+                 ""
+             }
+             
+             # 4. Sync Themes (Data)
              THEME_DEST="$USER_HOME/.local/share/prism/themes"
              if [ -d "$THEME_SOURCE" ]; then
                 mkdir -p "$USER_HOME/.local/share/prism"
                 chown ${user}:users "$USER_HOME/.local/share/prism"
                 
-                # Copy defaults
                 ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$THEME_SOURCE" "$THEME_DEST/"
                 
-                # Set Default Theme Symlink
+                # Set Default Theme
                 CURRENT_LINK="$USER_HOME/.local/share/prism/current"
                 DEFAULT_THEME="catppuccin-mocha"
                 
@@ -162,47 +187,10 @@ in
                    fi
                 fi
              fi
-
-             # 4. Apply USER OVERRIDES (Enforced)
-             # Automatically looks in ../overrides/<username>
-             ${
-               if hasOverrides then
-                 ''
-                   USER_OVERRIDE="${overridesPath}/${user}"
-
-                   # A. Standard Dotfiles Override
-                   if [ -d "$USER_OVERRIDE" ]; then
-                       echo "[Prism] Applying user overrides from repo/overrides/${user}..."
-                       # We exclude 'themes' and 'wallpapers' from the root sync to treat them specially below
-                       ${rsync} -rav --mkpath --chmod=u+rwX --exclude 'themes' --exclude 'wallpapers' --chown=${user}:users "$USER_OVERRIDE/" "$USER_HOME/"
-                   fi
-
-                   # B. Custom Themes Override (overrides/<user>/themes)
-                   # Allows easy adding/patching of themes without the deep folder structure
-                   USER_THEME_OVERRIDE="$USER_OVERRIDE/themes"
-                   if [ -d "$USER_THEME_OVERRIDE" ]; then
-                       echo "[Prism] Applying custom user themes..."
-                       ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_THEME_OVERRIDE/" "$THEME_DEST/"
-                   fi
-
-                   # C. Custom Wallpapers Override (overrides/<user>/wallpapers)
-                   # Syncs to a dedicated wallpapers folder
-                   USER_WALL_OVERRIDE="$USER_OVERRIDE/wallpapers"
-                   WALL_DEST="$USER_HOME/.local/share/prism/wallpapers"
-                   if [ -d "$USER_WALL_OVERRIDE" ]; then
-                       echo "[Prism] Applying custom user wallpapers..."
-                       ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$USER_WALL_OVERRIDE/" "$WALL_DEST/"
-                   fi
-                 ''
-               else
-                 ""
-             }
-
+             
              # 5. Sync Project Templates
-             # Copies defaults/templates to ~/.local/share/prism/templates
              TEMPLATE_DEST="$USER_HOME/.local/share/prism/templates"
              if [ -d "$TEMPLATE_SOURCE" ]; then
-                echo "[Prism] Syncing project templates..."
                 mkdir -p "$TEMPLATE_DEST"
                 chown ${user}:users "$TEMPLATE_DEST"
                 ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$TEMPLATE_SOURCE" "$TEMPLATE_DEST/"
