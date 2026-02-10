@@ -53,7 +53,7 @@ in
         nvidiaSettings = true;
 
         # Select the stable driver version by default
-        package = config.boot.kernelPackages.nvidiaPackages.stable;
+        package = config.boot.kernelPackages.nvidiaPackages.beta;
       };
     })
 
