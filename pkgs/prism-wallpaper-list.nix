@@ -40,5 +40,5 @@ writeShellScriptBin "prism-wallpaper-list" ''
   #       name: (split("/") | last)
   #     })
   #   | [ . as $list | range(0; length; 3) as $i | $list[$i:$i+3] ]
-  '
+  # '
 ''
