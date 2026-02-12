@@ -42,7 +42,7 @@ writeShellScriptBin "prism-wall" ''
   fi
 
   case "$cmd" in
-    "next"|"random"|*)
+    "next"|"random")
       # Pick random from combined list
       # sort -R shuffles the lines
       IMAGE=$(get_wallpapers | sort -R | head -n 1)
@@ -56,6 +56,10 @@ writeShellScriptBin "prism-wall" ''
       # Interactive fzf selection
       # We display the full path so you know if it's a theme or custom wallpaper
       IMAGE=$(get_wallpapers | fzf --prompt="Wallpaper> " --preview "echo {}" --layout=reverse --border --height=40%)
+      ;;
+    *) 
+      echo "Usage: prism-wall [next|random|select|set <path>]"
+      exit 1
       ;;
   esac
 
