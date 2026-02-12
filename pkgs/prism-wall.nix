@@ -62,10 +62,9 @@ writeShellScriptBin "prism-wall" ''
   if [ -n "$IMAGE" ]; then
     echo "[Prism] Setting wallpaper: $IMAGE"
     swww img "$IMAGE" \
-      --transition-type grow \
-      --transition-pos 0.5,0.5 \
+      --transition-type simple \
       --transition-fps 60 \
-      --transition-step 90 \
+      --transition-step 200 \
       > /dev/null 2>&1 &
   else
     echo "No wallpapers found in:"
