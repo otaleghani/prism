@@ -47,6 +47,10 @@ writeShellScriptBin "prism-wall" ''
       # sort -R shuffles the lines
       IMAGE=$(get_wallpapers | sort -R | head -n 1)
       ;;
+
+      "set")
+      IMAGE="$2"
+      ;;
       
     "select")
       # Interactive fzf selection
