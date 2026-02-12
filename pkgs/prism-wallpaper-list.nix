@@ -25,12 +25,20 @@ writeShellScriptBin "prism-wallpaper-list" ''
   # 1. Convert list to JSON objects {path, name}
   # 2. Chunk into sub-arrays of 3 for the grid layout
   echo "$FILES" | jq -R -s -c '
-    split("\n") 
-    | map(select(length > 0)) 
-    | map({
-        path: ., 
-        name: (split("/") | last)
-      })
-    | [ . as $list | range(0; length; 3) as $i | $list[$i:$i+3] ]
+  split("\n") 
+  | map(select(length > 0)) 
+  | map({
+      path: ., 
+      name: (split("/") | last)
+    })
+  '
+  # echo "$FILES" | jq -R -s -c '
+  #   split("\n") 
+  #   | map(select(length > 0)) 
+  #   | map({
+  #       path: ., 
+  #       name: (split("/") | last)
+  #     })
+  #   | [ . as $list | range(0; length; 3) as $i | $list[$i:$i+3] ]
   '
 ''
