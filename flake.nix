@@ -82,6 +82,7 @@
           prism-brightness = pkgs.callPackage ./pkgs/prism-brightness.nix { };
           prism-wallpaper-list = pkgs.callPackage ./pkgs/prism-wallpaper-list.nix { };
           prism-themes-list = pkgs.callPackage ./pkgs/prism-themes-list.nix { };
+          prism-system-status = pkgs.callPackage ./pkgs/prism-system-status.nix { };
         }
       );
 
@@ -164,6 +165,7 @@
                 brightness = self.packages.${prev.system}.prism-brightness;
                 wallpaper-list = self.packages.${prev.system}.prism-wallpaper-list;
                 themes-list = self.packages.${prev.system}.prism-themes-list;
+                system-status = self.packages.${prev.system}.prism-system-status;
               };
               quickshell = quickshell.packages.${prev.system}.default;
             })
