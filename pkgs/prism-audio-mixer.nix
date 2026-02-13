@@ -13,13 +13,16 @@ writeShellScriptBin "prism-audio-mixer" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
   CMD="$1"
+  TRIGGER_FILE="/tmp/prism_audio_trigger"
 
-  # Helper to fetch state
+  # --- 1. The Heavy Lifting Function ---
   get_state() {
+      # Optimization: We fetch everything we need with fewer calls if possible,
+      # but for now, the logic is fine as long as we don't spam it.
+      
       DEFAULT_SINK=$(pactl get-default-sink)
       
       # Master Volume & Mute
-      # grep -Po '\d+(?=%)' extracts the number before the % sign
       MASTER_VOL=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '\d+(?=%)' | head -n 1)
       if pactl get-sink-mute @DEFAULT_SINK@ | grep -q "yes"; then
           MASTER_MUTED="true"
@@ -27,7 +30,7 @@ writeShellScriptBin "prism-audio-mixer" ''
           MASTER_MUTED="false"
       fi
 
-      # 1. Get Sinks (Outputs)
+      # Sinks
       SINKS=$(pactl -f json list sinks | jq -c --arg def "$DEFAULT_SINK" '[.[] | {
           id: .index, 
           name: .name,
@@ -36,7 +39,7 @@ writeShellScriptBin "prism-audio-mixer" ''
           is_default: (.name == $def)
       }]')
 
-      # 2. Get Sink Inputs (Apps)
+      # Apps
       APPS=$(pactl -f json list sink-inputs | jq -c '[.[] | {
           id: .index, 
           name: (.properties."application.name" // .properties."media.name" // "Unknown"),
@@ -49,26 +52,52 @@ writeShellScriptBin "prism-audio-mixer" ''
           )
       }]')
 
-      # Return combined JSON
       echo "{\"master\": {\"vol\": $MASTER_VOL, \"muted\": $MASTER_MUTED}, \"sinks\": $SINKS, \"apps\": $APPS}"
   }
 
   case "$CMD" in
     "listen")
+      # --- THE FIX ---
+      
+      # 1. Start a background listener.
+      # It pipes events to the trigger file instantly, never blocking the server.
+      rm -f "$TRIGGER_FILE"
+      (
+        pactl subscribe \
+        | grep --line-buffered -E "sink|sink-input|server" \
+        > "$TRIGGER_FILE"
+      ) &
+      LISTENER_PID=$!
+
+      # Ensure we kill the listener when this script exits
+      trap "kill $LISTENER_PID 2>/dev/null; rm -f $TRIGGER_FILE" EXIT
+
+      # 2. Run the Initial State
       get_state
-      # Subscribe to changes (new apps, volume changes)
-      pactl subscribe | grep --line-buffered -E "sink|sink-input" | while read -r _; do
-          get_state
+
+      # 3. Main Loop (The "Updater")
+      # Check for changes every 0.1s. 
+      # This effectively limits updates to max 10 per second, saving your CPU/Audio Server.
+      while true; do
+        if [ -s "$TRIGGER_FILE" ]; then
+            # File has content -> Events happened!
+            
+            # Clear the file immediately
+            : > "$TRIGGER_FILE"
+            
+            # Run the update
+            get_state
+        fi
+        # Wait a tiny bit before checking again
+        sleep 0.1
       done
       ;;
       
     "set-volume")
-      # $2 = id, $3 = volume
       pactl set-sink-input-volume "$2" "$3%"
       ;;
 
     "set-master")
-      # $2 = volume
       pactl set-sink-volume @DEFAULT_SINK@ "$2%"
       ;;
 
@@ -77,9 +106,7 @@ writeShellScriptBin "prism-audio-mixer" ''
        ;;
       
     "set-default")
-      # $2 = name
       pactl set-default-sink "$2"
-      # Move all current inputs to the new sink
       pactl list short sink-inputs | cut -f1 | while read -r id; do
           pactl move-sink-input "$id" "$2"
       done
