@@ -51,5 +51,7 @@ writeShellScriptBin "prism-theme-list" ''
   JSON_ARRAY="[$(IFS=,; echo "''${THEMES[*]}")]"
 
   # Chunk into rows of 3 using jq
-  echo "$JSON_ARRAY" | jq -c '[ . as $list | range(0; length; 3) as $i | $list[$i:$i+3] ]'
+  # echo "$JSON_ARRAY" | jq -c '[ . as $list | range(0; length; 3) as $i | $list[$i:$i+3] ]'
+  # Just echo the json
+  echo "$JSON_ARRAY"
 ''
