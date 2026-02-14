@@ -32,6 +32,7 @@ with pkgs;
   yazi # Terminal file manager
   findutils # find
   coreutils # sort, head, etc.
+  go
 
   # Window
   waybar
