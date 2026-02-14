@@ -8,6 +8,9 @@ bindkey "^e" autosuggest-execute
 bindkey "^c" autosuggest-clear
 bindkey "^w" autosuggest-fetch
 
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
 # --- Prism Theme Integration ---
 if [ -f "$HOME/.local/share/prism/current/fzf.sh" ]; then
     source "$HOME/.local/share/prism/current/fzf.sh"
