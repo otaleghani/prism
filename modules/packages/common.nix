@@ -117,4 +117,5 @@ with pkgs;
   prism.wallpaper-list
   prism.themes-list
   prism.system-status
+  prism.system-monitor
 ]
