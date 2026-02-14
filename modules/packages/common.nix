@@ -75,6 +75,9 @@ with pkgs;
   # Browser
   chromium
 
+  # Programs
+  obsidian
+
   # Prism
   # prism.portal
   prism.sync
