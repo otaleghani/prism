@@ -18,7 +18,8 @@ writeShellScriptBin "prism-system-monitor" ''
   PREV_IDLE=0
 
   while true; do
-      # --- 1. CPU USAGE (Inline to keep state) ---
+      # --- 1. CPU USAGE ---
+      # Read /proc/stat
       read -r cpu a b c idle rest < /proc/stat
       TOTAL=$((a+b+c+idle))
       
@@ -38,9 +39,9 @@ writeShellScriptBin "prism-system-monitor" ''
       PREV_IDLE=$idle
 
       # --- 2. CPU TEMP ---
-      # Tries to find the highest core temp. Fallback to 0.
+      # FIX: We use ''${VAR:-0} so Nix ignores it and passes it to Bash
       CPU_TEMP=$(sensors -j 2>/dev/null | jq 'max_by(.[] | objects | to_entries[] | select(.key | test("temp[0-9]+_input")) | .value) | .[] | objects | to_entries[] | select(.key | test("temp[0-9]+_input")) | .value' 2>/dev/null | cut -d. -f1)
-      CPU_TEMP=${CPU_TEMP: -0}
+      CPU_TEMP=''${CPU_TEMP:-0}
 
       # --- 3. RAM USAGE ---
       RAM_USAGE=$(free | awk '/Mem/{printf("%.0f"), $3/$2*100}')
@@ -55,13 +56,16 @@ writeShellScriptBin "prism-system-monitor" ''
           # AMD Logic
           GPU_USAGE=$(cat /sys/class/drm/card0/device/gpu_busy_percent)
           # Try to grab first temp found
-          GPU_TEMP=$(sensors -j 2>/dev/null | jq '.[].edge.temp1_input' 2>/dev/null | head -n1 | cut -d. -f1)
-          GPU_JSON="{\"usage\": ${GPU_USAGE: -0}, \"temp\": ${GPU_TEMP: -0}}"
+          GPU_TEMP_RAW=$(sensors -j 2>/dev/null | jq '.[].edge.temp1_input' 2>/dev/null | head -n1 | cut -d. -f1)
+          
+          # FIX: Escape the Bash expansion here too
+          GPU_JSON="{\"usage\": ''${GPU_USAGE:-0}, \"temp\": ''${GPU_TEMP_RAW:-0}}"
       else
           GPU_JSON="{\"usage\": 0, \"temp\": 0}"
       fi
 
       # Output JSON
+      # Note: $VAR is safe in Nix, but ''${VAR} is safer if you ever use braces.
       echo "{\"cpu\": {\"usage\": $CPU_USAGE, \"temp\": $CPU_TEMP}, \"ram\": $RAM_USAGE, \"disk\": $DISK_USAGE, \"gpu\": $GPU_JSON}"
       
       sleep 2
