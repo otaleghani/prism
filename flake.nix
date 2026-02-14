@@ -84,6 +84,7 @@
           prism-themes-list = pkgs.callPackage ./pkgs/prism-themes-list.nix { };
           prism-system-status = pkgs.callPackage ./pkgs/prism-system-status.nix { };
           prism-system-monitor = pkgs.callPackage ./pkgs/prism-system-monitor.nix { };
+          prism-volume = pkgs.callPackage ./pkgs/prism-volume.nix { };
         }
       );
 
@@ -168,6 +169,7 @@
                 themes-list = self.packages.${prev.system}.prism-themes-list;
                 system-status = self.packages.${prev.system}.prism-system-status;
                 system-monitor = self.packages.${prev.system}.prism-system-monitor;
+                volume = self.packages.${prev.system}.prism-volume;
               };
               quickshell = quickshell.packages.${prev.system}.default;
             })

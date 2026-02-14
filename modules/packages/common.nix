@@ -118,4 +118,5 @@ with pkgs;
   prism.themes-list
   prism.system-status
   prism.system-monitor
+  prism.volume
 ]
