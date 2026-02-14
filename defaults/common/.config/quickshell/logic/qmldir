@@ -1,0 +1,6 @@
+singleton BarLogic BarLogic.qml
+singleton ClockLogic ClockLogic.qml
+singleton NotificationsLogic NotificationsLogic.qml
+singleton WallpaperLogic WallpaperLogic.qml
+singleton ThemesLogic ThemesLogic.qml
+CalendarLogic CalendarLogic.qml

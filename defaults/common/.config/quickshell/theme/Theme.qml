@@ -1,0 +1,1 @@
+/home/oliviero/.local/share/prism/current/Theme.qml
