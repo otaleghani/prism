@@ -9,10 +9,10 @@ writeShellScriptBin "prism-volume" ''
       echo "$(pamixer --get-volume) $(pamixer --get-mute)"
       ;;
     "up")
-      pamixer -i 5
+      pamixer -i 1
       ;;
     "down")
-      pamixer -d 5
+      pamixer -d 1
       ;;
     "toggle")
       pamixer -t
