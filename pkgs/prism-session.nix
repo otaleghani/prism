@@ -1,9 +1,5 @@
 {
   writeShellScriptBin,
-  # eww,
-  # rofi,
-  # systemd,
-  # procps, # for pkill
 }:
 
 writeShellScriptBin "prism-session" ''

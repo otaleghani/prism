@@ -1,8 +1,5 @@
 { writeShellScriptBin }:
 
-# No dependencies needed here as it relies on 'prism-focus' and 'prism-webapp'
-# being installed in the system/user profile along with this script.
-
 writeShellScriptBin "prism-focus-webapp" ''
   # Usage: prism-focus-webapp <window-pattern> <url>
   # 

@@ -15,14 +15,9 @@ writeShellScriptBin "prism-audio-mixer" ''
   CMD="$1"
   TRIGGER_FILE="/tmp/prism_audio_trigger"
 
-  # --- 1. The Heavy Lifting Function ---
   get_state() {
-      # Optimization: We fetch everything we need with fewer calls if possible,
-      # but for now, the logic is fine as long as we don't spam it.
-      
       DEFAULT_SINK=$(pactl get-default-sink)
       
-      # Master Volume & Mute
       MASTER_VOL=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '\d+(?=%)' | head -n 1)
       if pactl get-sink-mute @DEFAULT_SINK@ | grep -q "yes"; then
           MASTER_MUTED="true"
@@ -57,10 +52,6 @@ writeShellScriptBin "prism-audio-mixer" ''
 
   case "$CMD" in
     "listen")
-      # --- THE FIX ---
-      
-      # 1. Start a background listener.
-      # It pipes events to the trigger file instantly, never blocking the server.
       rm -f "$TRIGGER_FILE"
       (
         pactl subscribe \
@@ -72,10 +63,10 @@ writeShellScriptBin "prism-audio-mixer" ''
       # Ensure we kill the listener when this script exits
       trap "kill $LISTENER_PID 2>/dev/null; rm -f $TRIGGER_FILE" EXIT
 
-      # 2. Run the Initial State
+      # Run the Initial State
       get_state
 
-      # 3. Main Loop (The "Updater")
+      # Main Loop (The "Updater")
       # Check for changes every 0.1s. 
       # This effectively limits updates to max 10 per second, saving your CPU/Audio Server.
       while true; do

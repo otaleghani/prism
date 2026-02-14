@@ -1,8 +1,5 @@
 { writeShellScriptBin }:
 
-# This script acts as a central launcher for AI services.
-# It relies on 'prism-focus-webapp' being installed in the system/user path.
-
 writeShellScriptBin "prism-ai" ''
   # Usage: prism-ai <service>
   # Supported: chatgpt, claude, gemini, deepseek, perplexity

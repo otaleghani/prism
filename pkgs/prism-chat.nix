@@ -1,8 +1,5 @@
 { writeShellScriptBin }:
 
-# This script acts as a central launcher for chat services.
-# It relies on 'prism-focus-webapp' being installed in the system/user path.
-
 writeShellScriptBin "prism-chat" ''
   # Usage: prism-chat <service>
   # Supported: whatsapp, telegram, discord, slack, messenger

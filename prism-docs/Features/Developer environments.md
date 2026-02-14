@@ -1,0 +1,1 @@
+The **Prism Project Suite** provides a high-level workflow for developers to manage their development environments. It leverages Nix Flakes to ensure that project-specific dependencies are handled cleanly and reproducibly.

@@ -1,5 +1,3 @@
-# prism-active-window returns the name of the current active window in hyprland
-
 { pkgs, writeShellScriptBin }:
 let
   deps = [

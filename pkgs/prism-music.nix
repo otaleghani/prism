@@ -1,8 +1,5 @@
 { writeShellScriptBin }:
 
-# This script acts as a central launcher for music services.
-# It relies on 'prism-focus-webapp' being installed in the system/user path.
-
 writeShellScriptBin "prism-music" ''
   # Usage: prism-music <service>
   # Supported: spotify, youtube-music, apple-music, soundcloud, deezer
