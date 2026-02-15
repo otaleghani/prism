@@ -6,28 +6,38 @@ let
     pkgs.cliphist
     pkgs.wl-clipboard
     pkgs.libnotify
+    pkgs.coreutils
   ];
 in
 writeShellScriptBin "prism-clipboard" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  # Check if arguments passed (e.g. --wipe)
+  # Management logic
+  # Allows for total history erasure via command line flag
   if [ "$1" == "--wipe" ]; then
-      cliphist wipe
-      notify-send "Clipboard" "History cleared" -i edit-clear
+      cliphist wipe || {
+          notify-send "Prism Clipboard" "Failed to clear history." -u critical
+          exit 1
+      }
+      notify-send "Prism Clipboard" "History cleared successfully." -i edit-clear
       exit 0
   fi
 
-  # Show History
-  # cliphist list: Shows history
-  # rofi: Selection menu
-  # cliphist decode: Turns the selection back into the actual text/image
-  # wl-copy: Puts it back into your active clipboard
-
+  # Selection interface
+  # Retrieves history list and presents it via rofi
   SELECTED=$(cliphist list | rofi -dmenu -p "Clipboard" -display-columns 2)
 
+  # Processing logic
+  # Decodes the selected item and pushes it to the system clipboard
   if [ -n "$SELECTED" ]; then
-      echo "$SELECTED" | cliphist decode | wl-copy
-      notify-send "Clipboard" "Copied to clipboard" -i edit-copy
+      echo "$SELECTED" | cliphist decode | wl-copy || {
+          notify-send "Prism Clipboard" "Failed to decode selection." -u critical
+          exit 1
+      }
+      
+      # Feedback loop
+      # Extract a snippet of the text for the notification
+      SNIPPET=$(echo "$SELECTED" | cut -c 1-30)
+      notify-send "Prism Clipboard" "Copied: $SNIPPET..." -i edit-copy
   fi
 ''

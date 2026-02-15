@@ -1,37 +1,50 @@
-{ writeShellScriptBin }:
+{ pkgs, writeShellScriptBin }:
 
+let
+  deps = [
+    pkgs.libnotify
+    pkgs.coreutils
+  ];
+in
 writeShellScriptBin "prism-chat" ''
-  # Usage: prism-chat <service>
-  # Supported: whatsapp, telegram, discord, slack, messenger
+  export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
+  # Input validation
   SERVICE="$1"
 
   if [ -z "$SERVICE" ]; then
-    echo "Usage: prism-chat <service>"
-    echo "Supported services: whatsapp, telegram, discord, slack, messenger"
+    notify-send "Prism Chat" "Usage: prism-chat <service>\n(whatsapp, telegram, discord, slack, messenger)" -u low
     exit 1
   fi
 
+  # Service mapping
   case "$SERVICE" in
     "whatsapp")
-      exec prism-focus-webapp "WhatsApp" "https://web.whatsapp.com"
+      NAME="WhatsApp" ; URL="https://web.whatsapp.com"
       ;;
     "telegram")
-      exec prism-focus-webapp "Telegram" "https://web.telegram.org/k/"
+      NAME="Telegram" ; URL="https://web.telegram.org/k/"
       ;;
     "discord")
-      exec prism-focus-webapp "Discord" "https://discord.com/app"
+      NAME="Discord" ; URL="https://discord.com/app"
       ;;
     "slack")
-      exec prism-focus-webapp "Slack" "https://app.slack.com/client"
+      NAME="Slack" ; URL="https://app.slack.com/client"
       ;;
     "messenger")
-      exec prism-focus-webapp "Messenger" "https://www.messenger.com"
+      NAME="Messenger" ; URL="https://www.messenger.com"
       ;;
     *)
-      echo "Error: Unknown service '$SERVICE'"
-      echo "Supported: whatsapp, telegram, discord, slack, messenger"
+      # Notify user of invalid service
+      notify-send "Prism Chat" "Error: '$SERVICE' is not a recognized chat service." -u critical
       exit 1
       ;;
   esac
+
+  # Focus execution
+  # Switches to the existing workspace or launches a new instance
+  prism-focus-webapp "$NAME" "$URL" || {
+    notify-send "Prism Chat" "Failed to launch $NAME. Ensure the web engine is responsive." -u critical
+    exit 1
+  }
 ''

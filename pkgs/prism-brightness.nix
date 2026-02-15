@@ -5,6 +5,7 @@ let
     pkgs.brightnessctl
     pkgs.jq
     pkgs.coreutils
+    pkgs.libnotify
   ];
 in
 writeShellScriptBin "prism-brightness" ''
@@ -12,19 +13,21 @@ writeShellScriptBin "prism-brightness" ''
 
   CMD="$1"
 
+  # Status generation
+  # Queries hardware backlight and formats percentage and icons for UI
   get_status() {
-    # brightnessctl -m output: name,class,current,max,percent%
-    # We filter for class 'backlight' to ignore leds/kbd
+    # Filters for backlight class to avoid interference with keyboard leds
     DATA=$(brightnessctl -m -c backlight | head -n 1)
     
     if [ -z "$DATA" ]; then
-        # Fallback for desktops (always 100%)
+        # Fallback for desktops or systems without controllable backlights
         echo '{"percent": 100, "icon": "󰃠"}'
         return
     fi
     
     PERC=$(echo "$DATA" | cut -d',' -f4 | tr -d '%')
     
+    # Icon logic based on intensity levels
     if [ "$PERC" -ge 70 ]; then ICON="󰃠";
     elif [ "$PERC" -ge 30 ]; then ICON="󰃟";
     else ICON="󰃞"; fi
@@ -34,7 +37,8 @@ writeShellScriptBin "prism-brightness" ''
 
   case "$CMD" in
     "listen")
-      # Polling loop
+      # Data stream
+      # Provides continuous updates for the UI dashboard
       while true; do
         get_status
         sleep 0.5
@@ -42,11 +46,23 @@ writeShellScriptBin "prism-brightness" ''
       ;;
       
     "set")
-      # $2 can be "5%+", "5%-", or just "50" (from slider)
+      # Hardware control
+      # Accepts relative (5%+) or absolute (50) values
       VAL="$2"
-      # If raw number from slider, append %
+      
       if [[ "$VAL" =~ ^[0-9]+$ ]]; then VAL="$VAL%"; fi
-      brightnessctl set "$VAL" -q
+
+      # Execution with error handling
+      brightnessctl set "$VAL" -q || {
+        notify-send "Prism Brightness" "Failed to adjust display intensity. Check hardware permissions." -u critical
+        exit 1
+      }
+      ;;
+
+    *)
+      # Usage help
+      echo "Usage: prism-brightness [listen|set <value>]"
+      exit 1
       ;;
   esac
 ''

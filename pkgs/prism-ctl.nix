@@ -47,7 +47,4 @@ writeShellScriptBin "prism-ctl" ''
       exit 1
       ;;
   esac
-
-  # Optional: Log the event for debugging
-  # echo "[Prism] Toggled drawer: $TARGET"
 ''
