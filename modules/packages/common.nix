@@ -125,5 +125,5 @@ with pkgs;
   prism.install-webapp
   prism.uninstall-webapp
   prism.font
-  prism.drawer
+  prism.ctl
 ]
