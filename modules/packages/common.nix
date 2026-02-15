@@ -123,4 +123,6 @@ with pkgs;
   prism.system-status
   prism.system-monitor
   prism.volume
+  prism.install-webapp
+  prism.uninstall-webapp
 ]

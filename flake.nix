@@ -85,6 +85,8 @@
           prism-system-status = pkgs.callPackage ./pkgs/prism-system-status.nix { };
           prism-system-monitor = pkgs.callPackage ./pkgs/prism-system-monitor.nix { };
           prism-volume = pkgs.callPackage ./pkgs/prism-volume.nix { };
+          prism-install-webapp = pkgs.callPackage ./pkgs/prism-install-webapp.nix { };
+          prism-uninstall-webapp = pkgs.callPackage ./pkgs/prism-uninstall-webapp.nix { };
         }
       );
 
@@ -170,6 +172,8 @@
                 system-status = self.packages.${prev.system}.prism-system-status;
                 system-monitor = self.packages.${prev.system}.prism-system-monitor;
                 volume = self.packages.${prev.system}.prism-volume;
+                install-webapp = self.packages.${prev.system}.prism-install-webapp;
+                uninstall-webapp = self.packages.${prev.system}.prism-uninstall-webapp;
               };
               quickshell = quickshell.packages.${prev.system}.default;
             })
