@@ -5,7 +5,7 @@ let
     pkgs.hyprland
     pkgs.coreutils
     pkgs.libnotify
-    pkgs.rofi
+    pkgs.gum
     pkgs.neovim
   ];
 in
@@ -15,52 +15,57 @@ writeShellScriptBin "prism-monitor" ''
   CONFIG_FILE="$HOME/.config/hypr/monitors.conf"
 
   # Terminal auto-launch
-  # If launched from a keybind, re-run inside the Prism TUI wrapper
   if [ ! -t 0 ]; then
     if command -v prism-tui >/dev/null; then
         exec prism-tui "$0" "$@"
     else
-        notify-send "Prism Monitor" "Error: prism-tui not found." -u critical
+        notify-send "Prism Monitor" "Error: prism-tui not found. Ensure it is in your PATH." -u critical
         exit 1
     fi
   fi
+
+  # Header display
+  clear
+  gum style --border double --margin "1 2" --padding "1 2" --foreground 4 "Prism Monitor Manager"
 
   # Ensure config exists
   if [ ! -f "$CONFIG_FILE" ]; then
     mkdir -p "$(dirname "$CONFIG_FILE")"
     echo "# Prism Monitor Configuration" > "$CONFIG_FILE"
-    echo "# monitor=name,resolution,position,scale" >> "$CONFIG_FILE"
     echo "monitor=,preferred,auto,1" >> "$CONFIG_FILE"
+    echo "Default configuration file created."
   fi
 
   # Dynamic editor selection
-  # Uses the inherited $EDITOR variable from your Hyprland env setup
-  # Defaults to nvim if $EDITOR is unset.
   EDITOR_CMD="''${EDITOR:-nvim}"
-
-  clear
-  echo "[Prism] Opening Monitor Layout with $EDITOR_CMD..."
+  echo "Opening monitor layout with $EDITOR_CMD..."
   $EDITOR_CMD "$CONFIG_FILE"
 
   # Apply changes immediately
+  echo "Applying changes to compositor..."
   hyprctl reload
 
   # Persistence logic
-  SAVE_ACTION=$(echo -e "Yes\nNo" | rofi -dmenu -p "Persist changes to Flake?")
-
-  if [ "$SAVE_ACTION" == "Yes" ]; then
-      echo "[Prism] Saving to overrides..."
-      # Run prism-save then prism-sync as requested
+  echo ""
+  gum style --foreground 4 "Should these changes be made permanent?"
+  if gum confirm "Persist changes to Flake overrides?"; then
+      echo "Saving to overrides..."
+      # Attempting to save and sync
       if prism-save "$CONFIG_FILE" && prism-sync; then
-          notify-send "Prism Monitor" "Monitor config changed and saved to Flake." -i display
+          notify-send "Prism Monitor" "Monitor configuration changed and saved to Flake successfully." -i display
       else
-          notify-send "Prism Monitor" "Failed to persist changes." -u critical
+          echo "Error: Failed to save or sync changes."
+          notify-send "Prism Monitor" "Failed to persist changes. Check logs for permission errors." -u critical
+          
+          # Hold execution so the user can read the error
+          echo "Press any key to exit..."
+          read -n 1 -s
+          exit 1
       fi
   else
-
-      # Custom notification for the "No" branch
-      notify-send "Prism Monitor" "Updated but not saved, this will be overridden next startup. If you wish to make it permanent, use prism-save." -u normal -i display
+      notify-send "Prism Monitor" "Updated but not saved. These changes will be lost on next startup. Use prism-save to make them permanent." -u normal -i display
   fi
 
+  echo "Operation complete."
   exit 0
 ''
