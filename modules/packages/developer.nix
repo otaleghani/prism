@@ -13,4 +13,5 @@ with pkgs;
   gnumake
 
   prism.project
+  prism.api-test
 ]

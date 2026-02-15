@@ -87,6 +87,7 @@
           prism-volume = pkgs.callPackage ./pkgs/prism-volume.nix { };
           prism-install-webapp = pkgs.callPackage ./pkgs/prism-install-webapp.nix { };
           prism-uninstall-webapp = pkgs.callPackage ./pkgs/prism-uninstall-webapp.nix { };
+          prism-api-test = pkgs.callPackage ./pkgs/prism-api-test.nix { };
         }
       );
 
@@ -174,6 +175,7 @@
                 volume = self.packages.${prev.system}.prism-volume;
                 install-webapp = self.packages.${prev.system}.prism-install-webapp;
                 uninstall-webapp = self.packages.${prev.system}.prism-uninstall-webapp;
+                api-test = self.packages.${prev.system}.prism-api-test;
               };
               quickshell = quickshell.packages.${prev.system}.default;
             })
