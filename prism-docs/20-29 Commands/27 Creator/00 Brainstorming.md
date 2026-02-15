@@ -1,0 +1,6 @@
+- **`prism-asset-convert`**: A drag-and-drop (or path-based) script that uses `ffmpeg` or `imagemagick` to instantly convert files to web-optimized formats (e.g., `.mov` to `.mp4` or `.png` to `.webp`).
+- **`prism-stream-start`**: A "Scene Switcher" for those not using full OBS. It could set up your `prism-screenrecord` flags, open your webcam overlay, and launch your chat window as a focused web-app in one click.
+- **`prism-color-picker`**: A wrapper for `hyprpicker`. It gives you a magnifying glass, lets you click a pixel, and then shows a Rofi menu to copy the color as HEX, RGB, or HSL.
+- **`prism-mic-test`**: A visual OSD (On-Screen Display) for audio input levels. It allows you to see if your voice is clipping before you start a stream or a voice-over session.
+- **`prism-font-preview`**: A Rofi-based font browser. It renders a sample of every font installed on the system so you can pick the right typography for a graphic design project.
+- **`prism-render-status`**: A background job monitor. If you are exporting a video in the background, this script shows a progress bar in the Waybar or as a pop-up so you know when it's safe to shutdown.

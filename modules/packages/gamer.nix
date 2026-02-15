@@ -13,4 +13,6 @@ with pkgs;
 
   # Communication
   discord
+
+  prism.game-launcher
 ]

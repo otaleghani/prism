@@ -124,4 +124,5 @@ with pkgs;
   prism.volume
   prism.install-webapp
   prism.uninstall-webapp
+  prism.font
 ]

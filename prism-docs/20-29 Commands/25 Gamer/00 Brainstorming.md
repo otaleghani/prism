@@ -1,0 +1,8 @@
+- **`prism-game-tune`**: A script that toggles "Game Mode" system-wide. It switches the power profile to `performance`, sets the CPU governor, and disables desktop notifications (SwayNC "Do Not Disturb").
+- **`prism-game-launcher`**: A Rofi-based menu that aggregates games from Steam, Lutris, and Heroic into a single, clean list.
+- **`prism-gpu-monitor`**: A specialized version of your system monitor that focuses on VRAM usage, GPU clock speeds, and temperature, perhaps rendered as a small OSD (On-Screen Display).
+- **`prism-controller-test`**: Spawns a small OSD window that visualizes your gamepad inputs. Essential for troubleshooting Bluetooth controllers or checking for stick drift before a competitive match.
+- **`prism-save-sync`**: For games that don't have Steam Cloud. This script zips your local save directories and pushes them to a private S3 bucket or Git repo.
+- **`prism-discord-bridge`**: Since gamers often keep Discord open, this launches a specialized "Chat-Only" instance of the Discord web-app in a thin vertical strip on the side of the screen.
+- **`prism-wine-manager`**: A TUI to manage specific Wine or Proton prefixes. It allows you to set `WINEPREFIX` and open a `winecfg` or `control` window for that specific "non-Steam" game.
+- **`prism-recording-osd`**: A small status indicator for `prism-screenrecord`. It tells you exactly how long you've been recording and the current file size, so you don't run out of disk space during a 4-hour session.

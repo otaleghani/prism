@@ -1,0 +1,8 @@
+- **`prism-dev-doctor`**: A diagnostic script that checks if your required runtimes (Docker, Node, Python, etc.) are active and up-to-date for the current project flake.
+- **`prism-api-test`**: A TUI wrapper for `curlie` or `httpie` that allows you to quickly fire off JSON requests to local or remote endpoints without leaving the terminal.
+- **`prism-git-ui`**: A standard wrapper for `lazygit`, ensuring it always opens in a centered floating window with the correct Prism theme colors.
+- **`prism-docker-manager`**: A wrapper for `lazydocker`. Since devs deal with containers constantly, this launches a themed, floating TUI to manage images, volumes, and logs without typing `docker ps -a` every five seconds.
+- **`prism-log-tail`**: An interactive log viewer. You select a service or a file in `var/log` (or a project's `logs/` dir), and it opens a centered window with `fzf` filtering enabled so you can live-search for "Error" or "404".
+- **`prism-db-browse`**: A TUI database explorer (wrapping `gobang`). It allows you to quickly query your local PostgreSQL or MySQL instances via the Prism TUI window.
+- **`prism-bench`**: A wrapper for `hyperfine`. It prompts you for two commands and runs a benchmark to see which one is faster—perfect for optimizing scripts or builds.
+- **`prism-snippet-copy`**: A searchable CLI library for your personal code snippets. Select a snippet from your `~/Documents/Snippets` via Rofi/Gum and it copies directly to your clipboard.

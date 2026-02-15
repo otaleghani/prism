@@ -89,6 +89,8 @@
           prism-uninstall-webapp = pkgs.callPackage ./pkgs/prism-uninstall-webapp.nix { };
           prism-api-test = pkgs.callPackage ./pkgs/prism-api-test.nix { };
           prism-git-tui = pkgs.callPackage ./pkgs/prism-git-tui.nix { };
+          prism-game-launcher = pkgs.callPackage ./pkgs/prism-game-launcher.nix { };
+          prism-font = pkgs.callPackage ./pkgs/prism-font.nix { };
         }
       );
 
@@ -178,6 +180,8 @@
                 uninstall-webapp = self.packages.${prev.system}.prism-uninstall-webapp;
                 api-test = self.packages.${prev.system}.prism-api-test;
                 git-tui = self.packages.${prev.system}.prism-git-tui;
+                game-launcher = self.packages.${prev.system}.prism-game-launcher;
+                font = self.packages.${prev.system}.prism-font;
               };
               quickshell = quickshell.packages.${prev.system}.default;
             })
