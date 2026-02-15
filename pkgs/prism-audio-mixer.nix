@@ -7,6 +7,7 @@ let
     pkgs.coreutils
     pkgs.gnugrep
     pkgs.procps
+    pkgs.libnotify
   ];
 in
 writeShellScriptBin "prism-audio-mixer" ''
@@ -15,6 +16,8 @@ writeShellScriptBin "prism-audio-mixer" ''
   CMD="$1"
   TRIGGER_FILE="/tmp/prism_audio_trigger"
 
+  # State generation
+  # Aggregates master volume, sinks, and application streams into JSON
   get_state() {
       DEFAULT_SINK=$(pactl get-default-sink)
       
@@ -25,7 +28,7 @@ writeShellScriptBin "prism-audio-mixer" ''
           MASTER_MUTED="false"
       fi
 
-      # Sinks
+      # Sinks data
       SINKS=$(pactl -f json list sinks | jq -c --arg def "$DEFAULT_SINK" '[.[] | {
           id: .index, 
           name: .name,
@@ -34,10 +37,11 @@ writeShellScriptBin "prism-audio-mixer" ''
           is_default: (.name == $def)
       }]')
 
-      # Apps
+      # Application data
+      # Maps application names to Nerd Font icons for the UI
       APPS=$(pactl -f json list sink-inputs | jq -c '[.[] | {
           id: .index, 
-          name: (.properties."application.name" // .properties."media.name" // "Unknown"),
+          name: (.properties."application.name" // .properties."media.name" // "Unknown"), 
           vol: (.volume."front-left".value_percent | sub("%";"") | tonumber),
           icon: (
             (.properties."application.name" // "") as $name |
@@ -52,6 +56,8 @@ writeShellScriptBin "prism-audio-mixer" ''
 
   case "$CMD" in
     "listen")
+      # Event subscription
+      # Spawns a background process to watch for PulseAudio changes
       rm -f "$TRIGGER_FILE"
       (
         pactl subscribe \
@@ -60,47 +66,54 @@ writeShellScriptBin "prism-audio-mixer" ''
       ) &
       LISTENER_PID=$!
 
-      # Ensure we kill the listener when this script exits
+      # Cleanup logic
       trap "kill $LISTENER_PID 2>/dev/null; rm -f $TRIGGER_FILE" EXIT
 
-      # Run the Initial State
+      # Initial state output
       get_state
 
-      # Main Loop (The "Updater")
-      # Check for changes every 0.1s. 
-      # This effectively limits updates to max 10 per second, saving your CPU/Audio Server.
+      # Main update loop
+      # Monitors the trigger file and throttles updates to 10Hz
       while true; do
         if [ -s "$TRIGGER_FILE" ]; then
-            # File has content -> Events happened!
-            
-            # Clear the file immediately
+            # Event detected
             : > "$TRIGGER_FILE"
-            
-            # Run the update
             get_state
         fi
-        # Wait a tiny bit before checking again
         sleep 0.1
       done
       ;;
       
     "set-volume")
+      # Per-app volume adjustment
       pactl set-sink-input-volume "$2" "$3%"
       ;;
 
     "set-master")
+      # System-wide volume adjustment
       pactl set-sink-volume @DEFAULT_SINK@ "$2%"
       ;;
 
     "toggle-mute")
+      # Mute toggle logic
        pactl set-sink-mute @DEFAULT_SINK@ toggle
        ;;
       
     "set-default")
+      # Audio output switching
+      # Sets default sink and migrates all active streams to it
       pactl set-default-sink "$2"
       pactl list short sink-inputs | cut -f1 | while read -r id; do
           pactl move-sink-input "$id" "$2"
       done
+      
+      notify-send "Prism Audio" "Output switched to $2" -i audio-speakers
+      ;;
+
+    *)
+      # Usage help
+      echo "Usage: prism-audio-mixer [listen|set-volume|set-master|toggle-mute|set-default]"
+      exit 1
       ;;
   esac
 ''
