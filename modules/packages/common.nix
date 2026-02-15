@@ -109,7 +109,6 @@ with pkgs;
   prism.keybinds
   prism.power
   prism.users
-  prism.project
   prism.workspaces
   prism.active-window
   prism.audio-status

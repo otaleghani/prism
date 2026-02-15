@@ -11,4 +11,6 @@ with pkgs;
   nodejs_20
   gcc
   gnumake
+
+  prism.project
 ]
