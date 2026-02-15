@@ -2,7 +2,7 @@
 
 let
   deps = [
-    pkgs.gum
+    pkgs.fzf
     pkgs.jq
     pkgs.gawk
     pkgs.libnotify
@@ -22,35 +22,30 @@ writeShellScriptBin "prism-delete" ''
     fi
   fi
 
-  # Header display
-  clear
-  gum style --border double --margin "1 2" --padding "1 2" --foreground 1 "Prism Package Removal"
-
   # Data collection
-  # Parses the imperative Nix profile to map index keys to package names
+  # Parses imperative profile for removal indices
   LIST=$(nix profile list --json | jq -r '.elements | to_entries | .[] | "\(.key) \(.value.storePaths[0] | split("-")[1:])"')
 
   if [ -z "$LIST" ]; then
-    echo "No imperative packages found in the current profile."
-    notify-send "Prism Store" "Removal cancelled: No packages found." -u low
-    
-    echo "Press any key to exit..."
-    read -n 1 -s
+    notify-send "Prism Store" "No packages found to remove." -u low
     exit 0
   fi
 
   # Selection interface
-  # Provides a multi-select filter to choose packages for removal
-  echo "Select packages to remove (Space to mark, Enter to confirm):"
-  SELECTED_LINES=$(echo "$LIST" | gum filter --no-limit --placeholder "Filter packages...")
+  # Multi-select supported via TAB
+  SELECTED_LINES=$(echo "$LIST" | fzf \
+    --prompt="Remove> " \
+    --layout=reverse \
+    --height=50% \
+    --border \
+    --multi \
+    --header="Select packages to remove (TAB to multi-select)")
 
   if [ -z "$SELECTED_LINES" ]; then
-    echo "No packages selected. Exiting."
     exit 0
   fi
 
   # Extraction logic
-  # Isolates the index numbers for the nix profile remove command
   INDICES=$(echo "$SELECTED_LINES" | awk '{print $1}' | tr '\n' ' ')
 
   # Execution logic
@@ -58,14 +53,12 @@ writeShellScriptBin "prism-delete" ''
   if nix profile remove $INDICES; then
     notify-send "Prism Store" "Packages removed successfully." -i trash-can
   else
-    notify-send "Prism Store" "Failed to remove packages. Profile might be locked." -u critical
+    notify-send "Prism Store" "Failed to remove packages." -u critical
     
     # Error persistence
-    echo "Error: Nix profile modification failed."
+    echo "Error: Modification failed."
     echo "Press any key to exit..."
     read -n 1 -s
     exit 1
   fi
-
-  echo "Operation complete."
 ''
