@@ -6,6 +6,7 @@ let
     pkgs.coreutils
     pkgs.libnotify
     pkgs.rofi
+    pkgs.neovim
   ];
 in
 writeShellScriptBin "prism-monitor" ''
@@ -13,12 +14,10 @@ writeShellScriptBin "prism-monitor" ''
 
   CONFIG_FILE="$HOME/.config/hypr/monitors.conf"
 
-  # Auto-Launch Terminal
-  # If this script is run from a keybind (no terminal), it re-launches itself
-  # inside a terminal window using prism-tui.
+  # Terminal auto-launch
+  # If launched from a keybind, re-run inside the Prism TUI wrapper
   if [ ! -t 0 ]; then
     if command -v prism-tui >/dev/null; then
-        # "$0" is the path to this script
         exec prism-tui "$0" "$@"
     else
         notify-send "Prism Monitor" "Error: prism-tui not found." -u critical
@@ -28,30 +27,40 @@ writeShellScriptBin "prism-monitor" ''
 
   # Ensure config exists
   if [ ! -f "$CONFIG_FILE" ]; then
-    echo "# Monitor Config" > "$CONFIG_FILE"
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+    echo "# Prism Monitor Configuration" > "$CONFIG_FILE"
+    echo "# monitor=name,resolution,position,scale" >> "$CONFIG_FILE"
     echo "monitor=,preferred,auto,1" >> "$CONFIG_FILE"
   fi
 
-  # Open Editor (Blocking)
-  # We use the editor directly (not prism-tui) so the script WAITS for it to close.
-  EDITOR="''${EDITOR:-nano}"
+  # Dynamic editor selection
+  # Uses the inherited $EDITOR variable from your Hyprland env setup
+  # Defaults to nvim if $EDITOR is unset.
+  EDITOR_CMD="''${EDITOR:-nvim}"
 
-  echo "Opening $CONFIG_FILE with $EDITOR..."
-  $EDITOR "$CONFIG_FILE"
+  clear
+  echo "[Prism] Opening Monitor Layout with $EDITOR_CMD..."
+  $EDITOR_CMD "$CONFIG_FILE"
 
-  # Reload Hyprland
-  # This only runs AFTER you close the editor
-  echo "Reloading Hyprland configuration..."
+  # Apply changes immediately
   hyprctl reload
-  notify-send "Prism Monitor" "Configuration reloaded." -i display
 
-  # Prompt to Persist
-  if command -v prism-save >/dev/null; then
-      ACTION=$(echo -e "Yes\nNo" | rofi -dmenu -p "Save to Prism Overrides?")
-      
-      if [ "$ACTION" == "Yes" ]; then
-          prism-save "$CONFIG_FILE"
-          notify-send "Prism Monitor" "Configuration saved to Flake overrides."
+  # Persistence logic
+  SAVE_ACTION=$(echo -e "Yes\nNo" | rofi -dmenu -p "Persist changes to Flake?")
+
+  if [ "$SAVE_ACTION" == "Yes" ]; then
+      echo "[Prism] Saving to overrides..."
+      # Run prism-save then prism-sync as requested
+      if prism-save "$CONFIG_FILE" && prism-sync; then
+          notify-send "Prism Monitor" "Monitor config changed and saved to Flake." -i display
+      else
+          notify-send "Prism Monitor" "Failed to persist changes." -u critical
       fi
+  else
+
+      # Custom notification for the "No" branch
+      notify-send "Prism Monitor" "Updated but not saved, this will be overridden next startup. If you wish to make it permanent, use prism-save." -u normal -i display
   fi
+
+  exit 0
 ''

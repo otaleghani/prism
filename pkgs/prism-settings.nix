@@ -45,11 +45,11 @@ writeShellScriptBin "prism-settings" ''
       ;;
 
     "$OPT_DOTFILES")
-      exec prism-focus-tui "nvim ~/.config/"
+      exec prism-focus-tui "nvim" "~/.config/"
       ;;
 
     "$OPT_PROGRAMS")
-      exec prism-focus-tui "nvim ~/.config/hypr/programs.conf"
+      exec prism-focus-tui "nvim" "~/.config/hypr/programs.conf"
       ;;
       
     "$OPT_WIFI")
