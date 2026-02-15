@@ -28,7 +28,7 @@ writeShellScriptBin "prism-settings" ''
 
   # Menu
   # We could customize the look by creating ~/.config/rofi/settings.rasi
-  SELECTED=$(echo -e "$OPT_CONFIG\n$OPT_DOTFILES\n$OPT_WIFI\n$OPT_BLUETOOTH\n$OPT_MONITOR\n$OPT_AUDIO\n$OPT_THEME\n$OPT_WALL\n$OPT_USERS\n$OPT_TIMEZONE\n$OPT_KEYBOARD\n$OPT_POWER" | rofi -dmenu -p "Settings" -no-show-icons)
+  SELECTED=$(echo -e "$OPT_CONFIG\n$OPT_DOTFILES\n$OPT_PROGRAMS\n$OPT_WIFI\n$OPT_BLUETOOTH\n$OPT_MONITOR\n$OPT_AUDIO\n$OPT_THEME\n$OPT_WALL\n$OPT_USERS\n$OPT_TIMEZONE\n$OPT_KEYBOARD\n$OPT_POWER" | rofi -dmenu -p "Settings" -no-show-icons)
 
   case "$SELECTED" in
     "$OPT_CONFIG")
