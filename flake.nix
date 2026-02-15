@@ -91,6 +91,7 @@
           prism-git-tui = pkgs.callPackage ./pkgs/prism-git-tui.nix { };
           prism-game-launcher = pkgs.callPackage ./pkgs/prism-game-launcher.nix { };
           prism-font = pkgs.callPackage ./pkgs/prism-font.nix { };
+          prism-ctl = pkgs.callPackage ./pkgs/prism-ctl.nix { };
         }
       );
 
@@ -182,6 +183,7 @@
                 git-tui = self.packages.${prev.system}.prism-git-tui;
                 game-launcher = self.packages.${prev.system}.prism-game-launcher;
                 font = self.packages.${prev.system}.prism-font;
+                ctl = self.packages.${prev.system}.prism-ctl;
               };
               quickshell = quickshell.packages.${prev.system}.default;
             })

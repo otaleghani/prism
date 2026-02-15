@@ -12,22 +12,23 @@ writeShellScriptBin "prism-settings" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
   # --- Options ---
-  OPT_CONFIG="  Edit Configuration"
-  OPT_DOTFILES="  Edit Dotfiles"
-  OPT_WIFI="  Wi-Fi"
-  OPT_BLUETOOTH="  Bluetooth"
-  OPT_MONITOR="  Monitors"
-  OPT_AUDIO="  Audio Mixer"
-  OPT_THEME="🎨  Switch Theme"
-  OPT_WALL="  Wallpaper Picker"
-  OPT_USERS="  Manage Users"
+  OPT_CONFIG="Edit configuration"
+  OPT_DOTFILES="Edit dotfiles"
+  OPT_PROGRAMS="Change default programs"
+  OPT_WIFI="Wi-Fi configuration"
+  OPT_BLUETOOTH="Bluetooth configuration"
+  OPT_MONITOR="Manage monitors"
+  OPT_AUDIO="Audio mixer"
+  OPT_THEME="Switch theme"
+  OPT_WALL="Wallpaper picker"
+  OPT_USERS="Manage users"
   OPT_TIMEZONE="Change timezone"
   OPT_KEYBOARD="Change keyboard layout"
-  OPT_POWER="Power profiles"
+  OPT_POWER="Change power profiles"
 
   # Menu
   # We could customize the look by creating ~/.config/rofi/settings.rasi
-  SELECTED=$(echo -e "$OPT_CONFIG\n$OPT_DOTFILES\n$OPT_WIFI\n$OPT_BLUETOOTH\n$OPT_MONITOR\n$OPT_AUDIO\n$OPT_THEME\n$OPT_WALL\n$OPT_USERS\n$OPT_TIMEZONE\n$OPT_KEYBOARD\n$OPT_POWER" | rofi -dmenu -p "Settings")
+  SELECTED=$(echo -e "$OPT_CONFIG\n$OPT_DOTFILES\n$OPT_WIFI\n$OPT_BLUETOOTH\n$OPT_MONITOR\n$OPT_AUDIO\n$OPT_THEME\n$OPT_WALL\n$OPT_USERS\n$OPT_TIMEZONE\n$OPT_KEYBOARD\n$OPT_POWER" | rofi -dmenu -p "Settings" -no-show-icons)
 
   case "$SELECTED" in
     "$OPT_CONFIG")
@@ -44,7 +45,11 @@ writeShellScriptBin "prism-settings" ''
       ;;
 
     "$OPT_DOTFILES")
-      exec prism-focus-tui "nvim" "~/.config"
+      exec prism-focus-tui "nvim" "~/.config/"
+      ;;
+
+    "$OPT_PROGRAMS")
+      exec prism-focus-tui "nvim" "~/.config/hypr/programs.conf"
       ;;
       
     "$OPT_WIFI")

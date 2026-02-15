@@ -1,0 +1,1 @@
+If you need to run some scripts at startup, you can simply create a file at `~/.config/startup.sh`. This will be run when [[hyprland]] fires up.
