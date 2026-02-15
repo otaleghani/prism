@@ -50,11 +50,11 @@ writeShellScriptBin "prism-monitor" ''
   gum style --foreground 4 "Should these changes be made permanent?"
   if gum confirm "Persist changes to Flake overrides?"; then
       echo "Saving to overrides..."
-      # Attempting to save and sync
-      if prism-save "$CONFIG_FILE" && prism-sync; then
+      # Attempting to save and save
+      if prism-save "$CONFIG_FILE" && prism-save; then
           notify-send "Prism Monitor" "Monitor configuration changed and saved to Flake successfully." -i display
       else
-          echo "Error: Failed to save or sync changes."
+          echo "Error: Failed to save or save changes."
           notify-send "Prism Monitor" "Failed to persist changes. Check logs for permission errors." -u critical
           
           # Hold execution so the user can read the error

@@ -1,37 +1,52 @@
-{ writeShellScriptBin }:
+{ pkgs, writeShellScriptBin }:
 
+let
+  deps = [
+    pkgs.libnotify
+    pkgs.coreutils
+  ];
+in
 writeShellScriptBin "prism-ai" ''
-  # Usage: prism-ai <service>
-  # Supported: chatgpt, claude, gemini, deepseek, perplexity
+  export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
+  # Input validation
   SERVICE="$1"
 
   if [ -z "$SERVICE" ]; then
-    echo "Usage: prism-ai <service>"
-    echo "Supported services: chatgpt, claude, gemini, deepseek, perplexity"
+    notify-send "Prism AI" "Usage: prism-ai <service>\n(chatgpt, claude, gemini, deepseek, perplexity)" -u low
     exit 1
   fi
 
+  # Service mapping
   case "$SERVICE" in
     "chatgpt")
-      exec prism-focus-webapp "ChatGPT" "https://chatgpt.com"
+      NAME="ChatGPT" ; URL="https://chatgpt.com"
       ;;
     "claude")
-      exec prism-focus-webapp "Claude" "https://claude.ai"
+      NAME="Claude" ; URL="https://claude.ai"
       ;;
     "gemini")
-      exec prism-focus-webapp "Gemini" "https://gemini.google.com"
+      NAME="Gemini" ; URL="https://gemini.google.com"
       ;;
     "deepseek")
-      exec prism-focus-webapp "DeepSeek" "https://chat.deepseek.com"
+      NAME="DeepSeek" ; URL="https://chat.deepseek.com"
       ;;
     "perplexity")
-      exec prism-focus-webapp "Perplexity" "https://www.perplexity.ai"
+      NAME="Perplexity" ; URL="https://www.perplexity.ai"
       ;;
     *)
-      echo "Error: Unknown service '$SERVICE'"
-      echo "Supported: chatgpt, claude, gemini, deepseek, perplexity"
+      # Notify user of invalid service
+      notify-send "Prism AI" "Error: '$SERVICE' is not a recognized AI service." -u critical
       exit 1
       ;;
   esac
+
+  # Focus execution
+  # Following prism-focus-webapp logic for single-instance management
+  if prism-focus-webapp "$NAME" "$URL"; then
+    notify-send "Prism AI" "Switched to $NAME workspace." -i distpatch
+  else
+    notify-send "Prism AI" "Failed to launch $NAME. Ensure the web engine is responsive." -u critical
+    exit 1
+  fi
 ''
