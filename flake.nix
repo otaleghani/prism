@@ -88,6 +88,7 @@
           prism-install-webapp = pkgs.callPackage ./pkgs/prism-install-webapp.nix { };
           prism-uninstall-webapp = pkgs.callPackage ./pkgs/prism-uninstall-webapp.nix { };
           prism-api-test = pkgs.callPackage ./pkgs/prism-api-test.nix { };
+          prism-git-tui = pkgs.callPackage ./pkgs/prism-git-tui.nix { };
         }
       );
 
@@ -176,6 +177,7 @@
                 install-webapp = self.packages.${prev.system}.prism-install-webapp;
                 uninstall-webapp = self.packages.${prev.system}.prism-uninstall-webapp;
                 api-test = self.packages.${prev.system}.prism-api-test;
+                git-tui = self.packages.${prev.system}.prism-git-tui;
               };
               quickshell = quickshell.packages.${prev.system}.default;
             })
