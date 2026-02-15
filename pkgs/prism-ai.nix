@@ -43,10 +43,8 @@ writeShellScriptBin "prism-ai" ''
 
   # Focus execution
   # Following prism-focus-webapp logic for single-instance management
-  if prism-focus-webapp "$NAME" "$URL"; then
-    # notify-send "Prism AI" "Switched to $NAME workspace." -i distpatch
-  else
+  prism-focus-webapp "$NAME" "$URL" || {
     notify-send "Prism AI" "Failed to launch $NAME. Ensure the web engine is responsive." -u critical
     exit 1
-  fi
+  }
 ''
