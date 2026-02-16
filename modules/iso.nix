@@ -6,11 +6,8 @@
 
 {
   imports = [
-    # Switch to Minimal (TTY only, smaller, more reliable)
     "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
   ];
-
-  # --- ISO Settings ---
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -29,7 +26,4 @@
     dosfstools # For FAT32 (EFI) formatting
     e2fsprogs # For Ext4 formatting
   ];
-
-  # Optional: Auto-start the installer wizard on login
-  # services.getty.helpLine = lib.mkForce "Run 'prism-installer' to start the setup wizard.";
 }

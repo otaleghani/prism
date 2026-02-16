@@ -16,8 +16,6 @@ in
 {
   # Only apply this configuration if a gamer exists
   config = lib.mkIf hasGamerProfile {
-
-    # Steam configuration
     programs.steam = {
       enable = true;
       remotePlay.openFirewall = true; # Open ports for Steam Remote Play
@@ -29,17 +27,13 @@ in
     };
 
     # Gamemode
-    # Optimises system performance on demand
     programs.gamemode.enable = true;
-
-    # Gamescope (Standalone)
     programs.gamescope = {
       enable = true;
-      capSysNice = true; # Allow gamescope to renice itself for performance
+      capSysNice = true;
     };
 
     # Hardware specifics
-    # If using a controller, we might want to enable udev rules
     hardware.xpadneo.enable = true; # Xbox One controller support (bluetooth)
   };
 }

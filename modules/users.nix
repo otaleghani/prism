@@ -138,7 +138,7 @@ in
              chown -R ${user}:users "$USER_HOME/.config" "$USER_HOME/.local"
              chmod -R u+rwX "$USER_HOME/.config" "$USER_HOME/.local"
 
-             # 1. Apply COMMON Defaults (Enforced - Steamroll)
+             # Apply COMMON Defaults (Enforced - Steamroll)
              # Defaults will overwrite local changes to enforce state.
              if [ -d "$COMMON_SOURCE" ]; then
                echo "  -> Applying Common Defaults..."
@@ -147,13 +147,13 @@ in
                echo "  -> [INFO] No Common Defaults found at $COMMON_SOURCE"
              fi
 
-             # 2. Apply PROFILE Defaults (Enforced - Steamroll)
+             # Apply PROFILE Defaults (Enforced - Steamroll)
              if [ "${userCfg.profileType}" != "custom" ] && [ -d "$PROFILE_SOURCE" ]; then
                echo "  -> Applying Profile Defaults (${userCfg.profileType})..."
                ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$PROFILE_SOURCE" "$USER_HOME/"
              fi
 
-             # 3. Apply USER OVERRIDES (Enforced)
+             # Apply USER OVERRIDES (Enforced)
              # Automatically looks in user-flake/overrides/<username>
              ${
                if hasOverrides then
@@ -184,7 +184,7 @@ in
                  ''
              }
              
-             # 4. Sync Themes (Data)
+             # Sync Themes (Data)
              THEME_DEST="$USER_HOME/.local/share/prism/themes"
              if [ -d "$THEME_SOURCE" ]; then
                 mkdir -p "$USER_HOME/.local/share/prism"
@@ -206,7 +206,7 @@ in
                 fi
              fi
              
-             # 5. Sync Project Templates
+             # Sync Project Templates
              TEMPLATE_DEST="$USER_HOME/.local/share/prism/templates"
              if [ -d "$TEMPLATE_SOURCE" ]; then
                 echo "  -> Syncing Project Templates..."
@@ -215,7 +215,7 @@ in
                 ${rsync} -rav --mkpath --chmod=u+rwX --chown=${user}:users "$TEMPLATE_SOURCE" "$TEMPLATE_DEST/"
              fi
 
-             # 6. Fix Nvim Permissions
+             # Fix Nvim Permissions
              if [ -d "$USER_HOME/.local/share/nvim" ]; then
                  chown -R ${user}:users "$USER_HOME/.local/share/nvim"
                  chmod -R u+rwX "$USER_HOME/.local/share/nvim"
