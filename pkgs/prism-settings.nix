@@ -68,12 +68,13 @@ writeShellScriptBin "prism-settings" ''
       ;;
 
     "$OPT_WALL")
-      exec prism-wall select
+      # exec prism-wall select
+      exec prism-ctl wallpapers
       ;;
 
     "$OPT_FONT")
       # Triggers the font manager (will auto-launch prism-tui)
-      exec prism-font
+      exec prism-tui prism-font
       ;;
 
     "$OPT_WIFI")
@@ -90,12 +91,12 @@ writeShellScriptBin "prism-settings" ''
 
     "$OPT_WEB_INS")
       # Interactive webapp creation
-      exec prism-install-webapp
+      exec prism-tui prism-install-webapp
       ;;
 
     "$OPT_WEB_REM")
       # Interactive webapp removal
-      exec prism-uninstall-webapp
+      exec prism-tui prism-uninstall-webapp
       ;;
 
     "$OPT_KB")
