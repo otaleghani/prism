@@ -7,6 +7,7 @@ let
     pkgs.coreutils
     pkgs.gnugrep
     pkgs.procps
+    pkgs.libnotify
   ];
 in
 writeShellScriptBin "prism-notifications" ''
@@ -16,37 +17,38 @@ writeShellScriptBin "prism-notifications" ''
 
   case "$CMD" in
     "listen")
+      # History processing
+      # Converts Dunst history into a structured JSON stream for UI rendering
       update() {
-         # Dump history as JSON for Eww
-         # FIX: Removed the double loop to prevent duplication.
-         # FIX: Added '| reverse' so newest notifications are at the top.
-         # We use '|| echo []' to handle cases where history might be empty or malformed.
-         HISTORY=$(dunstctl history 2>/dev/null)
-         
-         if [ -n "$HISTORY" ]; then
-             echo "$HISTORY" | jq -c '[.data[][] | {
-               id: .id.data, 
-               app: .appname.data, 
-               summary: .summary.data, 
-               body: .body.data,
-               urgency: .urgency.data,
-               time: .timestamp.data,
-               actions: (if .actions.data then [.actions.data | range(0; length; 2) as $i | {id: .[$i], label: .[$i+1]}] else [] end)
-             }] | reverse'
-         else
-             echo "[]"
-         fi
+          HISTORY=$(dunstctl history 2>/dev/null)
+          
+          if [ -n "$HISTORY" ]; then
+              echo "$HISTORY" | jq -c '[.data[][] | {
+                id: .id.data, 
+                app: .appname.data, 
+                summary: .summary.data, 
+                body: .body.data,
+                urgency: .urgency.data,
+                time: .timestamp.data,
+                actions: (if .actions.data then [.actions.data | range(0; length; 2) as $i | {id: .[$i], label: .[$i+1]}] else [] end)
+              }] | reverse'
+          else
+              echo "[]"
+          fi
       }
       
-      # Initial update
-      update
-      
-      # Trap SIGUSR1 to force a manual refresh (used by 'clear' / 'dismiss' commands)
-      # This allows instant UI updates when you click buttons, despite the polling delay.
+      # Signal management
+      # Enables instant UI refresh via external commands like clear or dismiss
       trap update SIGUSR1
       
-      # POLLING LOOP
-      # Since 'dunstctl subscribe' is unavailable, we poll history every second.
+      # Initial state
+      update || {
+        notify-send "Prism System" "Notification listener failed to start." -u critical
+        exit 1
+      }
+      
+      # Polling sequence
+      # Continuously monitors notification state changes
       while true; do
         sleep 1
         update
@@ -54,23 +56,26 @@ writeShellScriptBin "prism-notifications" ''
       ;;
       
     "dismiss")
-      # Close specific ID if active
+      # Targeted removal
+      # Closes active popups and purges the specific ID from history
       dunstctl close "$2"
-      
-      # Remove from history
       dunstctl history-rm "$2"
       
-      # Force refresh immediately so UI updates
+      # Signal refresh
       pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "clear")
+      # Bulk cleanup
+      # Wipes all active notifications and historical logs
       dunstctl close-all
       dunstctl history-clear
       pkill -SIGUSR1 -f "prism-notifications listen"
       ;;
       
     "action")
+      # Interaction handling
+      # Triggers specific notification actions based on user selection
       ACTION_ID="''${3:-default}"
       dunstctl action "$2" "$ACTION_ID"
       ;;

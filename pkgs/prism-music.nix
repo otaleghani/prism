@@ -1,42 +1,50 @@
-{ writeShellScriptBin }:
+{ pkgs, writeShellScriptBin }:
 
+let
+  deps = [
+    pkgs.libnotify
+    pkgs.coreutils
+  ];
+in
 writeShellScriptBin "prism-music" ''
-  # Usage: prism-music <service>
-  # Supported: spotify, youtube-music, apple-music, soundcloud, deezer
+  export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
+  # Input validation
   SERVICE="$1"
 
   if [ -z "$SERVICE" ]; then
-    echo "Usage: prism-music <service>"
-    echo "Supported services: spotify, youtube-music, apple-music, soundcloud, deezer"
+    notify-send "Prism Music" "Usage: prism-music <service>\n(spotify, youtube-music, apple-music, soundcloud, deezer)" -u low
     exit 1
   fi
 
+  # Service mapping
   case "$SERVICE" in
     "spotify")
-      # Pattern matches "Spotify - Web Player" or just "Spotify"
-      exec prism-focus-webapp "Spotify" "https://open.spotify.com"
+      NAME="Spotify" ; URL="https://open.spotify.com"
       ;;
     "youtube-music")
-      # Pattern matches "YouTube Music"
-      exec prism-focus-webapp "YouTube Music" "https://music.youtube.com"
+      NAME="YouTube Music" ; URL="https://music.youtube.com"
       ;;
     "apple-music")
-      # Pattern matches "Apple Music"
-      exec prism-focus-webapp "Apple Music" "https://music.apple.com"
+      NAME="Apple Music" ; URL="https://music.apple.com"
       ;;
     "soundcloud")
-      # Pattern matches "SoundCloud"
-      exec prism-focus-webapp "SoundCloud" "https://soundcloud.com"
+      NAME="SoundCloud" ; URL="https://soundcloud.com"
       ;;
     "deezer")
-      # Pattern matches "Deezer"
-      exec prism-focus-webapp "Deezer" "https://www.deezer.com"
+      NAME="Deezer" ; URL="https://www.deezer.com"
       ;;
     *)
-      echo "Error: Unknown service '$SERVICE'"
-      echo "Supported: spotify, youtube-music, apple-music, soundcloud, deezer"
+      # Notify user of invalid service
+      notify-send "Prism Music" "Error: '$SERVICE' is not a supported music service." -u critical
       exit 1
       ;;
   esac
+
+  # Focus execution
+  # Switches to the existing workspace or launches the music web engine
+  prism-focus-webapp "$NAME" "$URL" || {
+    notify-send "Prism Music" "Failed to launch $NAME. Ensure the web engine is responsive." -u critical
+    exit 1
+  }
 ''

@@ -4,7 +4,7 @@ let
   deps = [
     pkgs.coreutils
     pkgs.networkmanager
-    pkgs.iwd # Required for iwctl
+    pkgs.iwd
     pkgs.gnugrep
     pkgs.gawk
     pkgs.gnused
