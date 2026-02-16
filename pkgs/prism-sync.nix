@@ -1,19 +1,33 @@
-# prism-sync fetches the available packages from the nix repository
-{
-  pkgs,
-  writeShellScriptBin,
-}:
+{ pkgs, writeShellScriptBin }:
 
 writeShellScriptBin "prism-sync" ''
+  export PATH=${
+    pkgs.lib.makeBinPath [
+      pkgs.nix
+      pkgs.coreutils
+      pkgs.gnugrep
+      pkgs.libnotify
+    ]
+  }:$PATH
+
   CACHE_DIR="$HOME/.cache/prism"
   mkdir -p "$CACHE_DIR"
 
-  echo "[Prism] Indexing Nixpkgs (this takes ~10-20 seconds)..."
+  # Process initiation
+  echo "Indexing Nixpkgs database (this may take a few moments)..."
 
-  # We use nix-env -qa because it's reliable for fetching available packages
-  # Format: package.attr.path  Description
-  # Filter out 'nixos.' attributes (modules/functions) which cause "not an attribute set" errors
-  ${pkgs.nix}/bin/nix-env -f ${pkgs.path} -qaP --description | grep -vE "^nixos\." > "$CACHE_DIR/pkglist.txt"
+  # Data collection
+  # Queries available packages and formats them as 'AttributePath Description'
+  # Filters out NixOS modules to prevent attribute set errors
+  nix-env -f '<nixpkgs>' -qaP --description | grep -vE "^nixos\." > "$CACHE_DIR/pkglist.txt" || {
+    notify-send "Prism Store" "Database synchronization failed." -u critical
+    exit 1
+  }
 
-  echo "[Prism] Database updated. $(wc -l < $CACHE_DIR/pkglist.txt) packages indexed."
+  # Result calculation
+  PKG_COUNT=$(wc -l < "$CACHE_DIR/pkglist.txt")
+
+  # Finalization
+  echo "  [Success] -> Database updated with $PKG_COUNT packages."
+  notify-send "Prism Store" "Package index updated ($PKG_COUNT entries)." -i system-software-update
 ''
