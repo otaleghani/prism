@@ -22,10 +22,10 @@ writeShellScriptBin "prism-workspaces" ''
     '
   }
 
-  # 1. Output initial state
+  # Output initial state
   generate
 
-  # 2. Listen to socket for changes
+  # Listen to socket for changes
   # We listen for workspace/monitor events and regenerate JSON
   socat -U - UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock | while read -r line; do
     case "$line" in
