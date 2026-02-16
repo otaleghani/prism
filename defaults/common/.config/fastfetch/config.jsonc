@@ -3,27 +3,26 @@
   "logo": {
     "source": "~/.config/fastfetch/logo.txt",
     "type": "file",
+    "position": "top",
     "color": {
       "1": "blue"
     },
     "padding": {
-      "top": 2,
-      "left": 2,
-      "right": 2
+      "top": 1,
+      "bottom": 1
     }
   },
   "display": {
     "separator": " ",
     "color": "blue",
     "size": {
-        "binaryPrefix": "si"
+      "binaryPrefix": "si"
     }
   },
   "modules": [
-    "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌──────────────────────Hardware──────────────────────┐"
+      "format": "\u001b[90m────────────────── Hardware ──────────────────"
     },
     {
       "type": "host",
@@ -32,44 +31,40 @@
     },
     {
       "type": "cpu",
-      "key": "  │ ├",
+      "key": "  ├",
       "showPeCoreCount": true,
       "keyColor": "green"
     },
     {
       "type": "gpu",
-      "key": "  │ ├",
+      "key": "  ├",
       "detectionMethod": "pci",
       "keyColor": "green"
     },
     {
       "type": "display",
-      "key": "  │ ├󱄄",
+      "key": "  ├󱄄",
       "keyColor": "green"
     },
     {
       "type": "disk",
-      "key": "  │ ├󰋊",
+      "key": "  ├󰋊",
       "keyColor": "green"
     },
     {
       "type": "memory",
-      "key": "  │ ├",
+      "key": "  ├",
       "keyColor": "green"
     },
     {
       "type": "swap",
-      "key": "  └ └󰓡",
+      "key": "  └󰓡",
       "keyColor": "green"
-    },
-    {
-      "type": "custom",
-      "format": "\u001b[90m└────────────────────────────────────────────────────┘"
     },
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌──────────────────────Software──────────────────────┐"
+      "format": "\u001b[90m────────────────── Software ──────────────────"
     },
     {
       "type": "os",
@@ -78,43 +73,39 @@
     },
     {
       "type": "kernel",
-      "key": "  │ ├",
+      "key": "  ├",
       "keyColor": "blue"
     },
     {
       "type": "wm",
-      "key": "  │ ├",
+      "key": "  ├",
       "keyColor": "blue"
     },
     {
       "type": "terminal",
-      "key": "  │ ├",
+      "key": "  ├",
       "keyColor": "blue"
     },
     {
       "type": "packages",
-      "key": "  │ ├󰏖",
+      "key": "  ├󰏖",
       "keyColor": "blue"
     },
     {
         "type": "command",
-        "key": "  │ ├󰉼",
+        "key": "  ├󰉼",
         "keyColor": "blue",
         "text": "readlink $HOME/.local/share/prism/current | xargs basename"
     },
     {
       "type": "terminalfont",
-      "key": "  └ └",
+      "key": "  └",
       "keyColor": "blue"
-    },
-    {
-      "type": "custom",
-      "format": "\u001b[90m└────────────────────────────────────────────────────┘"
     },
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌────────────────Age / Uptime────────────────────────┐"
+      "format": "\u001b[90m──────────────── Age / Uptime ────────────────"
     },
     {
         "type": "command",
@@ -126,10 +117,6 @@
       "type": "uptime",
       "key": "  󱫐 Uptime",
       "keyColor": "magenta"
-    },
-    {
-      "type": "custom",
-      "format": "\u001b[90m└────────────────────────────────────────────────────┘"
     },
     "break"
   ]
