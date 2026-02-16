@@ -1,21 +1,7 @@
-## Before 1.0
-- [ ] Find logo -> https://itoa.hex.dance/
-- [ ] Create documentation
 
-## TODO
+- [ ] Profile specific brainstorms [[30-39 Profiles/33 Creator/00 Brainstorming|Creator]], [[30-39 Profiles/32 Pentester/00 Brainstorming|Pentester]], [[30-39 Profiles/31 Gamer/00 Brainstorming|Gamer]] and [[30-39 Profiles/30 Developer/00 Brainstorming|Developer]]
 - [ ] Refine `defualts/templates`
 - [ ] Refine `defualts/themes`
-- [ ] Rework scripts by using `gum` and making them more 
-- [ ] When an error occurs, wait for an input instead of closing with with `read -r -p "Press Enter to close..."`
-- [ ] Custom autostart script
-
-## Enhancements
-
-- [ ] User profile specific scripts
-
-## Fixes
-- [ ] `prism-monitor` doesn't open the file
-- [ ] `prism-wall select`  needs to open a terminal window
-- [ ] `prism-install` needs to open a terminal window
-- [ ] `prism-delete` needs to open a terminal window
-- [x] `prism-project-new` needs to track `flake.nix`
+- [ ] Create way to generate custom themes
+- [ ] Create a way to manage the user icon, something like a `prism-user-icon` to change the icon that is visible on startup.
+- [ ] Enhance `prism-users` to be able to change the users on the system

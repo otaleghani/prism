@@ -21,8 +21,6 @@ in
       package = pkgs.qemu_kvm;
       runAsRoot = true;
       swtpm.enable = true;
-      # FIX: ovmf submodule removed in latest Nixpkgs.
-      # Images are now provided by default.
     };
   };
 
