@@ -2,47 +2,69 @@
 
 let
   deps = [
-    pkgs.rofi
+    pkgs.fzf
     pkgs.gum
-    pkgs.glib # for gsettings
-    pkgs.fontconfig # for fc-list
+    pkgs.glib
+    pkgs.fontconfig
     pkgs.coreutils
-    pkgs.gnused
+    pkgs.libnotify
   ];
 in
 writeShellScriptBin "prism-font" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  # 1. Get a list of unique System Fonts
-  # fc-list : family gets the names, cut/sort cleans it up
+  # Terminal auto-launch
+  if [ ! -t 0 ]; then
+    if command -v prism-tui >/dev/null; then
+        exec prism-tui "$0" "$@"
+    else
+        notify-send "Prism Appearance" "Terminal wrapper not found." -u critical
+        exit 1
+    fi
+  fi
+
+  # Header display
+  clear
+  gum style --border double --margin "1 2" --padding "1 2" --foreground 5 "Prism Font Manager"
+
+  # Font discovery
+  # Queries system font database for unique family names
   FONTS=$(fc-list : family | cut -d',' -f1 | sort -u)
 
-  # 2. Select Font Family via Rofi
-  SELECTED_FONT=$(echo "$FONTS" | rofi -dmenu -p "System Font")
+  # Family selection
+  # High-performance filtering via fzf
+  SELECTED_FONT=$(echo "$FONTS" | fzf \
+    --prompt="Font Family> " \
+    --height=40% \
+    --layout=reverse \
+    --border \
+    --header="Select System Font")
 
-  if [ -z "$SELECTED_FONT" ]; then
-    exit 0
-  fi
+  [ -z "$SELECTED_FONT" ] && exit 0
 
-  # 3. Select Font Size via Gum
-  FONT_SIZE=$(gum input --placeholder "11" --header "Enter Font Size (e.g., 10, 11, 12)")
-
-  if [ -z "$FONT_SIZE" ]; then
-    FONT_SIZE="11" # Default fallback
-  fi
+  # Size selection
+  # Interactive numeric input via gum
+  FONT_SIZE=$(gum input --placeholder "11" --header "Enter Font Size (e.g. 10, 12, 14)")
+  FONT_SIZE="''${FONT_SIZE:-11}"
 
   FULL_FONT_STRING="$SELECTED_FONT $FONT_SIZE"
 
-  # 4. Apply via GSettings (GTK Apps)
-  echo "[Prism] Applying font: $FULL_FONT_STRING"
+  # Application logic
+  # Pushes font configuration to GTK and system schemas
+  echo "Applying $FULL_FONT_STRING..."
 
-  gsettings set org.gnome.desktop.interface font-name "$FULL_FONT_STRING"
-  gsettings set org.gnome.desktop.interface document-font-name "$FULL_FONT_STRING"
+  gsettings set org.gnome.desktop.interface font-name "$FULL_FONT_STRING" && \
+  gsettings set org.gnome.desktop.interface document-font-name "$FULL_FONT_STRING" || {
+      notify-send "Prism Appearance" "Failed to update system fonts." -u critical
+      exit 1
+  }
 
-  # Optional: Update Monospace font if you want it to affect terminals/editors
-  if gum confirm "Would you like to set this as the Monospace font too?"; then
+  # Monospace toggle
+  echo ""
+  if gum confirm "Set this as the system Monospace font too?"; then
       gsettings set org.gnome.desktop.interface monospace-font-name "$FULL_FONT_STRING"
   fi
 
-  notify-send "Prism" "System font updated to $FULL_FONT_STRING" -i preferences-desktop-font
+  # Success feedback
+  notify-send "Prism Appearance" "System font updated to $FULL_FONT_STRING" -i preferences-desktop-font
 ''
