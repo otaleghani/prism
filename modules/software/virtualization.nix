@@ -6,15 +6,14 @@
 }:
 
 let
-  # Extract the list of usernames defined in your prism.users option
-  # that are intended to be normal interactive users.
+  # Dynamically fetch normal users for VM group assignment
   vmUsers = lib.mapAttrsToList (name: userCfg: name) (
     lib.filterAttrs (name: userCfg: userCfg.isNormalUser) config.prism.users
   );
 in
 {
   # Virtualization Backend
-  # Enables the libvirtd daemon and the KVM/QEMU stack
+  # Enables libvirtd and the KVM/QEMU stack
   virtualisation.libvirtd = {
     enable = lib.mkDefault true;
 
@@ -22,15 +21,12 @@ in
       package = pkgs.qemu_kvm;
       runAsRoot = true;
       swtpm.enable = true;
-      ovmf = {
-        enable = true;
-        packages = [ pkgs.OVMFFull.fd ];
-      };
+      # FIX: ovmf submodule removed in latest Nixpkgs.
+      # Images are now provided by default.
     };
   };
 
   # GUI Management Tools
-  # Includes Virt-manager for the UI and Spice-gtk for high-performance guest display
   environment.systemPackages = with pkgs; [
     virt-manager
     virt-viewer
@@ -42,7 +38,7 @@ in
   ];
 
   # User Group Access
-  # Injects the 'libvirtd' and 'kvm' groups into every user defined in your Prism config.
+  # Grants VM control to all interactive Prism users
   users.users = lib.genAttrs vmUsers (name: {
     extraGroups = [
       "libvirtd"
@@ -51,12 +47,10 @@ in
   });
 
   # High-Performance Guest Access
-  # Enables SPICE guest support for better clipboard sharing and resolution scaling
   services.spice-vdagentd.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
 
   # UI Integration
-  # Ensures the virt-manager connection URI is set to system QEMU by default
   programs.virt-manager.enable = true;
   programs.dconf.enable = true;
 }
