@@ -6,24 +6,36 @@ let
     pkgs.curl
     pkgs.coreutils
     pkgs.gnused
+    pkgs.libnotify
   ];
 in
 writeShellScriptBin "prism-install-webapp" ''
     export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-    # 1. Gather Data
+    # Terminal auto-launch
+    if [ ! -t 0 ]; then
+      if command -v prism-tui >/dev/null; then
+          exec prism-tui "$0" "$@"
+      else
+          notify-send "Prism Webapp" "Terminal wrapper not found." -u critical
+          exit 1
+      fi
+    fi
+
+    # Data collection
+    # Checks for arguments or triggers interactive TUI mode
     if [ "$#" -lt 3 ]; then
       clear
-      gum style --border double --margin "1 2" --padding "1 2" --foreground 212 "PRISM WEBAPP INSTALLER"
+      gum style --border double --margin "1 2" --padding "1 2" --foreground 2 "Prism Webapp Installer"
       
       APP_NAME=$(gum input --prompt "Name> " --placeholder "e.g. YouTube")
-      [ -z "$APP_NAME" ] && exit 1
+      [ -z "$APP_NAME" ] && exit 0
       
       APP_URL=$(gum input --prompt "URL> " --placeholder "https://youtube.com")
-      [ -z "$APP_URL" ] && exit 1
+      [ -z "$APP_URL" ] && exit 0
       
       ICON_REF=$(gum input --prompt "Icon URL> " --placeholder "URL to a PNG icon")
-      [ -z "$ICON_REF" ] && exit 1
+      [ -z "$ICON_REF" ] && exit 0
       
       INTERACTIVE_MODE=true
     else
@@ -33,26 +45,27 @@ writeShellScriptBin "prism-install-webapp" ''
       INTERACTIVE_MODE=false
     fi
 
-    # 2. Setup Directories
+    # Directory preparation
     ICON_DIR="$HOME/.local/share/applications/icons"
     DESKTOP_DIR="$HOME/.local/share/applications"
     mkdir -p "$ICON_DIR"
 
-    # 3. Handle Icon
+    # Icon processing
+    # Downloads remote assets or references local paths
     ICON_PATH="$ICON_DIR/$APP_NAME.png"
     if [[ $ICON_REF =~ ^https?:// ]]; then
-      echo "[Prism] Downloading icon..."
-      if ! curl -sL -o "$ICON_PATH" "$ICON_REF"; then
-        gum style --foreground 196 "Error: Failed to download icon."
+      echo "Downloading icon for $APP_NAME..."
+      curl -sL -o "$ICON_PATH" "$ICON_REF" || {
+        notify-send "Prism Webapp" "Failed to download icon for $APP_NAME." -u critical
+        [ "$INTERACTIVE_MODE" = true ] && read -n 1 -s -p "Press any key to exit..."
         exit 1
-      fi
+      }
     else
-      # If it's a local path or reference
       ICON_PATH="$ICON_REF"
     fi
 
-    # 4. Generate the Desktop Entry
-    # We point the Exec to prism-focus-webapp so it manages instances correctly
+    # Desktop entry generation
+    # Points execution to prism-focus-webapp for instance management
     DESKTOP_FILE="$DESKTOP_DIR/$APP_NAME.desktop"
 
     cat > "$DESKTOP_FILE" <<EOF
@@ -70,7 +83,13 @@ writeShellScriptBin "prism-install-webapp" ''
 
     chmod +x "$DESKTOP_FILE"
 
+    # Success feedback
+    notify-send "Prism Webapp" "Installed $APP_NAME successfully. Available in launcher." -i system-software-install
+
     if [ "$INTERACTIVE_MODE" = true ]; then
-      gum style --foreground 212 "Success! $APP_NAME is now available in your launcher."
+      echo ""
+      gum style --foreground 2 "Success! $APP_NAME has been integrated into Prism."
+      echo "Press any key to close..."
+      read -n 1 -s
     fi
 ''

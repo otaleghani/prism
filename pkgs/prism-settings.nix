@@ -11,6 +11,10 @@ in
 writeShellScriptBin "prism-settings" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
+  # TODO:
+  # Add update system
+  # Add update 
+
   # --- Options ---
   OPT_CONFIG="Edit configuration"
   OPT_DOTFILES="Edit dotfiles"
