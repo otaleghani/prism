@@ -63,7 +63,6 @@ writeShellScriptBin "prism-screenrecord" ''
   }
 
   # Helper: Webcam initialization
-  # Calculates HiDPI scaling and selects optimal 16:9 resolution
   start_webcam_overlay() {
     cleanup_webcam
 
@@ -102,7 +101,7 @@ writeShellScriptBin "prism-screenrecord" ''
   }
 
   # Helper: Start process
-  # Invokes gpu-screen-recorder with Wayland portal for window selection
+  # Invokes gpu-screen-recorder with Wayland portal
   start_recording() {
     local timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
     local filename="$OUTPUT_DIR/Recording_$timestamp.mp4"
@@ -116,17 +115,15 @@ writeShellScriptBin "prism-screenrecord" ''
     fi
     [[ -n "$inputs" ]] && audio_args="-a $inputs"
 
-    gpu-screen-recorder -w portal -f 60 -o "$filename" $audio_args & || {
-        notify-send "Prism Recorder" "Failed to start recording engine." -u critical
-        exit 1
-    }
+    # Execution logic
+    # Fixed: Removed the invalid '||' after the background operator '&'
+    gpu-screen-recorder -w portal -f 60 -o "$filename" $audio_args &
     
     notify-send "Prism Recorder" "Recording started. Saving to $OUTPUT_DIR" -i media-record
     pkill -RTMIN+8 waybar 2>/dev/null
   }
 
   # Helper: Stop process
-  # Gracefully terminates recording to prevent file corruption
   stop_recording() {
     pkill -SIGINT -f "gpu-screen-recorder"
 
