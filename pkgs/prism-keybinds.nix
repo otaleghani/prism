@@ -6,6 +6,7 @@ let
     pkgs.gnugrep
     pkgs.gnused
     pkgs.gawk
+    pkgs.libnotify
   ];
 in
 writeShellScriptBin "prism-keybinds" ''
@@ -13,28 +14,24 @@ writeShellScriptBin "prism-keybinds" ''
 
   CONFIG_DIR="$HOME/.config/hypr"
 
-  # Gather keybinds
-  # We look recursively (-r) in the hypr folder for lines starting with 'bind ='
-  # We exclude comments (#)
-  # We prettify the output:
-  #   - Remove 'bind = '
-  #   - Replace $mainMod with SUPER
-  #   - Format nicely
-
+  # Data collection
+  # Recursively scans Hyprland configs for active keybindings
+  # Filters out comments and formats the syntax for human readability
   BINDS=$(grep -r "^bind =" "$CONFIG_DIR" | \
     sed 's/.*:bind = //g' | \
-    sed 's/$mainMod/SUPER/g' | \
+    sed 's/$MAIN_MOD/SUPER/g' | \
     sed 's/, exec, /  ->  Exec: /g' | \
     sed 's/, / + /g' | \
     sort)
 
+  # Validation logic
+  # Alerts the user if the configuration directory is empty or inaccessible
   if [ -z "$BINDS" ]; then
-    rofi -e "No keybinds found in $CONFIG_DIR"
+    notify-send "Prism Keybinds" "No active keybinds detected in $CONFIG_DIR." -u critical
     exit 1
   fi
 
-  # Show menu
-  # -i: Case insensitive
-  # -p: Prompt
+  # Selection interface
+  # Presents the formatted list via an interactive search menu
   echo "$BINDS" | rofi -dmenu -p "Keybinds" -i -width 1000
 ''
