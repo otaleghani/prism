@@ -32,11 +32,8 @@ with pkgs;
   yazi # Terminal file manager
   findutils # find
   coreutils # sort, head, etc.
-  go
 
   # Window
-  waybar
-  eww
   wl-clipboard
   hyprpicker # Color picker
   cliphist
@@ -44,12 +41,9 @@ with pkgs;
   papirus-icon-theme
   rose-pine-icon-theme
   rose-pine-hyprcursor # Cursor
-  walker # Application runner
   rofi # Application runner
   swww # Wallpaper engine
   hyprpolkitagent # Needed for prism-portal
-  # swaynotificationcenter # Notification manager
-  dunst # Notification manager
   libnotify
   brightnessctl
   playerctl
