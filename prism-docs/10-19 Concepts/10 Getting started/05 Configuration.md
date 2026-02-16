@@ -1,19 +1,71 @@
-Dotfiles, how the override system works, [[17 prism-save]]
-
 # Configuration
 
-The configuration resides in the ~/.config/prism directory.
+The primary user configuration resides in `~/.config/prism`.
 
-The default config is just a flake.nix file, a flake.lock file and that's it. Nothing more.
+In its purest form, this directory contains only two files:
 
-# Overrides
+1. **`flake.nix`**: Your system's DNA (Drivers, Users, System Packages).
+2. **`flake.lock`**: The version manifest that ensures reproducibility.
 
-## Dotfiles
-The user can use the `prism-save` command to save the overrides into the correct folder. This will save the dotfiles in subsequential updates, which works like `git`: you track files using `prism-save <file>`. This saves the file names into a `.prismsave` file and saves them in the overrides.
+Everything else—your themes, your keybinds, and your app configs—is managed by the override system.
 
-You can delete tracked files using `prism-save delete <file>`.
+## Overrides
+
+Prism ships with defaults for applications like [[Hyprland]], [[QuickShell]], and [[Neovim]]. On every system update or activation, Prism **re-writes** these defaults to ensure your system doesn't "drift" into a broken state.
+
+To prevent your custom settings from being wiped, you must place them in the `overrides/` directory.
+
+## Managing dotfiles with `prism-save`
+
+The `prism-save` utility is your bridge between "live" configuration and "persistent" overrides. It works similarly to `git` by tracking specific files.
+
+### Tracking a file
+
+If you have modified a config (e.g., `~/.config/nvim/init.lua`) and want to keep those changes permanently:
+
+```bash
+prism-save ~/.config/nvim/init.lua
+```
+
+**What happens?**
+
+1. The file path is added to `~/.prismsave` (your tracking list).
+2. The file is copied to `/etc/prism/overrides/$USER/.config/nvim/init.lua`.
+3. On the next update, Prism will see this file in your overrides and apply it **after** the defaults.
+
+### Syncing all changes
+
+If you've edited multiple tracked files and want to "commit" their current state to your overrides:
+
+```bash
+prism-save
+```
+
+### Removing a track
+
+To stop overriding a file and return to Prism's defaults:
+
+```bash
+prism-save delete ~/.config/nvim/init.lua
+```
 
 ## Themes and wallpapers
-Users need to add into the prism configuration the overrides for their user.
-For themes the folder is `/etc/prism/overrides/USERNAME/themes`
-For wallpapers the folder is `/etc/prism/overrides/USERNAME/wallpapers`
+
+Themes and wallpapers follow a specific directory structure within your user overrides. Prism looks for these folders to populate your Rofi pickers (`$SUPER + CTRL + T` and `$SUPER + CTRL + W`).
+
+| **Asset Type**        | **Override Path**                           |
+| --------------------- | ------------------------------------------- |
+| **Custom Themes**     | `/etc/prism/overrides/USERNAME/themes/`     |
+| **Custom Wallpapers** | `/etc/prism/overrides/USERNAME/wallpapers/` |
+
+### Creating a Custom Theme
+
+1. Create a folder in the path above (e.g., `my-cool-theme`).
+2. Add your `colors.json` or `waybar.css`.
+3. Prism will automatically detect this folder and add it to your theme list.
+
+## Why use this system?
+
+- **Atomic Rollbacks:** If you mess up an override, you can delete it and instantly return to a working Prism default.
+- **Version Control:** Your entire `overrides/` folder can be committed to a Git repository, making it easy to sync your personal "flavor" across multiple machines.
+- **Cleanliness:** Your `$HOME` directory stays clean, as the "source of truth" lives safely within your Prism Flake.

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "10-19 Concepts/19 Advance/06 Virtualization.md",
+                "file": "10-19 Concepts/10 Getting started/07 Updates.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "06 Virtualization"
+              "title": "07 Updates"
             }
           }
         ]
@@ -185,9 +185,17 @@
   },
   "active": "ed95b52133cddaa2",
   "lastOpenFiles": [
+    "10-19 Concepts/10 Getting started/08 Themes.md",
+    "10-19 Concepts/10 Getting started/07 Updates.md",
+    "10-19 Concepts/10 Getting started/06 Users.md",
+    "10-19 Concepts/10 Getting started/05 Configuration.md",
+    "10-19 Concepts/10 Getting started/04 Packages.md",
+    "10-19 Concepts/10 Getting started/03 Keybindings.md",
+    "10-19 Concepts/10 Getting started/02 Moving around.md",
+    "10-19 Concepts/10 Getting started/01 Installation.md",
+    "00-09 Introduction/01 About/01 Credits.md",
     "00-09 Introduction/01 About/02 Roadmap.md",
     "10-19 Concepts/19 Advance/06 Virtualization.md",
-    "10-19 Concepts/10 Getting started/01 Installation.md",
     "30-39 Profiles/30 Index/01 What are Profiles.md",
     "30-39 Profiles/31 Developer/02 Apps.md",
     "30-39 Profiles/30 Index",
@@ -205,16 +213,8 @@
     "20-29 Commands/26 Pentester/00 Brainstorming.md",
     "20-29 Commands/25 Gamer/00 Brainstorming.md",
     "20-29 Commands/24 Developer/01 prism-project-new.md",
-    "20-29 Commands/24 Developer/00 Brainstorming.md",
     "20-29 Commands/27 Creator",
-    "20-29 Commands/24 Developer/04 prism-git-tui.md",
     "20-29 Commands/26 Pentester",
-    "20-29 Commands/24 Developer/03 prism-api-test.md",
-    "20-29 Commands/25 Gamer/01 prism-game-launcher.md",
-    "20-29 Commands/24 Developer/02 prism-project-open.md",
-    "20-29 Commands/22 Interactive/02 prism-uninstall-webapp.md",
-    "20-29 Commands/22 Interactive/01 prism-install-webapp.md",
-    "20-29 Commands/23 Configuration/03 prism-settings.md",
     "20-29 Commands/25 Gamer",
     "20-29 Commands/24 Developer",
     "10-19 Concepts/11 Apps/Untitled",

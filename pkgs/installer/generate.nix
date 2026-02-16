@@ -54,7 +54,7 @@ writeShellScriptBin "prism-installer-generate" ''
 
     # Generate users.nix
     cat > "$TARGET_DIR/users.nix" <<EOF
-  { pkgs, ... }: {
+  { ... }: {
     # --- USER: $USERNAME ---
     prism.users.$USERNAME = {
       description = "$FULLNAME";
@@ -73,24 +73,19 @@ writeShellScriptBin "prism-installer-generate" ''
     description = "PrismOS System Config";
 
     inputs = {
-      nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
       prism.url = "github:otaleghani/prism/$LATEST_TAG";
-      prism.inputs.nixpkgs.follows = "nixpkgs";
-      silentSDDM.url = "github:uiriansan/SilentSDDM";
-      silentSDDM.inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    outputs = { self, nixpkgs, prism, silentSDDM, ... }@inputs: {
-      nixosConfigurations.prism = nixpkgs.lib.nixosSystem {
+    outputs = { self, prism, silentSDDM, ... }@inputs: {
+      nixosConfigurations.prism = prism.inputs.nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
           ./hardware-configuration.nix
           ./users.nix
           prism.nixosModules.default
-          silentSDDM.nixosModules.default
 
-          ({ pkgs, ... }: {
+          ({ ... }: {
             networking.hostName = "$HOSTNAME";
             system.stateVersion = "24.05";
 

@@ -1,44 +1,59 @@
-Users are the reason prism is called prism! The idea behind this is that every user has it's own purpose. This way you can divide your gaming profile from you work profile. Choosing a profile instead of another will provide you with packages and custom keybindings.
+# Users
 
-There are different types of users that you can choose from.
-- Developer
-- Gamer
-- Custom
-- Pentester (WIP)
-- Creator (WIP)
+The name **Prism** comes from the idea of taking a single system and splitting it into distinct "spectral" profiles. Each user account on your machine is more than just a login; it is a **Persona** with a specific set of tools, keybindings, and behaviors. To do this Prism gives you the [[07 prism-users]] utility that allows you to easily add and remove users without touching your NixOs configuration.
 
-The custom one is just a blank user with no other packages installed. 
+## Available users profiles
 
-Do you have to abide from this structure? Nope! You can decide how to use your system however you want! If you prefer a single user setup, go for it!
+When defining a user in your `flake.nix`, you assign them a `profileType`. This dictates what "layer" of defaults Prism applies to their home directory.
 
-## The steam dilemma
+| Persona       | Purpose           | Key Features                                                                             |
+| ------------- | ----------------- | ---------------------------------------------------------------------------------------- |
+| **Developer** | Coding & DevOps   | `prism-project-new`, `prism-project-open`, `prism-api-test`, and specialized dev shells. |
+| **Custom**    | Minimalist        | A blank slate. No profile-specific packages or scripts; just the core Prism environment. |
+| **Gamer**     | High-Perf Play    | (WIP) Includes optimizations for low-latency input and game launchers.                   |
+| **Pentester** | Security Research | (WIP) Pre-configured network tools and isolated security environments.                   |
+| **Creator**   | Media Production  | (WIP) Low-latency audio (Pipewire/Jack) and video editing suites.                        |
 
-The only thing that you need to keep in mind is that if you wish to game on your machine you'll need to add at least a "gamer" user. Reason why is that Steam has to installed system-wide, not per-user. If you do not wish to have it in your setup, just copy add this into your configuration:
+## Configuration flexibility
+
+Prism does not force a multi-user setup on you. If you prefer one "God User" who does everything, simply create a single account. However, the multi-user approach allows you to:
+
+- **Isolate Work:** Keep your production SSH keys and project files away from your gaming account.
+- **Custom Keybinds:** Use `$MOD + CTRL + [1-9]` for different scripts depending on who is logged in.
+- **Dependency Management:** Ensure your "Gamer" profile doesn't bloat your "Developer" profile with wine/proton dependencies.
+
+## The Steam dilemma
+
+While most things in Prism are per-user, some software is "heavy" and requires deep system-level integration. **Steam** is the primary example.
+
+Because Steam requires specific firewall rules, 32-bit libraries, and kernel-level performance tweaks (like Gamescope and Gamemode), it must be enabled at the **system level** in your `flake.nix` rather than just added to a user's package list.
+
+#### How to enable Gaming Support
+
+If you wish to take a non-gamer user and giving it gaming capabilities, add this block to your main NixOS configuration:
 
 ```nix
-    programs.steam = {
-      enable = true;
-      remotePlay.openFirewall = true; # Open ports for Steam Remote Play
-      dedicatedServer.openFirewall = true; # Open ports for Source Dedicated Server
-
-      # Enable Gamescope (the micro-compositor used on the Steam Deck)
-      # Great for running games at different resolutions or fixing windowing issues
-      gamescopeSession.enable = true;
-    };
-
-    # Gamemode
-    # Optimises system performance on demand
-    programs.gamemode.enable = true;
-
-    # Gamescope (Standalone)
-    programs.gamescope = {
-      enable = true;
-      capSysNice = true; # Allow gamescope to renice itself for performance
-    };
-
-    # Hardware specifics
-    # If using a controller, we might want to enable udev rules
-    hardware.xpadneo.enable = true; # Xbox One controller support (bluetooth)
+{
+  # ... inside your configuration ...
+  
+  # Enable Steam & Gamescope
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true; 
+    dedicatedServer.openFirewall = true; 
+    gamescopeSession.enable = true;
   };
 
+  # Feral Gamemode for performance optimization
+  programs.gamemode.enable = true;
+
+  # Standalone Gamescope (Micro-compositor)
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true; 
+  };
+
+  # Controller Support
+  hardware.xpadneo.enable = true; # Xbox controller drivers
+}
 ```
