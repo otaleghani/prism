@@ -8,8 +8,9 @@
       "1": "blue"
     },
     "padding": {
-      "top": 1,
-      "bottom": 1
+      "left": 1,
+      "top": 4,
+      "bottom": 0
     }
   },
   "display": {
@@ -22,7 +23,7 @@
   "modules": [
     {
       "type": "custom",
-      "format": "\u001b[90m────────────────── Hardware ──────────────────"
+      "format": "\u001b[90m────────────────── Hardware ──────────────────\n"
     },
     {
       "type": "host",
@@ -64,7 +65,7 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m────────────────── Software ──────────────────"
+      "format": "\u001b[90m────────────────── Software ──────────────────\n"
     },
     {
       "type": "os",
@@ -105,7 +106,7 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m──────────────── Age / Uptime ────────────────"
+      "format": "\u001b[90m──────────────── Age / Uptime ────────────────\n"
     },
     {
         "type": "command",
@@ -121,3 +122,4 @@
     "break"
   ]
 }
+

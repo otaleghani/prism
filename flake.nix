@@ -127,6 +127,7 @@
             ./modules/software/wacom.nix
             ./modules/software/window-manager.nix
             ./modules/software/login.nix
+            ./modules/software/virtualization.nix
           ];
 
           # Inject our custom scripts package set
