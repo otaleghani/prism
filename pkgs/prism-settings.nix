@@ -5,108 +5,117 @@ let
     pkgs.rofi
     pkgs.coreutils
     pkgs.libnotify
-    # Note: We assume prism-* scripts (monitor, theme, wall, tui) are installed in the user profile
   ];
 in
 writeShellScriptBin "prism-settings" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  # TODO:
-  # Add update system
-  # Add update 
+  # Menu definitions
+  # Standardized labels for the Rofi selection interface
+  OPT_CONFIG="󱇦  Edit system configuration"
+  OPT_DOTFILES="󱰂  Edit dotfiles"
+  OPT_THEME="󱥚  Switch theme"
+  OPT_WALL="󰸉  Wallpaper picker"
+  OPT_FONT="󰬶  Change system font"
+  OPT_WIFI="󰖩  Wi-Fi configuration"
+  OPT_BT="󰂯  Bluetooth configuration"
+  OPT_AUDIO="󱄠  Audio mixer"
+  OPT_WEB_INS="󰖟  Install webapp"
+  OPT_WEB_REM="󰖟  Uninstall webapp"
+  OPT_KB="󰌌  Change keyboard layout"
+  OPT_POWER="󰓅  Change power profile"
+  OPT_UPDATE="󰚰  Update system (Stable)"
+  OPT_UPDATE_UN="󱓞  Update system (Unstable)"
 
-  # --- Options ---
-  OPT_CONFIG="Edit configuration"
-  OPT_DOTFILES="Edit dotfiles"
-  OPT_PROGRAMS="Change default programs"
-  OPT_WIFI="Wi-Fi configuration"
-  OPT_BLUETOOTH="Bluetooth configuration"
-  OPT_MONITOR="Manage monitors"
-  OPT_AUDIO="Audio mixer"
-  OPT_THEME="Switch theme"
-  OPT_WALL="Wallpaper picker"
-  OPT_USERS="Manage users"
-  OPT_TIMEZONE="Change timezone"
-  OPT_KEYBOARD="Change keyboard layout"
-  OPT_POWER="Change power profiles"
+  # Selection interface
+  # Compiles options into a searchable list
+  OPTIONS=(
+    "$OPT_CONFIG"
+    "$OPT_DOTFILES"
+    "$OPT_THEME"
+    "$OPT_WALL"
+    "$OPT_FONT"
+    "$OPT_WIFI"
+    "$OPT_BT"
+    "$OPT_AUDIO"
+    "$OPT_WEB_INS"
+    "$OPT_WEB_REM"
+    "$OPT_KB"
+    "$OPT_POWER"
+    "$OPT_UPDATE"
+    "$OPT_UPDATE_UN"
+  )
 
-  # Menu
-  # We could customize the look by creating ~/.config/rofi/settings.rasi
-  SELECTED=$(echo -e "$OPT_CONFIG\n$OPT_DOTFILES\n$OPT_PROGRAMS\n$OPT_WIFI\n$OPT_BLUETOOTH\n$OPT_MONITOR\n$OPT_AUDIO\n$OPT_THEME\n$OPT_WALL\n$OPT_USERS\n$OPT_TIMEZONE\n$OPT_KEYBOARD\n$OPT_POWER" | rofi -dmenu -p "Settings" -no-show-icons)
+  # Launch rofi
+  SELECTED=$(printf "%s\n" "''${OPTIONS[@]}" | rofi -dmenu -p "Settings" -i -no-show-icons)
 
+  # Execution logic
+  # Routes selection to the corresponding Prism utility
   case "$SELECTED" in
     "$OPT_CONFIG")
-      # Edit the Flake configuration
-      # Assumes your config is at ~/.config/prism
+      # Focuses the editor on the root flake directory
       FLAKE_DIR="/etc/prism"
-      if [ -d "$FLAKE_DIR" ]; then
-         # Launch editor using prism-focus-tui so it floats and centers
-         # Using 'nvim' (or your preferred editor)
-         exec prism-focus-tui "nvim" "$FLAKE_DIR"
-      else
-         notify-send "Prism Settings" "Config not found at ~/.config/prism" -u critical
-      fi
+      [ -d "$FLAKE_DIR" ] || FLAKE_DIR="$HOME/.config/prism"
+      exec prism-focus-tui "nvim" "$FLAKE_DIR"
       ;;
 
     "$OPT_DOTFILES")
-      exec prism-focus-tui "nvim" "~/.config/"
+      exec prism-focus-tui "nvim" "$HOME/.config"
       ;;
 
-    "$OPT_PROGRAMS")
-      exec prism-focus-tui "nvim" "~/.config/hypr/programs.conf"
-      ;;
-      
-    "$OPT_WIFI")
-      # Launch Impala (TUI Wifi)
-      exec prism-focus-tui "impala"
-      ;;
-      
-    "$OPT_BLUETOOTH")
-      # Launch Bluetui (TUI Bluetooth)
-      exec prism-focus-tui "bluetui"
-      ;;
-      
-    "$OPT_MONITOR")
-      # Launch Prism Monitor Wizard
-      exec prism-focus-tui prism-monitor
-      ;;
-      
-    "$OPT_AUDIO")
-      # Launch WireMix (TUI Audio)
-      # If you prefer GUI, change this to: exec pavucontrol
-      exec prism-focus-tui "wiremix"
-      ;;
-      
     "$OPT_THEME")
-      # Launch Theme Switcher
       exec prism-theme
       ;;
-      
+
     "$OPT_WALL")
-      # Launch Wallpaper Picker
       exec prism-wall select
       ;;
 
-    "$OPT_USERS") 
-      exec prism-users 
+    "$OPT_FONT")
+      # Triggers the font manager (will auto-launch prism-tui)
+      exec prism-font
       ;;
 
-    "$OPT_TIMEZONE") 
-      exec prism-timezone
+    "$OPT_WIFI")
+      exec prism-focus-tui "impala"
       ;;
 
-    "$OPT_KEYBOARD") 
+    "$OPT_BT")
+      exec prism-focus-tui "bluetui"
+      ;;
+
+    "$OPT_AUDIO")
+      exec prism-focus-tui "wiremix"
+      ;;
+
+    "$OPT_WEB_INS")
+      # Interactive webapp creation
+      exec prism-install-webapp
+      ;;
+
+    "$OPT_WEB_REM")
+      # Interactive webapp removal
+      exec prism-uninstall-webapp
+      ;;
+
+    "$OPT_KB")
       exec prism-keyboard
       ;;
 
-    "$OPT_POWER") 
+    "$OPT_POWER")
+      # Assumes a prism-power TUI or picker exists
       exec prism-power
       ;;
-      
-    "$OPT_KEYBINDS") 
-      exec prism-keybinds
+
+    "$OPT_UPDATE")
+      # Stable track update via terminal portal
+      exec prism-tui prism-update
       ;;
-    
+
+    "$OPT_UPDATE_UN")
+      # Unstable track update via terminal portal
+      exec prism-tui prism-update-unstable
+      ;;
 
     *)
       exit 0
