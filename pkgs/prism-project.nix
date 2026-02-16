@@ -6,21 +6,85 @@
 
 let
   deps = [
-    pkgs.gum
     pkgs.fzf
     pkgs.git
     pkgs.coreutils
     pkgs.findutils
-    pkgs.gnused
     pkgs.libnotify
+    pkgs.gum
   ];
 
+  # PROJECT OPEN
+  # Terminal-based portal to enter project development shells
+  projectOpen = writeShellScriptBin "prism-project-open" ''
+    export PATH=${pkgs.lib.makeBinPath deps}:$PATH
+    WORKSPACE_DIR="$HOME/Workspace"
+
+    # Terminal auto-launch
+    # Ensures the script runs inside a Prism-themed Ghostty window
+    if [ ! -t 0 ]; then
+      if command -v prism-tui >/dev/null; then
+          exec prism-tui "$0" "$@"
+      else
+          notify-send "Prism Projects" "Error: prism-tui not found." -u critical
+          exit 1
+      fi
+    fi
+
+    # Data collection
+    # Finds projects and sorts them by last access time
+    [ ! -d "$WORKSPACE_DIR" ] && {
+        notify-send "Prism Projects" "Workspace directory missing." -u critical
+        exit 1
+    }
+
+    PROJECT_LIST=$(find "$WORKSPACE_DIR" -mindepth 1 -maxdepth 1 -type d -printf "%T@ %f\n" 2>/dev/null | sort -rn | cut -d' ' -f2-)
+
+    [ -z "$PROJECT_LIST" ] && {
+        notify-send "Prism Projects" "No projects found in Workspace."
+        exit 0
+    }
+
+    # Selection interface
+    # Fast fzf filtering with a live directory preview
+    SELECTED=$(echo "$PROJECT_LIST" | fzf \
+      --prompt="Open Project> " \
+      --height=100% \
+      --layout=reverse \
+      --border \
+      --header="Select project to enter dev shell" \
+      --preview "ls -Ap $WORKSPACE_DIR/{}")
+
+    [ -z "$SELECTED" ] && exit 0
+
+    TARGET_PATH="$WORKSPACE_DIR/$SELECTED"
+
+    # Environment transition
+    # Changes directory and replaces the current process with nix develop
+    cd "$TARGET_PATH" || {
+        echo "Error: Could not enter directory $TARGET_PATH"
+        notify-send "Prism Projects" "Failed to enter project directory." -u critical
+        read -n 1 -s -p "Press any key to exit..."
+        exit 1
+    }
+
+    notify-send "Prism Projects" "Environment $SELECTED active." -i terminal
+
+    # Replaces the script with the nix-shell process
+    exec nix develop || {
+        echo "Error: 'nix develop' failed. Is the flake.nix valid and tracked by git?"
+        notify-send "Prism Projects" "Nix develop failed to start." -u critical
+        read -n 1 -s -p "Press any key to exit..."
+        exit 1
+    }
+  '';
+
+  # PROJECT NEW (Updated with your requirements)
   projectNew = writeShellScriptBin "prism-project-new" ''
     export PATH=${pkgs.lib.makeBinPath deps}:$PATH
     WORKSPACE_DIR="$HOME/Workspace"
     TEMPLATE_DIR="$HOME/.local/share/prism/templates"
 
-    # Terminal auto-launch
     if [ ! -t 0 ]; then
       exec prism-tui "$0" "$@"
     fi
@@ -28,9 +92,6 @@ let
     # Header display
     clear
     gum style --border double --margin "1 2" --padding "1 2" --foreground 4 "Prism Project Creator"
-
-    # Directory validation
-    mkdir -p "$WORKSPACE_DIR"
 
     # Input collection
     PROJECT_NAME=$(gum input --placeholder "Project Name" --header "Name your project")
@@ -53,6 +114,7 @@ let
     sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$TARGET_DIR/flake.nix"
 
     # Git integration
+    # Files must be tracked for Nix Flakes to recognize them
     if gum confirm "Initialize Git Repository?"; then
         cd "$TARGET_DIR"
         git init -q
@@ -60,41 +122,14 @@ let
         echo ".direnv/" >> .gitignore
         echo "result" >> .gitignore
         git add .gitignore
+        git add .
     fi
 
     # Success feedback
-    notify-send "Prism Projects" "Project '$PROJECT_NAME' created successfully." -i folder-new
+    notify-send "Prism Projects" "Project '$PROJECT_NAME' created and tracked." -i folder-new
 
     echo "Opening editor..."
     ''${EDITOR:-nvim} "$TARGET_DIR/flake.nix"
-  '';
-
-  projectOpen = writeShellScriptBin "prism-project-open" ''
-    export PATH=${pkgs.lib.makeBinPath deps}:$PATH
-    WORKSPACE_DIR="$HOME/Workspace"
-
-    # Data collection
-    # Sorts projects by most recently modified
-    PROJECT_LIST=$(find "$WORKSPACE_DIR" -mindepth 1 -maxdepth 1 -type d -printf "%T@ %f\n" 2>/dev/null | sort -rn | cut -d' ' -f2-)
-
-    [ -z "$PROJECT_LIST" ] && {
-        notify-send "Prism Projects" "No projects found."
-        exit 0
-    }
-
-    # Selection interface
-    SELECTED=$(echo "$PROJECT_LIST" | fzf \
-      --prompt="Open Project> " \
-      --height=60% \
-      --layout=reverse \
-      --border \
-      --header="Select a project to enter development shell" \
-      --preview "ls -Ap $WORKSPACE_DIR/{}")
-
-    [ -z "$SELECTED" ] && exit 0
-
-    # Output the path for the shell function to pick up
-    echo "$WORKSPACE_DIR/$SELECTED"
   '';
 
 in
