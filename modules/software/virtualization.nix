@@ -5,14 +5,19 @@
   ...
 }:
 
+let
+  # Extract the list of usernames defined in your prism.users option
+  # that are intended to be normal interactive users.
+  vmUsers = lib.mapAttrsToList (name: userCfg: name) (
+    lib.filterAttrs (name: userCfg: userCfg.isNormalUser) config.prism.users
+  );
+in
 {
   # Virtualization Backend
   # Enables the libvirtd daemon and the KVM/QEMU stack
   virtualisation.libvirtd = {
     enable = lib.mkDefault true;
 
-    # QEMU configuration
-    # Optimization for modern hardware and TPM support (required for Windows 11)
     qemu = {
       package = pkgs.qemu_kvm;
       runAsRoot = true;
@@ -37,26 +42,21 @@
   ];
 
   # User Group Access
-  # Automatically adds the main user to the necessary groups to manage VMs
-  # without constant sudo prompts.
-  users.users.${config.prism.user.name}.extraGroups = [
-    "libvirtd"
-    "kvm"
-  ];
+  # Injects the 'libvirtd' and 'kvm' groups into every user defined in your Prism config.
+  users.users = lib.genAttrs vmUsers (name: {
+    extraGroups = [
+      "libvirtd"
+      "kvm"
+    ];
+  });
 
   # High-Performance Guest Access
   # Enables SPICE guest support for better clipboard sharing and resolution scaling
   services.spice-vdagentd.enable = true;
-
-  # Shared Folders
-  # Useful for moving files between Prism (Host) and the VM (Guest)
   virtualisation.spiceUSBRedirection.enable = true;
 
-  # Persistence & Configuration
+  # UI Integration
   # Ensures the virt-manager connection URI is set to system QEMU by default
   programs.virt-manager.enable = true;
-
-  # UI Integration
-  # Optional: Adds the dconf settings for Virt-manager so it follows your system theme
   programs.dconf.enable = true;
 }
