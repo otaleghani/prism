@@ -91,7 +91,7 @@ writeShellScriptBin "prism-theme-list" ''
           # It extracts the part inside the quotes.
           
           extract_color() {
-            grep "property color $1:" "$QML" | sed -E 's/.*"([^"]+)".*/\1/'
+            grep "property color $1:" "$QML" | sed -E "s/.*['\"]([^'\"]+)['\"].*/\1/"
           }
 
           BASE=$(extract_color "base")
