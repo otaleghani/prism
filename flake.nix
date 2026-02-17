@@ -43,6 +43,7 @@
         {
           # prism-portal = pkgs.callPackage ./pkgs/prism-portal.nix { };
           prism-sync = pkgs.callPackage ./pkgs/prism-sync.nix { };
+          prism-update-old = pkgs.callPackage ./pkgs/prism-update-old.nix { };
           prism-update = pkgs.callPackage ./pkgs/prism-update.nix { };
           prism-install = pkgs.callPackage ./pkgs/prism-install.nix { };
           prism-delete = pkgs.callPackage ./pkgs/prism-delete.nix { };
@@ -136,6 +137,7 @@
               prism = {
                 # portal = self.packages.${prev.system}.prism-portal;
                 sync = self.packages.${prev.system}.prism-sync;
+                update-old = self.packages.${prev.system}.prism-update-old;
                 update = self.packages.${prev.system}.prism-update;
                 install = self.packages.${prev.system}.prism-install;
                 delete = self.packages.${prev.system}.prism-delete;

@@ -75,6 +75,7 @@ with pkgs;
   # Prism
   # prism.portal
   prism.sync
+  prism.update-old
   prism.update
   prism.install
   prism.delete

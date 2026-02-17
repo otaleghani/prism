@@ -1,99 +1,95 @@
-{
-  pkgs,
-  writeShellScriptBin,
-  symlinkJoin,
-}:
+{ pkgs }:
 
-let
-  deps = [
-    pkgs.curl
-    pkgs.jq
-    pkgs.coreutils
-    pkgs.findutils
-    pkgs.nix
-    pkgs.libnotify
+pkgs.writeShellApplication {
+  name = "prism-update";
+
+  # Dependencies available inside the script
+  runtimeInputs = with pkgs; [
+    coreutils
+    curl
+    jq
+    fzf
+    gnused
+    git
+    nix
+    nixos-rebuild
   ];
 
-  # Helper: Configuration discovery
-  # Locates the system flake directory in standard Prism locations
-  configDiscovery = ''
-    if [ -d "/etc/prism" ]; then
-        CONFIG_DIR="/etc/prism"
-    elif [ -d "$HOME/.config/prism" ]; then
-        CONFIG_DIR="$HOME/.config/prism"
+  text = ''
+    # Configuration
+    FLAKE_DIR="/etc/prism"
+    FLAKE_FILE="$FLAKE_DIR/flake.nix"
+    REPO_OWNER="otaleghani"
+    REPO_NAME="prism"
+
+    # Mode selection 
+
+    if [[ "''${1:-}" == "unstable" ]]; then
+        echo "Switching to UNSTABLE (tracking main/master)..."
+        NEW_URL="github:''${REPO_OWNER}/''${REPO_NAME}"
     else
-        CONFIG_DIR="''${1:-/etc/nixos}"
+        echo "Fetching releases for ''${REPO_NAME}..."
+        
+        # Fetch releases from GitHub API
+        if ! RELEASES_JSON=$(curl -s -f "https://api.github.com/repos/''${REPO_OWNER}/''${REPO_NAME}/releases"); then
+            echo "Error: Could not fetch releases from GitHub."
+            exit 1
+        fi
+
+        TAGS=$(echo "$RELEASES_JSON" | jq -r '.[].tag_name')
+
+        if [[ -z "$TAGS" || "$TAGS" == "null" ]]; then
+            echo "Error: No release tags found."
+            exit 1
+        fi
+
+        # Pipe tags into fzf
+        # We explicitly read from /dev/tty to ensure fzf interactive mode works
+        SELECTED_TAG=$(echo "$TAGS" | fzf --prompt="Select Prism Version > " --height=40% --layout=reverse --border < /dev/tty)
+
+        if [[ -z "$SELECTED_TAG" ]]; then
+            echo "No version selected. Operation cancelled."
+            exit 0
+        fi
+
+        echo "Selected version: $SELECTED_TAG"
+        NEW_URL="github:''${REPO_OWNER}/''${REPO_NAME}/''${SELECTED_TAG}"
     fi
 
-    if [ ! -f "$CONFIG_DIR/flake.nix" ]; then
-      notify-send "Prism Update" "Error: Flake configuration not found." -u critical
-      exit 1
-    fi
-  '';
+    # Apply changes
 
-  # UNSTABLE UPDATE
-  # Tracks the latest commits on the main branch
-  updateUnstable = writeShellScriptBin "prism-update-unstable" ''
-    export PATH=${pkgs.lib.makeBinPath deps}:$PATH
-    ${configDiscovery}
-
-    echo "=========================================="
-    echo "    Updating Prism (UNSTABLE / LATEST)    "
-    echo "=========================================="
-
-    # Lockfile management
-    # Pulls the latest commit hash for the Prism input
-    echo "[1/2] Fetching latest commits..."
-    sudo nix flake lock --update-input prism --commit-lock-file "$CONFIG_DIR" || {
-        notify-send "Prism Update" "Failed to update flake lock." -u critical
+    if [ ! -f "$FLAKE_FILE" ]; then
+        echo "Error: $FLAKE_FILE does not exist."
         exit 1
-    }
+    fi
 
-    # System generation
-    # Rebuilds the NixOS system profile
-    echo "[2/2] Rebuilding system..."
-    if sudo nixos-rebuild switch --flake "$CONFIG_DIR#prism"; then
-        notify-send "Prism Update" "System updated to latest unstable successfully." -i system-software-update
-        echo "Update Complete!"
+    echo "Updating flake input in $FLAKE_FILE..."
+
+    # Create backup
+    cp "$FLAKE_FILE" "''${FLAKE_FILE}.bak"
+
+    # Use sed to replace the prism.url line.
+    # We use | as delimiter to handle forward slashes in URL safely.
+    sed -i "s|prism.url = \".*\";|prism.url = \"$NEW_URL\";|" "$FLAKE_FILE"
+
+    # Verify change
+    if grep -q "$NEW_URL" "$FLAKE_FILE"; then
+        echo "   Input updated to $NEW_URL"
     else
-        notify-send "Prism Update" "System rebuild failed. Check logs." -u critical
-        exit 1
-    fi
-  '';
-
-  # STABLE UPDATE
-  # Tracks official GitHub releases and tagged versions
-  updateStable = writeShellScriptBin "prism-update" ''
-    export PATH=${pkgs.lib.makeBinPath deps}:$PATH
-    ${configDiscovery}
-
-    echo "=========================================="
-    echo "    Updating Prism (STABLE RELEASE)       "
-    echo "=========================================="
-
-    # Version discovery
-    # Queries the GitHub API for the most recent release tag
-    echo "[1/3] Checking for updates..."
-    LATEST_TAG=$(curl -sL https://api.github.com/repos/otaleghani/prism/releases/latest | jq -r ".tag_name")
-
-    if [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" == "null" ]; then
-        notify-send "Prism Update" "Failed to fetch latest release tag." -u critical
+        echo "   Error: Failed to update flake.nix. Restoring backup."
+        mv "''${FLAKE_FILE}.bak" "$FLAKE_FILE"
         exit 1
     fi
 
-    echo "Found Release: $LATEST_TAG"
+    # Rebuild System 
 
-    # Input overriding
-    # Pins the flake input to the specific GitHub tag
-    echo "[2/3] Locking dependencies..."
-    sudo nix flake lock --override-input prism "github:otaleghani/prism/$LATEST_TAG" --commit-lock-file "$CONFIG_DIR" || {
-        notify-send "Prism Update" "Failed to lock to $LATEST_TAG." -u critical
-        exit 1
-    }
+    echo "Updating flake lockfile..."
+    # This updates flake.lock to match the new version
+    nix flake update --flake "$FLAKE_DIR"
 
-    # System generation
-    echo "[3/3] Rebuilding system..."
-    if sudo nixos-rebuild switch --flake "$CONFIG_DIR#prism"; then
+    echo "Rebuilding NixOS configuration..."
+    # If this step requires root, nixos-rebuild will ask for password via sudo/polkit
+    if sudo nixos-rebuild switch --flake "''${FLAKE_DIR}#prism"; then
         notify-send "Prism Update" "Successfully updated to $LATEST_TAG." -i system-software-update
         echo "Update Complete!"
     else
@@ -101,12 +97,4 @@ let
         exit 1
     fi
   '';
-
-in
-symlinkJoin {
-  name = "prism-update-suite";
-  paths = [
-    updateUnstable
-    updateStable
-  ];
 }

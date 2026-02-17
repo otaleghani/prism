@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Index.md",
+                "file": "00-09 Introduction/01 About/02 Roadmap.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Index"
+              "title": "02 Roadmap"
             }
           }
         ]
@@ -185,6 +185,10 @@
   },
   "active": "ed95b52133cddaa2",
   "lastOpenFiles": [
+    "Index.md",
+    "10-19 Concepts/11 Apps/11 Tmux.md",
+    "10-19 Concepts/11 Apps/10 Obsidian.md",
+    "00-09 Introduction/01 About/02 Roadmap.md",
     "30-39 Profiles/33 Creator/00 Brainstorming.md",
     "30-39 Profiles/32 Pentester/00 Brainstorming.md",
     "30-39 Profiles/31 Gamer/00 Brainstorming.md",
@@ -201,16 +205,12 @@
     "10-19 Concepts/19 Advance/03 Boot configuration.md",
     "10-19 Concepts/19 Advance/02 Nix Configuration.md",
     "10-19 Concepts/19 Advance/01 Installing using flakes.md",
-    "00-09 Introduction/01 About/02 Roadmap.md",
     "00-09 Introduction/01 About/01 Credits.md",
     "10-19 Concepts/10 Getting started/01 Installation.md",
-    "10-19 Concepts/11 Apps/10 Obsidian.md",
     "10-19 Concepts/11 Apps/09 Yazi.md",
     "10-19 Concepts/11 Apps/08 Rofi.md",
     "10-19 Concepts/11 Apps/07 Cliphist.md",
     "10-19 Concepts/11 Apps/06 Btop.md",
-    "10-19 Concepts/11 Apps/05 Bluetui.md",
-    "10-19 Concepts/11 Apps/04 Thunar.md",
     "30-39 Profiles/30 Index",
     "30-39 Profiles",
     "20-29 Commands/27 Creator",
