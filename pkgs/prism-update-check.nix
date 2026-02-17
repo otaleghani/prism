@@ -42,9 +42,9 @@ pkgs.writeShellApplication {
 
     # 3. Extract Current Tag (Stable)
     # If we are here, the URL is likely "github:owner/repo/v1.0.0"
-    # We strip the base URL + slash to get the tag
-    # ''${var#pattern} removes the shortest match of pattern from front
-    CURRENT_TAG="''${CURRENT_URL#$BASE_URL/}"
+    # We strip the base URL + slash to get the tag.
+    # We quote "''${BASE_URL}" inside the expansion to satisfy shellcheck SC2295.
+    CURRENT_TAG="''${CURRENT_URL#"''${BASE_URL}"/}"
 
     # 4. Fetch Latest Tag from GitHub
     LATEST_JSON=$(curl -s --max-time 5 "https://api.github.com/repos/''${REPO_OWNER}/''${REPO_NAME}/releases/latest")
