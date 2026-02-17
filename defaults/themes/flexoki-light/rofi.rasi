@@ -1,0 +1,9 @@
+/* Flexoki Light */
+* {
+    background:     #FFFCF0FF;
+    background-alt: #F2F0E5FF;
+    foreground:     #100F0FFF;
+    selected:       #E6E4D9FF;
+    active:         #24837BFF;
+    urgent:         #AF3029FF;
+}

@@ -1,0 +1,9 @@
+/* Nord Colors */
+* {
+    background:     #2e3440FF;
+    background-alt: #3b4252FF;
+    foreground:     #d8dee9FF;
+    selected:       #4c566aFF;
+    active:         #88c0d0FF;
+    urgent:         #bf616aff;
+}
