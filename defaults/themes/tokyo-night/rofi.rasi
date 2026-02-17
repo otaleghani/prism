@@ -1,0 +1,9 @@
+/* Tokyo Night Moon Colors */
+* {
+    background:     #222436FF;
+    background-alt: #2d3f76FF;
+    foreground:     #c8d3f5FF;
+    selected:       #444a73FF;
+    active:         #82aaffFF;
+    urgent:         #ff757fFF;
+}

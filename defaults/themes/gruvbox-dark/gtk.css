@@ -1,0 +1,22 @@
+/* Gruvbox Dark GTK Override */
+@define-color accent_color #fabd2f;
+@define-color accent_bg_color #fabd2f;
+@define-color accent_fg_color #1d2021;
+
+@define-color window_bg_color #1d2021;
+@define-color window_fg_color #ebdbb2;
+
+@define-color view_bg_color #282828;
+@define-color view_fg_color #ebdbb2;
+
+@define-color headerbar_bg_color #282828;
+@define-color headerbar_fg_color #ebdbb2;
+@define-color headerbar_border_color #3c3836;
+@define-color headerbar_backdrop_color @window_bg_color;
+@define-color headerbar_shade_color rgba(0, 0, 0, 0.15);
+
+@define-color card_bg_color #3c3836;
+@define-color card_fg_color #ebdbb2;
+
+@define-color popover_bg_color #282828;
+@define-color popover_fg_color #ebdbb2;
