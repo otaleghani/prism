@@ -76,8 +76,10 @@ writeShellScriptBin "prism-theme-list" ''
 
   THEMES_DIR="$HOME/.local/share/prism/themes"
 
+  # Validation logic
   if [ ! -d "$THEMES_DIR" ]; then echo "[]"; exit 0; fi
 
+  # Data collection
   THEMES=()
   for theme_path in "$THEMES_DIR"/*; do
       [ -d "$theme_path" ] || continue
@@ -85,20 +87,14 @@ writeShellScriptBin "prism-theme-list" ''
       
       QML="$theme_path/Theme.qml"
       
+      # Parsing logic for QML properties
       if [ -f "$QML" ]; then
-          # Parsing logic:
-          # Looks for lines like: readonly property color base: "#1e1e2e"
-          # It extracts the part inside the quotes.
-          
-          extract_color() {
-            grep "property color $1:" "$QML" | sed -E 's/.*"([^"]+)".*/\1/'
-          }
-
-          BASE=$(extract_color "base")
-          SURFACE=$(extract_color "surface")
-          TEXT=$(extract_color "text")
-          ACCENT=$(extract_color "accent")
-          URGENT=$(extract_color "urgent")
+          # Extracts the hex code between quotes for each color property
+          BASE=$(grep "property color base" "$QML" | cut -d '"' -f 2)
+          SURFACE=$(grep "property color surface" "$QML" | cut -d '"' -f 2)
+          TEXT=$(grep "property color text" "$QML" | cut -d '"' -f 2)
+          ACCENT=$(grep "property color accent" "$QML" | cut -d '"' -f 2)
+          URGENT=$(grep "property color urgent" "$QML" | cut -d '"' -f 2)
       else
           # Fallback values
           BASE="#000000"
@@ -108,20 +104,11 @@ writeShellScriptBin "prism-theme-list" ''
           URGENT="#ff0000"
       fi
       
-      # Build the JSON object for this theme
-      # We use jq to safely construct the JSON and avoid quoting nightmares
-      THEME_JSON=$(jq -n \
-        --arg name "$NAME" \
-        --arg base "''${BASE:-#000}" \
-        --arg surface "''${SURFACE:-#222}" \
-        --arg text "''${TEXT:-#fff}" \
-        --arg accent "''${ACCENT:-#888}" \
-        --arg urgent "''${URGENT:-#f00}" \
-        '{name: $name, colors: {base: $base, surface: $surface, text: $text, accent: $accent, urgent: $urgent}}')
-
-      THEMES+=("$THEME_JSON")
+      # Object construction (Matching your original style)
+      THEMES+=("{\"name\": \"$NAME\", \"colors\": {\"base\": \"''${BASE:-#000}\", \"surface\": \"''${SURFACE:-#222}\", \"text\": \"''${TEXT:-#fff}\", \"accent\": \"''${ACCENT:-#888}\", \"urgent\": \"''${URGENT:-#f00}\"}}")
   done
 
+  # Serialization logic (Matching your original style)
   JSON_ARRAY="[$(IFS=,; echo "''${THEMES[*]}")]"
 
   # Final output
