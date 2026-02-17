@@ -78,18 +78,6 @@ writeShellScriptBin "prism-theme" ''
       ln -sf "$CURRENT_LINK/btop.theme" "$HOME/.config/btop/themes/prism.theme"
   }
 
-  # Dashboard orchestration
-  # Updates Quickshell modules and restarts the process
-  if [ -f "$TARGET_THEME/Theme.qml" ]; then
-      QS_THEME_DIR="$HOME/.config/quickshell/theme"
-      mkdir -p "$QS_THEME_DIR"
-      ln -sf "$CURRENT_LINK/Theme.qml" "$QS_THEME_DIR/Theme.qml"
-
-      if pgrep quickshell > /dev/null; then
-          pkill quickshell
-          quickshell -p "$HOME/.config/quickshell" >/dev/null 2>&1 & disown
-      fi
-  fi
 
   # Media configuration
   # Merges theme-specific MPV settings with the base config
@@ -128,6 +116,19 @@ writeShellScriptBin "prism-theme" ''
   # Triggers the wallpaper manager
   if command -v prism-wall >/dev/null; then
     prism-wall random
+  fi
+
+  # Dashboard orchestration
+  # Updates Quickshell modules and restarts the process
+  if [ -f "$TARGET_THEME/Theme.qml" ]; then
+      QS_THEME_DIR="$HOME/.config/quickshell/theme"
+      mkdir -p "$QS_THEME_DIR"
+      ln -sf "$CURRENT_LINK/Theme.qml" "$QS_THEME_DIR/Theme.qml"
+
+      if pgrep quickshell > /dev/null; then
+          pkill quickshell
+          quickshell -p "$HOME/.config/quickshell" >/dev/null 2>&1 & disown
+      fi
   fi
 
   # Success feedback
