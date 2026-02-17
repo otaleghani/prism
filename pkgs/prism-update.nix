@@ -43,13 +43,9 @@ pkgs.writeShellApplication {
             exit 1
         fi
 
-        # Pipe tags into fzf
-        # We explicitly read from /dev/tty to ensure fzf interactive mode works
-        SELECTED_TAG=$(echo "$TAGS" | fzf --prompt="Select Prism Version > " --height=40% --layout=reverse --border < /dev/tty)
-
-        if [[ -z "$SELECTED_TAG" ]]; then
-            echo "No version selected. Operation cancelled."
-            exit 0
+        if ! SELECTED_TAG=$(echo "$TAGS" | fzf --prompt="Select Prism Version > " --height=40% --layout=reverse --border); then
+             echo "No version selected. Operation cancelled."
+             exit 0
         fi
 
         echo "Selected version: $SELECTED_TAG"

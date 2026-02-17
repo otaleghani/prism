@@ -77,6 +77,7 @@ with pkgs;
   prism.sync
   prism.update-old
   prism.update
+  prism.update-check
   prism.install
   prism.delete
   prism.theme
