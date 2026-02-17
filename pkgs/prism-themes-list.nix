@@ -90,9 +90,9 @@ writeShellScriptBin "prism-theme-list" ''
       # Parsing logic for QML properties
       if [ -f "$QML" ]; then
           # Extracts the hex code between quotes for each color property
-          BASE=$(grep "property color base" "$QML" | cut -d '"' -f 2)
+          BASE=$(grep "property color background" "$QML" | cut -d '"' -f 2)
           SURFACE=$(grep "property color surface" "$QML" | cut -d '"' -f 2)
-          TEXT=$(grep "property color text" "$QML" | cut -d '"' -f 2)
+          TEXT=$(grep "property color foreground" "$QML" | cut -d '"' -f 2)
           ACCENT=$(grep "property color accent" "$QML" | cut -d '"' -f 2)
           URGENT=$(grep "property color urgent" "$QML" | cut -d '"' -f 2)
       else
