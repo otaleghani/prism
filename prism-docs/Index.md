@@ -4,7 +4,7 @@
 
 **Prism** is a NixOS-based distribution designed with a **"state-first"** philosophy. It doesn't just manage your packages; it enforces your environment through the reproducibility of Nix. Prism provides the tools to keep your digital life organized by treating users as a refraction of specific identities—ensuring that whether you are coding, gaming, or creating, your system is perfectly tuned to your current self.
 
-[Get Started](https://www.google.com/search?q=%23-get-started) · [View Features](https://www.google.com/search?q=%23-why-prism) · [Documentation](https://www.google.com/search?q=/docs)
+[[#Get started]] - [[#Why Prism?]] - [GitHub](https://github.com/otaleghani/prism)
 
 ---
 

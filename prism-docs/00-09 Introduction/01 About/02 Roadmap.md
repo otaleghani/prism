@@ -15,6 +15,6 @@
 
 ## Improvements on `prism-update`
 
-- [ ] `prism-update` should give the user the ability to choose the different versions of `prism` from the github tags.
-- [ ] `prism-update` should signal to the user when an update is ready
-- [ ] Check how to handle the updates with the flake! It should change the flake too!!
+- [x] `prism-update` should give the user the ability to choose the different versions of `prism` from the github tags.
+- [x] `prism-update` should signal to the user when an update is ready
+- [x] Check how to handle the updates with the flake! It should change the flake too!!
