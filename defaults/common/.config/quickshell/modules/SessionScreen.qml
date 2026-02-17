@@ -86,20 +86,37 @@ Floating {
             orientation: ListView.Horizontal
             spacing: Style.sessionBtnSpacing
 
-            // Navigation
             focus: true
             keyNavigationWraps: true
 
-            // Start at "Lock" (Middle)
             Component.onCompleted: currentIndex = 2
 
             model: actionsModel
 
-            // Keyboard Activation
-            Keys.onReturnPressed: root.runAction(model.action)
-            Keys.onEnterPressed: root.runAction(model.action)
-            Keys.onSpacePressed: root.runAction(model.action)
+            // KEYBOARD FIX:
+            // Access the model data of the currently highlighted index
+            Keys.onReturnPressed: {
+                let currentData = model.get(currentIndex);
+                root.runAction(currentData.action);
+            }
+            Keys.onEnterPressed: {
+                let currentData = model.get(currentIndex);
+                root.runAction(currentData.action);
+            }
+            Keys.onSpacePressed: {
+                let currentData = model.get(currentIndex);
+                root.runAction(currentData.action);
+            }
             Keys.onEscapePressed: root.close()
+
+            // Start at "Lock" (Middle)
+            Component.onCompleted: currentIndex = 2
+
+            // Keyboard Activation
+            // Keys.onReturnPressed: root.runAction(model.action)
+            // Keys.onEnterPressed: root.runAction(model.action)
+            // Keys.onSpacePressed: root.runAction(model.action)
+            // Keys.onEscapePressed: root.close()
 
             delegate: Rectangle {
                 id: btn
@@ -110,6 +127,7 @@ Floating {
                 required property string name
                 required property string icon
                 required property string action
+                required property int index
                 // required property string color
 
                 // State
@@ -121,6 +139,23 @@ Floating {
                 scale: (isHovered || isSelected) ? 1.05 : 1.0
                 border.width: (isHovered || isSelected) ? 2 : 0
                 border.color: Style.bg
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        sessionList.currentIndex = index;
+                        // MOUSE FIX: Use the 'action' property directly from the delegate
+                        root.runAction(action);
+                    }
+                }
+
+                // MouseArea {
+                //     anchors.fill: parent
+                //     onClicked: {
+                //         sessionList.currentIndex = index;
+                //         root.runAction(btn.action);
+                //     }
+                // }
 
                 // Animations
                 Behavior on scale {
@@ -156,14 +191,6 @@ Floating {
 
                 HoverHandler {
                     id: hoverHandler
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        sessionList.currentIndex = index;
-                        root.runAction(btn.action);
-                    }
                 }
             }
         }
