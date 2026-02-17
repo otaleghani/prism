@@ -8,7 +8,7 @@ pkgs.writeShellApplication {
     curl
     jq
     gnused
-    libnotify # For notify-send
+    libnotify
   ];
 
   text = ''
@@ -18,31 +18,37 @@ pkgs.writeShellApplication {
     REPO_NAME="prism"
 
     # 1. Parse current state from flake.nix
-    # We look for the line: prism.url = "..."
     if [ ! -f "$FLAKE_FILE" ]; then
         echo "" # Warning icon if file missing
         exit 1
     fi
 
+    # Extract the full line: prism.url = "..."
     URL_LINE=$(grep 'prism.url =' "$FLAKE_FILE")
 
+    # Clean extraction of the URL content inside the quotes
+    # Matches: anything -> prism.url = " -> (capture this) -> ";
+    CURRENT_URL=$(echo "$URL_LINE" | sed -n 's/.*prism.url = "\(.*\)";.*/\1/p')
+
+    # Construct the base "Unstable" URL
+    BASE_URL="github:''${REPO_OWNER}/''${REPO_NAME}"
+
     # 2. Check for Unstable Branch
-    # If the URL ends with just the repo name (no tag), it's unstable/main
-    # Regex: matches "github:owner/repo";
-    if [[ "$URL_LINE" =~ github:''${REPO_OWNER}/''${REPO_NAME}\";$ ]]; then
+    # If the URL is exactly "github:owner/repo", it is unstable (no tag)
+    if [ "$CURRENT_URL" == "$BASE_URL" ]; then
         echo "" # Nerd Font: Branch/Code icon (Unstable)
         exit 0
     fi
 
     # 3. Extract Current Tag (Stable)
-    # Removes everything before the slash after repo name, and removes trailing ";
-    CURRENT_TAG=$(echo "$URL_LINE" | sed -E "s|.*''${REPO_NAME}/(.*)\";|\1|")
+    # If we are here, the URL is likely "github:owner/repo/v1.0.0"
+    # We strip the base URL + slash to get the tag
+    # ''${var#pattern} removes the shortest match of pattern from front
+    CURRENT_TAG="''${CURRENT_URL#$BASE_URL/}"
 
     # 4. Fetch Latest Tag from GitHub
-    # Timeout set to 5s so your bar doesn't freeze if offline
     LATEST_JSON=$(curl -s --max-time 5 "https://api.github.com/repos/''${REPO_OWNER}/''${REPO_NAME}/releases/latest")
 
-    # If curl failed (offline), show a distinct icon or just the current status
     if [ -z "$LATEST_JSON" ]; then
         echo "" # Disconnected/Offline icon
         exit 0
