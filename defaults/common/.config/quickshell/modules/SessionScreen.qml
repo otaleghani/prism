@@ -110,7 +110,7 @@ Floating {
             Keys.onEscapePressed: root.close()
 
             // Start at "Lock" (Middle)
-            Component.onCompleted: currentIndex = 2
+            // Component.onCompleted: currentIndex = 2
 
             // Keyboard Activation
             // Keys.onReturnPressed: root.runAction(model.action)
