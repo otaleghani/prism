@@ -123,5 +123,6 @@ writeShellScriptBin "prism-theme-list" ''
   done
 
   # Output as a proper JSON array
-  printf '%s\n' "''${THEMES[@]}" | jq -s '.'
+  # printf '%s\n' "''${THEMES[@]}" | jq -s '.'
+  echo "$JSON_ARRAY"
 ''
