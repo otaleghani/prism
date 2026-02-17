@@ -91,7 +91,7 @@ writeShellScriptBin "prism-theme-list" ''
           # It extracts the part inside the quotes.
           
           extract_color() {
-            grep "property color $1:" "$QML" | sed -E "s/.*['\"]([^'\"]+)['\"].*/\1/"
+            grep "property color $1:" "$QML" | sed -E 's/.*"([^"]+)".*/\1/'
           }
 
           BASE=$(extract_color "base")
@@ -122,7 +122,8 @@ writeShellScriptBin "prism-theme-list" ''
       THEMES+=("$THEME_JSON")
   done
 
-  # Output as a proper JSON array
-  # printf '%s\n' "''${THEMES[@]}" | jq -s '.'
+  JSON_ARRAY="[$(IFS=,; echo "''${THEMES[*]}")]"
+
+  # Final output
   echo "$JSON_ARRAY"
 ''
