@@ -39,13 +39,13 @@ ColumnLayout {
     BarWifiIcon {
         connected: sysProcess.state.wifi.connected
     }
-
     BarBluetoothIcon {
         connected: sysProcess.state.bluetooth.connected
     }
-
     BarPowerProfiles {
         profile: sysProcess.state.profile
     }
+    BarUpdates {}
     BarNotifications {}
+    BarVolume {}
 }

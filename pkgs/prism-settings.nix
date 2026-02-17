@@ -13,7 +13,7 @@ writeShellScriptBin "prism-settings" ''
   # Menu definitions
   # Standardized labels for the Rofi selection interface
   OPT_CONFIG="󱇦  Edit system configuration"
-  OPT_DOTFILES="󱰂  Edit dotfiles"
+  OPT_DOTFILES="󰏘  Edit dotfiles"
   OPT_THEME="󱥚  Switch theme"
   OPT_WALL="󰸉  Wallpaper picker"
   OPT_FONT="󰬶  Change system font"
@@ -115,7 +115,7 @@ writeShellScriptBin "prism-settings" ''
 
     "$OPT_UPDATE_UN")
       # Unstable track update via terminal portal
-      exec prism-tui prism-update-unstable
+      exec prism-tui prism-update unstable
       ;;
 
     *)
