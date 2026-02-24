@@ -37,11 +37,18 @@
         4321 # Astro / Vite
         8080 # Generic Web
         8081 # Generic Web Alt
+        27036 # Steam Transfer
       ];
       allowedUDPPorts = lib.mkDefault [
         4321
         8080
         8081
+        27031 # Start Steam Transfer
+        27032
+        27033
+        27034
+        27035
+        27036 # End Steam Transfer
       ];
     };
 
