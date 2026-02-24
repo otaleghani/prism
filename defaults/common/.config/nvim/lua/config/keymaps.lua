@@ -32,6 +32,10 @@ map("n", "<leader>wq", "<Cmd>close<CR>", { desc = "Close current window" })
 map("n", "<leader>bq", "<Cmd>bdelete<CR>", { desc = "Close current buffer" })
 map("n", "<leader>bQ", "<Cmd>bdelete!<CR>", { desc = "Force close current buffer" })
 
+-- Quickfix
+map("n", "<M-j>", "<Cmd>cnext<CR>")
+map("n", "<M-k>", "<Cmd>cprev<CR>")
+
 -- LSP diagnostic
 map("n", "<leader>d", "<Cmd>lua vim.diagnostic.open_float()<CR>", opts)
 
