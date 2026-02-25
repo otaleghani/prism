@@ -6,6 +6,7 @@ with pkgs;
   lazygit
   lazydocker
   opencode
+  claude-code
 
   python3
   nodejs_20
