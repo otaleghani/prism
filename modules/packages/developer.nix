@@ -8,6 +8,8 @@ with pkgs;
   opencode
   claude-code
 
+  tree-sitter # Needed for nvim
+
   python3
   nodejs_20
   gcc
