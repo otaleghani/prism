@@ -38,6 +38,7 @@
         8080 # Generic Web
         8081 # Generic Web Alt
         27036 # Steam Transfer
+        27040 # Steam Transfer
       ];
       allowedUDPPorts = lib.mkDefault [
         4321
@@ -48,7 +49,8 @@
         27033
         27034
         27035
-        27036 # End Steam Transfer
+        27036
+        27040 # End Steam Transfer
       ];
     };
 
