@@ -32,6 +32,8 @@ with pkgs;
   yazi # Terminal file manager
   findutils # find
   coreutils # sort, head, etc.
+  direnv
+  nix-direnv
 
   # Window
   wl-clipboard

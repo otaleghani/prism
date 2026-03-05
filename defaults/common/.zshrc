@@ -1,5 +1,6 @@
 export EDITOR=nvim
 eval "$(ssh-agent -s)" >/dev/null 2>&1
+eval "$(direnv hook zsh)"
 
 export COLORTERM="truecolor"
 
