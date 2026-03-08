@@ -34,6 +34,7 @@ with pkgs;
   coreutils # sort, head, etc.
   direnv
   nix-direnv
+  yarr # Yet Another RSS Reader
 
   # Window
   wl-clipboard
