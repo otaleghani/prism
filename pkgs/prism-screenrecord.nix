@@ -98,6 +98,7 @@ writeShellScriptBin "prism-screenrecord" ''
       -fflags nobuffer -flags low_delay \
       -probesize 32 -analyzeduration 0 \
       -loglevel quiet &
+    disown
   }
 
   # Helper: Start process
@@ -115,10 +116,10 @@ writeShellScriptBin "prism-screenrecord" ''
     fi
     [[ -n "$inputs" ]] && audio_args="-a $inputs"
 
-    # Execution logic
-    # Fixed: Removed the invalid '||' after the background operator '&'
+    # FIX: disown so the recorder survives the parent shell exiting
     gpu-screen-recorder -w portal -f 60 -o "$filename" $audio_args &
-    
+    disown
+
     notify-send "Prism Recorder" "Recording started. Saving to $OUTPUT_DIR" -i media-record
     pkill -RTMIN+8 waybar 2>/dev/null
   }
@@ -128,25 +129,27 @@ writeShellScriptBin "prism-screenrecord" ''
     pkill -SIGINT -f "gpu-screen-recorder"
 
     local count=0
-    while pgrep -f "^gpu-screen-recorder" >/dev/null && [ $count -lt 50 ]; do
+    while pgrep -f "gpu-screen-recorder" >/dev/null && [ $count -lt 50 ]; do
       sleep 0.1
       count=$((count + 1))
     done
 
-    if pgrep -f "^gpu-screen-recorder" >/dev/null; then
-      pkill -9 -f "^gpu-screen-recorder"
+    if pgrep -f "gpu-screen-recorder" >/dev/null; then
+      pkill -9 -f "gpu-screen-recorder"
       notify-send "Prism Recorder" "Process force-killed. Check video integrity." -u critical
     else
       notify-send "Prism Recorder" "Recording saved successfully." -i media-playback-stop
     fi
-    
+
     cleanup_webcam
     pkill -RTMIN+8 waybar 2>/dev/null
   }
 
   # Main execution logic
+  # FIX: Removed ^ anchor — on NixOS the process path is /nix/store/…/bin/gpu-screen-recorder,
+  # so ^gpu-screen-recorder never matches.
   IS_RECORDING=false
-  pgrep -f "^gpu-screen-recorder" >/dev/null && IS_RECORDING=true
+  pgrep -f "gpu-screen-recorder" >/dev/null && IS_RECORDING=true
 
   IS_WEBCAM=false
   pgrep -f "WebcamOverlay" >/dev/null && IS_WEBCAM=true
