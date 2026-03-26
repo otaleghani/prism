@@ -11,6 +11,7 @@ let
 in
 writeShellScriptBin "prism-install" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
+  export NIXPKGS_ALLOW_UNFREE=1
   CACHE_FILE="$HOME/.cache/prism/pkglist.txt"
 
   # Terminal auto-launch
@@ -53,7 +54,7 @@ writeShellScriptBin "prism-install" ''
 
   # Execution logic
   echo "Installing $PKG..."
-  if nix profile install "nixpkgs#$PKG"; then
+  if nix profile install --impure "nixpkgs#$PKG"; then
     notify-send "Prism Store" "Successfully installed $PKG" -i system-software-install
   else
     notify-send "Prism Store" "Failed to install $PKG." -u critical
