@@ -54,6 +54,15 @@ in
 
         # Select the stable driver version by default
         package = config.boot.kernelPackages.nvidiaPackages.beta;
+
+        prime = {
+          offload = {
+            enable = true;
+            enableOffloadCmd = true;
+          };
+          nvidiaBusId = "PCI:1:0:0";
+          amdgpuBusId = "PCI:6:0:0";
+        };
       };
     })
 
