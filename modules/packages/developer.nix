@@ -19,4 +19,6 @@ with pkgs;
   prism.project
   prism.api-test
   prism.git-tui
+
+  xinit # Used for XFCE
 ]
