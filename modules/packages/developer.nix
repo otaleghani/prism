@@ -20,5 +20,8 @@ with pkgs;
   prism.api-test
   prism.git-tui
 
-  xinit # Used for XFCE
+  # Things from gamer that I still use
+  mangohud
+  protonup-qt
+  gamescope
 ]
