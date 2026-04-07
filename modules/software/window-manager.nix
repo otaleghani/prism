@@ -34,4 +34,9 @@
   # Security (Polkit)
   # Essential for GUI authentication prompts (like "Enter password to update system")
   security.polkit.enable = lib.mkDefault true;
+
+  services.xserver = {
+    enable = true;
+    desktopManager.xfce.enable = true;
+  };
 }
