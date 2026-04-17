@@ -45,7 +45,7 @@ with pkgs;
   rose-pine-icon-theme
   rose-pine-hyprcursor # Cursor
   rofi # Application runner
-  swww # Wallpaper engine
+  awww # Wallpaper engine
   hyprpolkitagent # Needed for prism-portal
   libnotify
   brightnessctl

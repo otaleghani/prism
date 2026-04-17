@@ -2,7 +2,7 @@
 
 let
   deps = [
-    pkgs.swww
+    pkgs.awww
     pkgs.fzf
     pkgs.findutils # for find
     pkgs.coreutils # for sort, head
@@ -35,9 +35,9 @@ writeShellScriptBin "prism-wall" ''
     fi
   }
 
-  # Ensure swww is running
-  if ! pgrep swww-daemon > /dev/null; then
-    swww-daemon >/dev/null 2>&1 &
+  # Ensure awww is running
+  if ! pgrep awww-daemon > /dev/null; then
+    awww-daemon >/dev/null 2>&1 &
     sleep 0.5
   fi
 
@@ -65,7 +65,7 @@ writeShellScriptBin "prism-wall" ''
 
   if [ -n "$IMAGE" ]; then
     echo "[Prism] Setting wallpaper: $IMAGE"
-    swww img "$IMAGE" \
+    awww img "$IMAGE" \
       --transition-type grow \
       --transition-pos top-right \
       --transition-duration 2 \
