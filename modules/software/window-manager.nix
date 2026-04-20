@@ -9,6 +9,8 @@
     xwayland.enable = lib.mkDefault true;
   };
 
+  programs.nix-ld.enable = true;
+
   # Environment Variables
   environment.sessionVariables = {
     # Hint Electron apps to use Wayland directly instead of XWayland
