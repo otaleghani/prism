@@ -7,6 +7,7 @@ with pkgs;
   lazydocker
   opencode
   claude-code
+  codex
   gh
 
   tree-sitter # Needed for nvim
