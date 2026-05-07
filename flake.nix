@@ -134,65 +134,71 @@
 
           # Inject our custom scripts package set
           nixpkgs.overlays = [
-            (final: prev: {
-              prism = {
-                # portal = self.packages.${prev.system}.prism-portal;
-                sync = self.packages.${prev.system}.prism-sync;
-                update-old = self.packages.${prev.system}.prism-update-old;
-                update = self.packages.${prev.system}.prism-update;
-                update-check = self.packages.${prev.system}.prism-update-check;
-                install = self.packages.${prev.system}.prism-install;
-                delete = self.packages.${prev.system}.prism-delete;
-                theme = self.packages.${prev.system}.prism-theme;
-                wall = self.packages.${prev.system}.prism-wall;
-                focus = self.packages.${prev.system}.prism-open-or-focus;
-                open-tui = self.packages.${prev.system}.prism-open-tui;
-                focus-tui = self.packages.${prev.system}.prism-open-or-focus-tui;
-                open-webapp = self.packages.${prev.system}.prism-open-webapp;
-                focus-webapp = self.packages.${prev.system}.prism-open-or-focus-webapp;
-                session = self.packages.${prev.system}.prism-session;
-                screenshot = self.packages.${prev.system}.prism-screenshot;
-                screenrecord = self.packages.${prev.system}.prism-screenrecord;
-                save = self.packages.${prev.system}.prism-save;
-                monitor = self.packages.${prev.system}.prism-monitor;
-                apps = self.packages.${prev.system}.prism-apps;
-                bluetooth = self.packages.${prev.system}.prism-bluetooth;
-                wifi = self.packages.${prev.system}.prism-wifi;
-                music = self.packages.${prev.system}.prism-music;
-                chat = self.packages.${prev.system}.prism-chat;
-                ai = self.packages.${prev.system}.prism-ai;
-                settings = self.packages.${prev.system}.prism-settings;
-                clipboard = self.packages.${prev.system}.prism-clipboard;
-                installer = self.packages.${prev.system}.prism-installer;
-                timezone = self.packages.${prev.system}.prism-timezone;
-                keyboard = self.packages.${prev.system}.prism-keyboard;
-                keybinds = self.packages.${prev.system}.prism-keybinds;
-                power = self.packages.${prev.system}.prism-power;
-                users = self.packages.${prev.system}.prism-users;
-                project = self.packages.${prev.system}.prism-project;
-                workspaces = self.packages.${prev.system}.prism-workspaces;
-                active-window = self.packages.${prev.system}.prism-active-window;
-                audio-status = self.packages.${prev.system}.prism-audio-status;
-                net-status = self.packages.${prev.system}.prism-net-status;
-                notif-status = self.packages.${prev.system}.prism-notif-status;
-                notifications = self.packages.${prev.system}.prism-notifications;
-                audio-mixer = self.packages.${prev.system}.prism-audio-mixer;
-                brightness = self.packages.${prev.system}.prism-brightness;
-                wallpaper-list = self.packages.${prev.system}.prism-wallpaper-list;
-                themes-list = self.packages.${prev.system}.prism-themes-list;
-                system-status = self.packages.${prev.system}.prism-system-status;
-                system-monitor = self.packages.${prev.system}.prism-system-monitor;
-                volume = self.packages.${prev.system}.prism-volume;
-                install-webapp = self.packages.${prev.system}.prism-install-webapp;
-                uninstall-webapp = self.packages.${prev.system}.prism-uninstall-webapp;
-                api-test = self.packages.${prev.system}.prism-api-test;
-                git-tui = self.packages.${prev.system}.prism-git-tui;
-                game-launcher = self.packages.${prev.system}.prism-game-launcher;
-                font = self.packages.${prev.system}.prism-font;
-                ctl = self.packages.${prev.system}.prism-ctl;
-              };
-              quickshell = quickshell.packages.${prev.system}.default;
-            })
+            (
+              final: prev:
+              let
+                system = prev.stdenv.hostPlatform.system;
+              in
+              {
+                prism = {
+                  # portal = self.packages.${prev.system}.prism-portal;
+                  sync = self.packages.${system}.prism-sync;
+                  update-old = self.packages.${system}.prism-update-old;
+                  update = self.packages.${system}.prism-update;
+                  update-check = self.packages.${system}.prism-update-check;
+                  install = self.packages.${system}.prism-install;
+                  delete = self.packages.${system}.prism-delete;
+                  theme = self.packages.${system}.prism-theme;
+                  wall = self.packages.${system}.prism-wall;
+                  focus = self.packages.${system}.prism-open-or-focus;
+                  open-tui = self.packages.${system}.prism-open-tui;
+                  focus-tui = self.packages.${system}.prism-open-or-focus-tui;
+                  open-webapp = self.packages.${system}.prism-open-webapp;
+                  focus-webapp = self.packages.${system}.prism-open-or-focus-webapp;
+                  session = self.packages.${system}.prism-session;
+                  screenshot = self.packages.${system}.prism-screenshot;
+                  screenrecord = self.packages.${system}.prism-screenrecord;
+                  save = self.packages.${system}.prism-save;
+                  monitor = self.packages.${system}.prism-monitor;
+                  apps = self.packages.${system}.prism-apps;
+                  bluetooth = self.packages.${system}.prism-bluetooth;
+                  wifi = self.packages.${system}.prism-wifi;
+                  music = self.packages.${system}.prism-music;
+                  chat = self.packages.${system}.prism-chat;
+                  ai = self.packages.${system}.prism-ai;
+                  settings = self.packages.${system}.prism-settings;
+                  clipboard = self.packages.${system}.prism-clipboard;
+                  installer = self.packages.${system}.prism-installer;
+                  timezone = self.packages.${system}.prism-timezone;
+                  keyboard = self.packages.${system}.prism-keyboard;
+                  keybinds = self.packages.${system}.prism-keybinds;
+                  power = self.packages.${system}.prism-power;
+                  users = self.packages.${system}.prism-users;
+                  project = self.packages.${system}.prism-project;
+                  workspaces = self.packages.${system}.prism-workspaces;
+                  active-window = self.packages.${system}.prism-active-window;
+                  audio-status = self.packages.${system}.prism-audio-status;
+                  net-status = self.packages.${system}.prism-net-status;
+                  notif-status = self.packages.${system}.prism-notif-status;
+                  notifications = self.packages.${system}.prism-notifications;
+                  audio-mixer = self.packages.${system}.prism-audio-mixer;
+                  brightness = self.packages.${system}.prism-brightness;
+                  wallpaper-list = self.packages.${system}.prism-wallpaper-list;
+                  themes-list = self.packages.${system}.prism-themes-list;
+                  system-status = self.packages.${system}.prism-system-status;
+                  system-monitor = self.packages.${system}.prism-system-monitor;
+                  volume = self.packages.${system}.prism-volume;
+                  install-webapp = self.packages.${system}.prism-install-webapp;
+                  uninstall-webapp = self.packages.${system}.prism-uninstall-webapp;
+                  api-test = self.packages.${system}.prism-api-test;
+                  git-tui = self.packages.${system}.prism-git-tui;
+                  game-launcher = self.packages.${system}.prism-game-launcher;
+                  font = self.packages.${system}.prism-font;
+                  ctl = self.packages.${system}.prism-ctl;
+                };
+                quickshell = quickshell.packages.${system}.default;
+              }
+            )
           ];
         };
 

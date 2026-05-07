@@ -7,7 +7,7 @@ let
     pkgs.gnused
     pkgs.libnotify
     pkgs.gawk
-    pkgs.xorg.xkeyboardconfig
+    pkgs.xkeyboard-config
   ];
 in
 writeShellScriptBin "prism-keyboard" ''

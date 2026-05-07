@@ -3,7 +3,7 @@
 with pkgs;
 [
   # Launchers
-  lutris
+  # lutris # currently broken!!
   heroic
 
   # Utilities
