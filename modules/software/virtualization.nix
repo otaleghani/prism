@@ -48,6 +48,9 @@ in
   services.spice-vdagentd.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
 
+  # Docker
+  virtualisation.docker.enable = true;
+
   # UI Integration
   programs.virt-manager.enable = true;
   programs.dconf.enable = true;
