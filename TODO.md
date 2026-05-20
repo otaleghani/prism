@@ -1,0 +1,2 @@
+- [ ] Delete or rework multi-user handling
+- [ ] Rework the way that the wallpapers are handled (do not make them "per-theme", to restrictive)

@@ -12,8 +12,8 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    silentSDDM.url = "github:uiriansan/SilentSDDM";
-    silentSDDM.inputs.nixpkgs.follows = "nixpkgs";
+    # silentSDDM.url = "github:uiriansan/SilentSDDM";
+    # silentSDDM.inputs.nixpkgs.follows = "nixpkgs";
     quickshell.url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
     quickshell.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -22,7 +22,7 @@
     {
       self,
       nixpkgs,
-      silentSDDM,
+      # silentSDDM,
       quickshell,
       ...
     }@inputs:
@@ -108,7 +108,7 @@
         }:
         {
           imports = [
-            silentSDDM.nixosModules.default
+            # silentSDDM.nixosModules.default
             ./modules/users.nix
             ./modules/packages.nix
             ./modules/hardware/audio.nix
