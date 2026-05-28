@@ -1,5 +1,5 @@
 return {
-  cmd = { "lua-languagee-server" },
+  cmd = { "lua-language-server" },
 
   filetypes = { "lua" },
 
