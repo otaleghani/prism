@@ -9,10 +9,13 @@ pkgs.writeShellApplication {
     curl
     jq
     fzf
+    gnugrep
     gnused
     git
+    libnotify
     nix
     nixos-rebuild
+    sudo
   ];
 
   text = ''
@@ -21,22 +24,52 @@ pkgs.writeShellApplication {
     FLAKE_FILE="$FLAKE_DIR/flake.nix"
     REPO_OWNER="otaleghani"
     REPO_NAME="prism"
+    REPO_GIT_URL="git+https://github.com/''${REPO_OWNER}/''${REPO_NAME}.git"
+
+    curl_args=(-s -f)
+    if [[ -n "''${GITHUB_TOKEN:-}" ]]; then
+        curl_args+=(-H "Authorization: Bearer ''${GITHUB_TOKEN}")
+    fi
+
+    print_rate_limit_help() {
+        printf '%s\n' \
+            "" \
+            "GitHub rate limit hit while updating flakes." \
+            "Retry later, or set a GitHub token for Nix:" \
+            "  mkdir -p ~/.config/nix" \
+            "  printf 'access-tokens = github.com=YOUR_TOKEN\\n' >> ~/.config/nix/nix.conf" \
+            "" \
+            "For one-off release discovery, you can also run:" \
+            "  GITHUB_TOKEN=YOUR_TOKEN prism-update"
+    }
+
+    fetch_release_tags() {
+        local releases_json
+        if releases_json=$(curl "''${curl_args[@]}" "https://api.github.com/repos/''${REPO_OWNER}/''${REPO_NAME}/releases"); then
+            echo "$releases_json" | jq -r '.[].tag_name'
+            return 0
+        fi
+
+        echo "Warning: Could not fetch GitHub releases through the API." >&2
+        echo "Falling back to repository tags..." >&2
+        git ls-remote --refs --tags "https://github.com/''${REPO_OWNER}/''${REPO_NAME}.git" \
+            | sed 's|.*refs/tags/||' \
+            | sort -Vr
+    }
 
     # Mode selection 
 
     if [[ "''${1:-}" == "unstable" ]]; then
-        echo "Switching to UNSTABLE (tracking main/master)..."
-        NEW_URL="github:''${REPO_OWNER}/''${REPO_NAME}"
+        echo "Switching to UNSTABLE (tracking main)..."
+        NEW_URL="''${REPO_GIT_URL}?ref=main"
+        TARGET_LABEL="unstable main"
     else
         echo "Fetching releases for ''${REPO_NAME}..."
-        
-        # Fetch releases from GitHub API
-        if ! RELEASES_JSON=$(curl -s -f "https://api.github.com/repos/''${REPO_OWNER}/''${REPO_NAME}/releases"); then
-            echo "Error: Could not fetch releases from GitHub."
+
+        if ! TAGS=$(fetch_release_tags); then
+            echo "Error: Could not fetch releases or tags from GitHub."
             exit 1
         fi
-
-        TAGS=$(echo "$RELEASES_JSON" | jq -r '.[].tag_name')
 
         if [[ -z "$TAGS" || "$TAGS" == "null" ]]; then
             echo "Error: No release tags found."
@@ -49,7 +82,8 @@ pkgs.writeShellApplication {
         fi
 
         echo "Selected version: $SELECTED_TAG"
-        NEW_URL="github:''${REPO_OWNER}/''${REPO_NAME}/''${SELECTED_TAG}"
+        NEW_URL="''${REPO_GIT_URL}?ref=''${SELECTED_TAG}"
+        TARGET_LABEL="$SELECTED_TAG"
     fi
 
     # Apply changes
@@ -63,13 +97,18 @@ pkgs.writeShellApplication {
 
     # Create backup
     cp "$FLAKE_FILE" "''${FLAKE_FILE}.bak"
+    HAD_LOCK=0
+    if [ -f "$FLAKE_DIR/flake.lock" ]; then
+        cp "$FLAKE_DIR/flake.lock" "$FLAKE_DIR/flake.lock.bak"
+        HAD_LOCK=1
+    fi
 
     # Use sed to replace the prism.url line.
     # We use | as delimiter to handle forward slashes in URL safely.
     sed -i "s|prism.url = \".*\";|prism.url = \"$NEW_URL\";|" "$FLAKE_FILE"
 
     # Verify change
-    if grep -q "$NEW_URL" "$FLAKE_FILE"; then
+    if grep -Fq "$NEW_URL" "$FLAKE_FILE"; then
         echo "   Input updated to $NEW_URL"
     else
         echo "   Error: Failed to update flake.nix. Restoring backup."
@@ -81,12 +120,28 @@ pkgs.writeShellApplication {
 
     echo "Updating flake lockfile..."
     # This updates flake.lock to match the new version
-    nix flake update --flake "$FLAKE_DIR"
+    LOCK_LOG=$(mktemp)
+    if ! nix flake update --flake "$FLAKE_DIR" 2> >(tee "$LOCK_LOG" >&2); then
+        echo "Error: Failed to update flake.lock. Restoring previous flake files."
+        mv "''${FLAKE_FILE}.bak" "$FLAKE_FILE"
+        if [ "$HAD_LOCK" -eq 1 ] && [ -f "$FLAKE_DIR/flake.lock.bak" ]; then
+            mv "$FLAKE_DIR/flake.lock.bak" "$FLAKE_DIR/flake.lock"
+        else
+            rm -f "$FLAKE_DIR/flake.lock"
+        fi
+        if grep -qi "rate limit" "$LOCK_LOG"; then
+            print_rate_limit_help
+        fi
+        rm -f "$LOCK_LOG"
+        exit 1
+    fi
+    rm -f "$LOCK_LOG"
+    rm -f "''${FLAKE_FILE}.bak" "$FLAKE_DIR/flake.lock.bak"
 
     echo "Rebuilding NixOS configuration..."
     # If this step requires root, nixos-rebuild will ask for password via sudo/polkit
     if sudo nixos-rebuild switch --flake "''${FLAKE_DIR}#prism"; then
-        notify-send "Prism Update" "Successfully updated to $LATEST_TAG." -i system-software-update
+        notify-send "Prism Update" "Successfully updated to $TARGET_LABEL." -i system-software-update
         echo "Update Complete!"
     else
         notify-send "Prism Update" "System rebuild failed." -u critical

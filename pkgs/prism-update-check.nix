@@ -6,6 +6,8 @@ pkgs.writeShellApplication {
   runtimeInputs = with pkgs; [
     coreutils
     curl
+    git
+    gnugrep
     jq
     gnused
     libnotify
@@ -16,6 +18,30 @@ pkgs.writeShellApplication {
     FLAKE_FILE="/etc/prism/flake.nix"
     REPO_OWNER="otaleghani"
     REPO_NAME="prism"
+    GITHUB_BASE="github:''${REPO_OWNER}/''${REPO_NAME}"
+    GIT_BASE="git+https://github.com/''${REPO_OWNER}/''${REPO_NAME}.git"
+
+    curl_args=(-s --max-time 5)
+    if [[ -n "''${GITHUB_TOKEN:-}" ]]; then
+        curl_args+=(-H "Authorization: Bearer ''${GITHUB_TOKEN}")
+    fi
+
+    latest_tag() {
+        local latest_json latest
+
+        latest_json=$(curl "''${curl_args[@]}" "https://api.github.com/repos/''${REPO_OWNER}/''${REPO_NAME}/releases/latest" || true)
+        latest=$(echo "$latest_json" | jq -r 'if type == "object" then (.tag_name // empty) else empty end' 2>/dev/null || true)
+
+        if [ -n "$latest" ] && [ "$latest" != "null" ]; then
+            echo "$latest"
+            return 0
+        fi
+
+        git ls-remote --refs --tags "https://github.com/''${REPO_OWNER}/''${REPO_NAME}.git" 2>/dev/null \
+            | sed 's|.*refs/tags/||' \
+            | sort -Vr \
+            | head -n 1
+    }
 
     # Parse current state from flake.nix
     if [ ! -f "$FLAKE_FILE" ]; then
@@ -30,31 +56,30 @@ pkgs.writeShellApplication {
     # Matches: anything -> prism.url = " -> (capture this) -> ";
     CURRENT_URL=$(echo "$URL_LINE" | sed -n 's/.*prism.url = "\(.*\)";.*/\1/p')
 
-    # Construct the base "Unstable" URL
-    BASE_URL="github:''${REPO_OWNER}/''${REPO_NAME}"
-
     # Check for Unstable Branch
-    # If the URL is exactly "github:owner/repo", it is unstable (no tag)
-    if [ "$CURRENT_URL" == "$BASE_URL" ]; then
+    # Older configs use github:owner/repo; newer configs avoid GitHub API rate limits with git+https.
+    if [ "$CURRENT_URL" == "$GITHUB_BASE" ] || [ "$CURRENT_URL" == "''${GIT_BASE}?ref=main" ]; then
         echo "" # Nerd Font: Branch/Code icon (Unstable)
         exit 0
     fi
 
-    # Extract Current Tag (Stable)
-    # If we are here, the URL is likely "github:owner/repo/v1.0.0"
-    # We strip the base URL + slash to get the tag.
-    # We quote "''${BASE_URL}" inside the expansion to satisfy shellcheck SC2295.
-    CURRENT_TAG="''${CURRENT_URL#"''${BASE_URL}"/}"
-
-    # Fetch Latest Tag from GitHub
-    LATEST_JSON=$(curl -s --max-time 5 "https://api.github.com/repos/''${REPO_OWNER}/''${REPO_NAME}/releases/latest")
-
-    if [ -z "$LATEST_JSON" ]; then
-        echo "" # Disconnected/Offline icon
+    # Extract Current Tag (Stable). Supports both github:owner/repo/tag and git+https://...?ref=tag.
+    if [[ "$CURRENT_URL" == "''${GITHUB_BASE}/"* ]]; then
+        CURRENT_TAG="''${CURRENT_URL#"''${GITHUB_BASE}"/}"
+    elif [[ "$CURRENT_URL" == "''${GIT_BASE}?ref="* ]]; then
+        CURRENT_TAG="''${CURRENT_URL#"''${GIT_BASE}"?ref=}"
+    else
+        echo ""
         exit 0
     fi
 
-    LATEST_TAG=$(echo "$LATEST_JSON" | jq -r '.tag_name')
+    # Fetch Latest Tag from GitHub, falling back to Git tags when the API is unavailable or rate-limited.
+    LATEST_TAG=$(latest_tag || true)
+
+    if [ -z "$LATEST_TAG" ]; then
+        echo "" # Disconnected/Offline icon
+        exit 0
+    fi
 
     # Compare and Notify
     if [ "$CURRENT_TAG" == "$LATEST_TAG" ]; then

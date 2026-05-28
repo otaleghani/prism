@@ -9,8 +9,5 @@ For users who want the "bleeding edge" features or bug fixes that haven't been t
 ## Usage
 
 ```bash
-prism-update-unstable
+prism-update unstable
 ```
-
-> [!caution] `--reset-dotfiles`
-> This script supports the `--reset-dotfiles` flag. This feature is deprecated and should not be used. Learn more about [[Overrides]] instead.

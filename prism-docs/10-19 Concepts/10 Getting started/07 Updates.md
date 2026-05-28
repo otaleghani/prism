@@ -26,11 +26,20 @@ prism-update
 If you want to test features currently in development:
 
 ```bash
-prism-update-unstable
+prism-update unstable
 ```
 
 - **What it does:** Fetches the absolute latest commit from the `main` branch.
 - **Warning:** Use this only if you are comfortable debugging potential "Work in Progress" issues.
+
+## GitHub rate limits
+
+Prism uses GitHub to discover releases and update the flake lockfile. If GitHub rate-limits your network, retry later or configure a GitHub token for Nix:
+
+```bash
+mkdir -p ~/.config/nix
+printf 'access-tokens = github.com=YOUR_TOKEN\n' >> ~/.config/nix/nix.conf
+```
 
 ## Declarative package updates
 
