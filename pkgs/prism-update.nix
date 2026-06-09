@@ -15,7 +15,6 @@ pkgs.writeShellApplication {
     libnotify
     nix
     nixos-rebuild
-    sudo
   ];
 
   text = ''
@@ -25,6 +24,16 @@ pkgs.writeShellApplication {
     REPO_OWNER="otaleghani"
     REPO_NAME="prism"
     REPO_GIT_URL="git+https://github.com/''${REPO_OWNER}/''${REPO_NAME}.git"
+
+    run_as_root() {
+        if [ "$(id -u)" -eq 0 ]; then
+            "$@"
+        elif [ -x /run/wrappers/bin/sudo ]; then
+            /run/wrappers/bin/sudo "$@"
+        else
+            sudo "$@"
+        fi
+    }
 
     curl_args=(-s -f)
     if [[ -n "''${GITHUB_TOKEN:-}" ]]; then
@@ -139,8 +148,8 @@ pkgs.writeShellApplication {
     rm -f "''${FLAKE_FILE}.bak" "$FLAKE_DIR/flake.lock.bak"
 
     echo "Rebuilding NixOS configuration..."
-    # If this step requires root, nixos-rebuild will ask for password via sudo/polkit
-    if sudo nixos-rebuild switch --flake "''${FLAKE_DIR}#prism"; then
+    # NixOS exposes setuid sudo through /run/wrappers/bin, not the Nix store binary.
+    if run_as_root nixos-rebuild switch --flake "''${FLAKE_DIR}#prism"; then
         notify-send "Prism Update" "Successfully updated to $TARGET_LABEL." -i system-software-update
         echo "Update Complete!"
     else

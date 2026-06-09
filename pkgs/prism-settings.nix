@@ -27,6 +27,16 @@ writeShellScriptBin "prism-settings" ''
   OPT_UPDATE="󰚰  Update system (Stable)"
   OPT_UPDATE_UN="󱓞  Update system (Unstable)"
 
+  run_root_tui() {
+    if [ "$(id -u)" -eq 0 ]; then
+      exec prism-tui "$@"
+    elif [ -x /run/wrappers/bin/sudo ]; then
+      exec prism-tui /run/wrappers/bin/sudo "$@"
+    else
+      exec prism-tui sudo "$@"
+    fi
+  }
+
   # Selection interface
   # Compiles options into a searchable list
   OPTIONS=(
@@ -110,12 +120,12 @@ writeShellScriptBin "prism-settings" ''
 
     "$OPT_UPDATE")
       # Stable track update via terminal portal
-      exec prism-tui prism-update
+      run_root_tui prism-update
       ;;
 
     "$OPT_UPDATE_UN")
       # Unstable track update via terminal portal
-      exec prism-tui prism-update unstable
+      run_root_tui prism-update unstable
       ;;
 
     *)

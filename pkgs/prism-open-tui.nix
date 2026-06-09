@@ -17,7 +17,11 @@ writeShellScriptBin "prism-tui" ''
   fi
 
   CMD="$1"
-  BASENAME=$(basename "$CMD")
+  if [ "$(basename "$CMD")" = "sudo" ] && [ -n "''${2:-}" ]; then
+    BASENAME=$(basename "$2")
+  else
+    BASENAME=$(basename "$CMD")
+  fi
 
   # Construct a unique App ID
   # This allows you to target this specific window in Hyprland config
