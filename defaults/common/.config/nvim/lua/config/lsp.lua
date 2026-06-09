@@ -11,6 +11,7 @@ vim.lsp.enable({
 	"vscode",
 	"vscode-json",
 	"astro",
+    "zig",
 })
 
 -- Diagnostics
