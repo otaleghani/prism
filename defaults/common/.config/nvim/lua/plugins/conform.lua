@@ -24,6 +24,7 @@ return {
 				astro = { "prettier" },
 				qml = { "qmlformat" },
 				qmljs = { "qmlformat" },
+                zig = { "zigfmt" },
 			},
 			format_on_save = {
 				lsp_fallback = true,
