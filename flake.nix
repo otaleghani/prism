@@ -14,6 +14,8 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     # silentSDDM.url = "github:uiriansan/SilentSDDM";
     # silentSDDM.inputs.nixpkgs.follows = "nixpkgs";
+    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
+    codex-cli-nix.inputs.nixpkgs.follows = "nixpkgs";
     quickshell.url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
     quickshell.inputs.nixpkgs.follows = "nixpkgs";
   };

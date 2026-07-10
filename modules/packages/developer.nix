@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, inputs }:
 
 with pkgs;
 [
@@ -7,7 +7,7 @@ with pkgs;
   lazydocker
   opencode
   claude-code
-  codex
+  inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
   gh
   # nodejs_25
 

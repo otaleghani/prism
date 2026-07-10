@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -10,7 +11,7 @@ let
 
   # Import the package lists from separate files
   commonPkgs = import ./packages/common.nix { inherit pkgs; };
-  devPkgs = import ./packages/developer.nix { inherit pkgs; };
+  devPkgs = import ./packages/developer.nix { inherit pkgs inputs; };
   gamerPkgs = import ./packages/gamer.nix { inherit pkgs; };
   pentesterPkgs = import ./packages/pentester.nix { inherit pkgs; };
   creatorPkgs = import ./packages/creator.nix { inherit pkgs; };
