@@ -9,7 +9,7 @@ with pkgs;
   claude-code
   codex
   gh
-  nodejs_25
+  # nodejs_25
 
   tree-sitter # Needed for nvim
 
