@@ -109,6 +109,8 @@
           ...
         }:
         {
+          _module.args.prismFlakeInputs = inputs;
+
           imports = [
             # silentSDDM.nixosModules.default
             ./modules/users.nix
