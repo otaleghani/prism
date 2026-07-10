@@ -14,7 +14,7 @@ with pkgs;
   tree-sitter # Needed for nvim
 
   python3
-  nodejs_20
+  # nodejs_20
   gcc
   gnumake
 
