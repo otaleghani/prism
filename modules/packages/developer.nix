@@ -26,4 +26,6 @@ with pkgs;
   mangohud
   protonup-qt
   gamescope
+
+  fuse3
 ]

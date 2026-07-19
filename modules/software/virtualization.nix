@@ -54,4 +54,5 @@ in
   # UI Integration
   programs.virt-manager.enable = true;
   programs.dconf.enable = true;
+  programs.fuse.enable = true;
 }
