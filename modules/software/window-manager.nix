@@ -36,4 +36,10 @@
   # Security (Polkit)
   # Essential for GUI authentication prompts (like "Enter password to update system")
   security.polkit.enable = lib.mkDefault true;
+
+  # appimage because I didn't know where to put it
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
 }
