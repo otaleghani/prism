@@ -11,6 +11,11 @@ in
 writeShellScriptBin "prism-zoom" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
+  if [[ "''${1:-}" == "--reset" ]]; then
+    hyprctl -q keyword cursor:zoom_factor 1
+    exit 0
+  fi
+
   current="$(hyprctl getoption cursor:zoom_factor -j | jq -r '.float')"
 
   if awk -v z="$current" 'BEGIN { exit !(z > 1.001) }'; then

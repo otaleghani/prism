@@ -125,4 +125,5 @@ with pkgs;
   prism.uninstall-webapp
   prism.font
   prism.ctl
+  prism.zoom
 ]
