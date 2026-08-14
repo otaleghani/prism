@@ -97,6 +97,7 @@
           prism-game-launcher = pkgs.callPackage ./pkgs/prism-game-launcher.nix { };
           prism-font = pkgs.callPackage ./pkgs/prism-font.nix { };
           prism-ctl = pkgs.callPackage ./pkgs/prism-ctl.nix { };
+          prism-zoom = pkgs.callPackage ./pkgs/prism-zoom.nix { };
         }
       );
 
