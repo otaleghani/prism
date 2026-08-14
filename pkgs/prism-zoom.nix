@@ -23,7 +23,8 @@ writeShellScriptBin "prism-zoom" ''
     exit 0
   fi
 
-  read -r x y w h < <(slurp -f '%x %y %w %h\n') || exit 0
+  selection="$(slurp -f '%x %y %w %h')" || exit 0
+  read -r x y w h <<< "$selection"
   (( w > 0 && h > 0 )) || exit 0
 
   cx=$((x + w / 2))
