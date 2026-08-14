@@ -17,7 +17,7 @@ writeShellScriptBin "prism-zoom" ''
       factor="$(
         hyprctl getoption cursor:zoom_factor -j |
           jq -r --arg action "$1" '
-            .float * (if $action == "--in" then 1.15 else 1 / 1.15 end)
+            .float * (if $action == "--in" then 1.05 else 1 / 1.05 end)
             | if . < 1 then 1 elif . > 3 then 3 else . end
           '
       )"
