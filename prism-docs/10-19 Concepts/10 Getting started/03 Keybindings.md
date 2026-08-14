@@ -62,6 +62,9 @@ The bottom row and specific control keys manage the Prism environment and status
 |`$MOD + SHIFT + C`|**Calendar**|Toggles the system calendar|
 |`$MOD + CTRL + W`|**Wallpapers**|Opens the Wallpaper selection menu|
 |`$MOD + CTRL + T`|**Themes**|Opens the Theme switcher menu|
+|`ALT + Scroll Up`|**Zoom In**|Magnifies the desktop around the pointer|
+|`ALT + Scroll Down`|**Zoom Out**|Reduces magnification around the pointer|
+|`ALT + Z`|**Reset Zoom**|Returns desktop magnification to normal|
 
 ## Capture and recording
 
