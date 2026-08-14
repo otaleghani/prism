@@ -200,6 +200,7 @@
                   game-launcher = self.packages.${system}.prism-game-launcher;
                   font = self.packages.${system}.prism-font;
                   ctl = self.packages.${system}.prism-ctl;
+                  zoom = self.packages.${system}.prism-zoom;
                 };
                 quickshell = quickshell.packages.${system}.default;
               }
