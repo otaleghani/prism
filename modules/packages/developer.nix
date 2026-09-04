@@ -28,4 +28,5 @@ with pkgs;
   gamescope
 
   fuse3
+  herdr
 ]
