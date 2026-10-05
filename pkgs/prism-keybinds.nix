@@ -3,31 +3,32 @@
 let
   deps = [
     pkgs.rofi
-    pkgs.gnugrep
-    pkgs.gnused
-    pkgs.gawk
+    pkgs.hyprland
+    pkgs.jq
     pkgs.libnotify
   ];
 in
 writeShellScriptBin "prism-keybinds" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  CONFIG_DIR="$HOME/.config/hypr"
-
-  # Data collection
-  # Recursively scans Hyprland configs for active keybindings
-  # Filters out comments and formats the syntax for human readability
-  BINDS=$(grep -r "^bind =" "$CONFIG_DIR" | \
-    sed 's/.*:bind = //g' | \
-    sed 's/$MAIN_MOD/SUPER/g' | \
-    sed 's/, exec, /  ->  Exec: /g' | \
-    sed 's/, / + /g' | \
-    sort)
+  # Query loaded bindings so Lua-generated bindings appear and old/ stays ignored.
+  BINDS=$(hyprctl binds -j | jq -r '
+    sort_by(.modmask, .key, .description)[] |
+    . as $bind |
+    ([{bit: 64, name: "SUPER"}, {bit: 4, name: "CTRL"},
+      {bit: 8, name: "ALT"}, {bit: 1, name: "SHIFT"},
+      {bit: 2, name: "CAPS"}, {bit: 16, name: "MOD2"},
+      {bit: 32, name: "MOD3"}, {bit: 128, name: "MOD5"}] |
+      map(select(($bind.modmask / .bit | floor) % 2 == 1) | .name)
+      + [if $bind.key != "" then $bind.key else "code:\($bind.keycode)" end] |
+      join(" + ")) + "  ->  " +
+    (if .description != "" then .description else .dispatcher + " " + .arg end)
+  ')
 
   # Validation logic
-  # Alerts the user if the configuration directory is empty or inaccessible
+  # Alerts the user if the compositor has no bindings or is inaccessible
   if [ -z "$BINDS" ]; then
-    notify-send "Prism Keybinds" "No active keybinds detected in $CONFIG_DIR." -u critical
+    notify-send "Prism Keybinds" "No active Hyprland keybinds detected." -u critical
     exit 1
   fi
 

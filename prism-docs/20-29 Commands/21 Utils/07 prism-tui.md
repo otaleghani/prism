@@ -25,24 +25,20 @@ prism-tui <command> [arguments...]
 
 ## Integration with Hyprland 
 
-The primary power of this script lies in the `app_id` it generates. You can use this ID in your `hyprland.conf` to define window rules.
+The primary power of this script lies in the `app_id` it generates. You can use this ID in `windowrules.lua` to define window rules.
 
 **Example Rule:** To make all `prism-tui` windows float and center:
 
-```
-windowrule {
-    name = prism_tui
-    match:class = ^(org.prism.)(impala|bluetui)$
-    stay_focused = on
-    
-    # Behavior
-    float = 1
-    center = 1
-    dim_around = 0
-    
-    # Styling
-    size = 900 600
-    rounding = 15
-}
+```lua
+hl.window_rule({
+    name = "prism_tui",
+    match = { class = "^(org.prism.)(impala|bluetui)$" },
+    stay_focused = true,
+    float = true,
+    center = true,
+    dim_around = false,
+    size = { 900, 600 },
+    rounding = 15,
+})
 
 ```

@@ -1,0 +1,14 @@
+hl.config({
+    dwindle = {
+        preserve_split = true,
+        special_scale_factor = 0.8,
+    },
+    master = {
+        new_status = "master",
+        special_scale_factor = 0.2,
+    },
+    misc = {
+        force_default_wallpaper = 1,
+        disable_hyprland_logo = true,
+    },
+})

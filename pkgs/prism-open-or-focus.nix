@@ -3,6 +3,7 @@
 let
   deps = [
     pkgs.jq
+    pkgs.hyprland
   ];
 in
 writeShellScriptBin "prism-focus" ''
@@ -28,11 +29,15 @@ writeShellScriptBin "prism-focus" ''
 
   if [[ -n "$WINDOW_ADDRESS" ]]; then
     echo "[Prism] Found existing window ($WINDOW_ADDRESS). Focusing..."
-    hyprctl dispatch focuswindow "address:$WINDOW_ADDRESS"
+    hyprctl dispatch "$(jq -rn --arg window "address:$WINDOW_ADDRESS" '
+      "hl.dsp.focus({ window = " + ($window | @json) + " })"
+    ')"
   else
     echo "[Prism] Window not found. Launching: $LAUNCH_COMMAND"
-    # Use hyprctl dispatch exec to launch the app cleanly within the Hyprland session.
+    # Use the Lua dispatcher to launch the app within the Hyprland session.
     # This is more reliable than 'setsid' as it ensures the app inherits the correct WM environment.
-    hyprctl dispatch exec "$LAUNCH_COMMAND"
+    hyprctl dispatch "$(jq -rn --arg command "$LAUNCH_COMMAND" '
+      "hl.dsp.exec_cmd(" + ($command | @json) + ")"
+    ')"
   fi
 ''

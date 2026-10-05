@@ -42,5 +42,5 @@
               :onclick "systemctl reboot" 
               "")
       (button :class "btn-logout" 
-              :onclick "hyprctl dispatch exit" 
+              :onclick "hyprctl dispatch 'hl.dsp.exit()'"
               "󰗽"))))

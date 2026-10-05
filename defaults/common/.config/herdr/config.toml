@@ -1,0 +1,53 @@
+onboarding = false
+
+[ui]
+show_agent_labels_on_pane_borders = false
+prompt_new_tab_name = false
+
+[theme]
+name = "terminal"
+auto_switch = false
+
+[keys]
+# Match ../tmux/tmux.conf: Ctrl+Space, release, then the action key.
+# Pressing Ctrl+Space twice sends a literal Ctrl+Space to the pane.
+prefix = "ctrl+space"
+
+# Move between panes with h/j/k/l.
+focus_pane_left = "prefix+h"
+focus_pane_down = "prefix+j"
+focus_pane_up = "prefix+k"
+focus_pane_right = "prefix+l"
+
+# Split right/down with L/J; H/K below split left/up.
+split_vertical = "prefix+shift+l"
+split_horizontal = "prefix+shift+j"
+close_pane = "prefix+q"
+
+# Herdr tabs correspond to tmux windows.
+new_tab = "prefix+n"
+rename_tab = "prefix+r"
+previous_tab = "prefix+i"
+next_tab = "prefix+o"
+
+# Use the same previous/next pair for spaces (Shift) and agents (Alt).
+previous_workspace = "prefix+shift+i"
+next_workspace = "prefix+shift+o"
+previous_agent = "prefix+alt+i"
+next_agent = "prefix+alt+o"
+
+# Keep displaced Herdr actions accessible without conflicting with tmux keys.
+detach = "prefix+d"
+resize_mode = "prefix+alt+r"
+open_notification_target = "prefix+alt+n"
+
+# Herdr 0.8.2 has no left/up split action: split, swap, then focus the new pane.
+[[keys.command]]
+key = "prefix+shift+h"
+type = "shell"
+command = '''"$HERDR_BIN_PATH" pane split --pane "$HERDR_ACTIVE_PANE_ID" --direction right --no-focus && "$HERDR_BIN_PATH" pane swap --pane "$HERDR_ACTIVE_PANE_ID" --direction right && "$HERDR_BIN_PATH" pane focus --pane "$HERDR_ACTIVE_PANE_ID" --direction left'''
+
+[[keys.command]]
+key = "prefix+shift+k"
+type = "shell"
+command = '''"$HERDR_BIN_PATH" pane split --pane "$HERDR_ACTIVE_PANE_ID" --direction down --no-focus && "$HERDR_BIN_PATH" pane swap --pane "$HERDR_ACTIVE_PANE_ID" --direction down && "$HERDR_BIN_PATH" pane focus --pane "$HERDR_ACTIVE_PANE_ID" --direction up'''

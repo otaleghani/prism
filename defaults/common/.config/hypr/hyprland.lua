@@ -1,0 +1,11 @@
+-- Prism's configuration is split by purpose; old/ contains the Hyprlang originals.
+require("programs")
+require("hyprcursor")
+require("input")
+require("monitors")
+require("styles")
+require("layout")
+require("windowrules")
+require("keybindings")
+require("mode")
+require("autostart")

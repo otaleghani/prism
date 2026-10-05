@@ -84,10 +84,10 @@ OverlayRectangle {
                     onClicked: {
                         if (parent.wsId === -99) {
                             // Special handling for Scratchpad
-                            Hyprland.dispatch("togglespecialworkspace");
+                            Hyprland.dispatch('hl.dsp.workspace.toggle_special("")');
                         } else {
                             // Normal switch for 99, 98, etc.
-                            Hyprland.dispatch(`workspace ${parent.wsId}`);
+                            Hyprland.dispatch(`hl.dsp.focus({ workspace = ${parent.wsId} })`);
                         }
                     }
                 }

@@ -12,7 +12,7 @@ in
 writeShellScriptBin "prism-monitor" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  CONFIG_FILE="$HOME/.config/hypr/monitors.conf"
+  CONFIG_FILE="''${XDG_CONFIG_HOME:-$HOME/.config}/hypr/monitors.lua"
 
   # Terminal auto-launch
   if [ ! -t 0 ]; then
@@ -31,8 +31,8 @@ writeShellScriptBin "prism-monitor" ''
   # Ensure config exists
   if [ ! -f "$CONFIG_FILE" ]; then
     mkdir -p "$(dirname "$CONFIG_FILE")"
-    echo "# Prism Monitor Configuration" > "$CONFIG_FILE"
-    echo "monitor=,preferred,auto,1" >> "$CONFIG_FILE"
+    echo '-- Prism Monitor Configuration' > "$CONFIG_FILE"
+    echo 'hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })' >> "$CONFIG_FILE"
     echo "Default configuration file created."
   fi
 

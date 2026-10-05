@@ -27,7 +27,7 @@
               :onclick "systemctl suspend; eww close session_win" 
               :tooltip "Suspend" "󰤄")
       (button :class "sess-btn logout" 
-              :onclick "pkill -x ghostty; hyprctl dispatch exit" 
+              :onclick "pkill -x ghostty; hyprctl dispatch 'hl.dsp.exit()'"
               :tooltip "Logout" "󰗽")
       (button :class "sess-btn reboot" 
               :onclick "systemctl reboot" 

@@ -8,7 +8,7 @@ A configuration utility for managing monitor settings in [[01 Hyprland]] (resolu
     - The script checks if it is running inside a terminal.
     - If launched from a GUI launcher (like Rofi) or a keybind, it automatically re-launches itself inside a new terminal window using `prism-tui`. This ensures you have a visible interface to edit the text file.
 2. **Editing:**
-    - It opens `$HOME/.config/hypr/monitors.conf` using your system's default editor ([[02 Neovim]]).
+    - It opens `~/.config/hypr/monitors.lua` (respecting `XDG_CONFIG_HOME`) using your system's default editor ([[02 Neovim]]).
     - If the file doesn't exist, it creates a default one.
     - **The script pauses here** while you edit the file.
 3. **Automatic Reload:**
@@ -37,12 +37,11 @@ prism-monitor
 
 ## Configuration file 
 
-The settings are stored in: `~/.config/hypr/monitors.conf`
+The settings are stored in: `~/.config/hypr/monitors.lua`
 
 **Example Monitor Config**
 
-```
-# monitor=NAME,RESOLUTION,POSITION,SCALE
-monitor=DP-1, 2560x1440@144, 0x0, 1
-monitor=HDMI-A-1, 1920x1080@60, 2560x0, 1
+```lua
+hl.monitor({ output = "DP-1", mode = "2560x1440@144", position = "0x0", scale = 1 })
+hl.monitor({ output = "HDMI-A-1", mode = "1920x1080@60", position = "2560x0", scale = 1 })
 ```

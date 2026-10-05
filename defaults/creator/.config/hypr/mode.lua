@@ -1,0 +1,2 @@
+-- Profile-specific bindings.
+-- Example: hl.bind("SUPER + CTRL + 1", hl.dsp.exec_cmd("your-command"))

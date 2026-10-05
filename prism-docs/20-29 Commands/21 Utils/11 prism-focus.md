@@ -12,8 +12,8 @@ The core window management utility for the "single-instance" workflow in Prism. 
     - **Regex Matching:** It uses regex boundaries (`\b`) to ensure it matches whole words (e.g., searching for "term" won't accidentally match "terminal") and is case-insensitive (`i` flag).
     - It extracts the unique `address` (handle) of the first matching window found.
 3. **Action:**
-    - **If found:** It executes `hyprctl dispatch focuswindow address:<ADDR>`, instantly bringing that specific window to the foreground and giving it input focus.
-    - **If not found:** It executes `hyprctl dispatch exec "<COMMAND>"`, launching the application as a child of the Hyprland process to ensure it inherits the correct environment variables.
+    - **If found:** It uses `hyprctl dispatch 'hl.dsp.focus({ window = "address:<ADDR>" })'`, bringing that window to the foreground.
+    - **If not found:** It uses `hyprctl dispatch 'hl.dsp.exec_cmd("<COMMAND>")'`, escaping the command string and launching it with Hyprland's environment.
 
 ## Dependencies
 

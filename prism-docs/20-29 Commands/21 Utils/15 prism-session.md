@@ -13,7 +13,7 @@ The script uses a simple `case` statement to route the user's intent to the appr
 ## Dependencies
 
 - `systemd`: For `systemctl` and `loginctl`.
-- `hyprland`: For the `hyprctl dispatch exit` command.
+- `hyprland`: For the `hyprctl dispatch 'hl.dsp.exit()'` command.
 - `procps`: For `pkill`.
 
 ## Usage
@@ -27,7 +27,7 @@ prism-session <action>
 |**Action**|**Command Executed**|**Effect**|
 |---|---|---|
 |`lock`|`loginctl lock-session`|Triggers the screen locker.|
-|`logout`|`hyprctl dispatch exit`|Closes the Hyprland session.|
+|`logout`|`hyprctl dispatch 'hl.dsp.exit()'`|Closes the Hyprland session.|
 |`suspend`|`systemctl suspend`|Puts the system into a low-power sleep state.|
 |`reboot`|`systemctl reboot`|Restarts the computer.|
 |`shutdown`|`systemctl poweroff`|Powers down the system completely.|

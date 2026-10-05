@@ -104,7 +104,7 @@
   (box :class "workspaces" :orientation "h" :spacing 5
     (for ws in workspaces_json
       (button :class {ws.active ? "active" : "inactive"}
-              :onclick "hyprctl dispatch workspace ${ws.id}"
+              :onclick "hyprctl dispatch 'hl.dsp.focus({ workspace = ${ws.id} })'"
               {ws.id}))))
 
 (defwidget window_name []

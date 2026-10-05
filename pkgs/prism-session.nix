@@ -13,7 +13,7 @@ writeShellScriptBin "prism-session" ''
         # Kill user processes to ensure clean exit
         pkill -u "$USER"
         # Hyprland specific exit
-        hyprctl dispatch exit
+        hyprctl dispatch 'hl.dsp.exit()'
         ;;
     "suspend")
         systemctl suspend

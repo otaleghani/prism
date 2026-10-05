@@ -48,7 +48,7 @@ OverlayRectangle {
 
                 ButtonMouseArea {
                     id: mouseArea
-                    onClicked: Hyprland.dispatch(`workspace ${parent.wsId}`)
+                    onClicked: Hyprland.dispatch(`hl.dsp.focus({ workspace = ${parent.wsId} })`)
                 }
             }
         }

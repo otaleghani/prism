@@ -5,6 +5,7 @@ let
     pkgs.rofi
     pkgs.hyprland
     pkgs.gnused
+    pkgs.gnugrep
     pkgs.libnotify
     pkgs.gawk
     pkgs.xkeyboard-config
@@ -13,7 +14,7 @@ in
 writeShellScriptBin "prism-keyboard" ''
   export PATH=${pkgs.lib.makeBinPath deps}:$PATH
 
-  CONFIG_FILE="$HOME/.config/hypr/input.conf"
+  CONFIG_FILE="''${XDG_CONFIG_HOME:-$HOME/.config}/hypr/input.lua"
   XKB_BASE="${pkgs.xorg.xkeyboardconfig}/share/X11/xkb/rules/base.lst"
 
   # Data collection
@@ -44,18 +45,26 @@ writeShellScriptBin "prism-keyboard" ''
   # Isolates the specific country/language code for the system command
   SELECTED=$(echo "$SELECTED_LINE" | awk '{print $1}')
 
+  if [[ ! "$SELECTED" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    notify-send "Prism Keyboard" "Invalid keyboard layout code." -u critical
+    exit 1
+  fi
+
   # Persistence logic
   # Updates the local configuration file for persistence across reboots
-  if [ -f "$CONFIG_FILE" ]; then
-      sed -i "s/kb_layout = .*/kb_layout = $SELECTED/" "$CONFIG_FILE" || {
+  if [ -f "$CONFIG_FILE" ] && grep -qE '^[[:space:]]*kb_layout[[:space:]]*=' "$CONFIG_FILE"; then
+      sed -i -E "s/^([[:space:]]*)kb_layout[[:space:]]*=.*/\1kb_layout = \"$SELECTED\",/" "$CONFIG_FILE" || {
         notify-send "Prism Keyboard" "Failed to update configuration file." -u critical
         exit 1
       }
+  else
+      notify-send "Prism Keyboard" "Missing kb_layout setting in $CONFIG_FILE." -u critical
+      exit 1
   fi
 
   # Hardware application
   # Triggers an immediate layout switch in the active compositor
-  hyprctl keyword input:kb_layout "$SELECTED" || {
+  hyprctl eval "hl.config({ input = { kb_layout = \"$SELECTED\" } })" || {
     notify-send "Prism Keyboard" "Failed to apply layout to active session." -u critical
     exit 1
   }

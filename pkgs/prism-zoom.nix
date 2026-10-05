@@ -28,5 +28,5 @@ writeShellScriptBin "prism-zoom" ''
       ;;
   esac
 
-  hyprctl -q keyword cursor:zoom_factor "$factor"
+  hyprctl -q eval "hl.config({ cursor = { zoom_factor = $factor } })"
 ''

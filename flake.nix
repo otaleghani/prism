@@ -99,6 +99,9 @@
           prism-ctl = pkgs.callPackage ./pkgs/prism-ctl.nix { };
           prism-zoom = pkgs.callPackage ./pkgs/prism-zoom.nix { };
         }
+        // pkgs.lib.optionalAttrs (system == "x86_64-linux") {
+          prism-windows = pkgs.callPackage ./pkgs/prism-windows.nix { };
+        }
       );
 
       # Core module

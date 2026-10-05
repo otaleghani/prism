@@ -1,0 +1,8 @@
+return {
+    base = "rgb(FFFCF0)",
+    text = "rgb(100F0F)",
+    active_border_1 = "rgb(24837B)",
+    active_border_2 = "rgb(205EA6)",
+    inactive_border = "rgb(E6E4D9)",
+    shadow = "rgba(100F0F22)",
+}
