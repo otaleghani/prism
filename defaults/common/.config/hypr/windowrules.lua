@@ -48,7 +48,8 @@ hl.window_rule({ match = { class = "^(pavucontrol)$" }, float = true, center = t
 hl.window_rule({ match = { class = "^(blueman-manager)$" }, float = true, center = true })
 hl.window_rule({ match = { class = "^(nm-connection-editor)$" }, float = true, center = true })
 
-hl.layer_rule({ match = { namespace = ".*" }, blur = true })
+-- Invisible Quickshell panels must not blur the desktop.
+hl.layer_rule({ match = { namespace = ".*" }, blur = true, ignore_alpha = 0.2 })
 
 -- Dedicated music, chat, and AI workspaces.
 hl.window_rule({ match = { title = "^(Spotify.*|YouTube Music|Apple Music|SoundCloud|Deezer.*)$" }, workspace = "99 silent" })
