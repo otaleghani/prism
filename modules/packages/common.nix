@@ -5,6 +5,8 @@ with pkgs;
   # Base utils
   tmux
   ffmpeg
+  v4l-utils # Webcam tools
+  usbutils # USB diagnostics
   git
   wget
   curl
