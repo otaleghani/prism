@@ -152,7 +152,6 @@ writeShellScriptBin "prism-screenrecord" ''
     ffplay -f v4l2 "''${size_args[@]}" -framerate 30 "$WEBCAM_DEVICE" \
       -vf "scale=''${target_width}:-1" \
       -window_title "WebcamOverlay" \
-      -noborder \
       -fflags nobuffer -flags low_delay \
       -probesize 32 -analyzeduration 0 \
       -loglevel error 8>&- 9>&- &

@@ -272,6 +272,8 @@ class ScreenrecordCheck(unittest.TestCase):
         args = command["args"]
         self.assertEqual(args[args.index("-a") + 1], "default_output|default_input")
         self.assertEqual(args[args.index("-w") + 1], "portal")
+        webcam = next(event for event in self.events("command") if event["name"] == "ffplay")
+        self.assertNotIn("-noborder", webcam["args"], "The webcam must remain resizable for tiling")
         ready = self.events("recorder-ready")[0]["time"]
         started = next(event for event in self.notifications() if "Recording started" in " ".join(event["args"]))
         self.assertGreaterEqual(started["time"], ready)
