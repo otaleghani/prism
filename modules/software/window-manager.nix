@@ -9,6 +9,14 @@
     xwayland.enable = lib.mkDefault true;
   };
 
+  systemd.user.targets.hyprland-session = {
+    description = "Hyprland session";
+    bindsTo = [ "graphical-session.target" ];
+    wants = [ "graphical-session-pre.target" ];
+    after = [ "graphical-session-pre.target" ];
+    unitConfig.PropagatesStopTo = "graphical-session.target";
+  };
+
   programs.nix-ld.enable = true;
 
   # Environment Variables

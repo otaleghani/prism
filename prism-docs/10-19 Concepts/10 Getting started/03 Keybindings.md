@@ -74,7 +74,7 @@ Prism features high-performance tools for documenting your work.
 |---|---|---|
 |`$MOD + P`|**Screenshot (Full)**|Capture the entire focused monitor|
 |`$MOD + SHIFT + P`|**Screenshot (Region)**|Select an area to capture and edit|
-|`$MOD + O`|**Record (Start)**|Start 60fps recording with Mic + Desktop Audio|
+|`$MOD + O`|**Record (Toggle)**|Start 60fps recording with microphone, desktop audio, and webcam; press again to stop and save|
 |`$MOD + CTRL + O`|**Record (Stop)**|Gracefully stop and save the current recording|
 
 ## Workspaces and special

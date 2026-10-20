@@ -1,21 +1,20 @@
 # `prism-screenrecord`
 
-A high-performance screen recording utility tailored for Prism. It leverages `gpu-screen-recorder` for hardware-accelerated recording (minimal CPU impact) and provides advanced features like multi-source audio mixing and a real-time webcam overlay. It is designed to work seamlessly with [[01 Hyprland]].
+A screen recording utility for Prism and [[01 Hyprland]], using `gpu-screen-recorder` at 60 FPS with optional desktop audio, microphone audio, and a webcam preview.
 
 ## How it works
 
-1. **Hardware Acceleration:** Uses your GPU to encode video at 60 FPS, ensuring that recording a game or a heavy application doesn't cause system lag.
-2. **Webcam Overlay (`ffplay`):** * Automatically detects your camera device via `v4l-utils`.
-    - Calculates the correct window size based on your monitor's HiDPI scale (querying `hyprctl`).
-    - Launches a frameless, low-latency preview window titled "WebcamOverlay."
-3. **Audio Management:** Can simultaneously capture desktop audio and microphone audio by dynamically building the recording command.
-4. **Wayland Integration:** Uses `xdg-desktop-portal` to allow you to select a specific window, monitor, or region for recording.
-5. **Toggle Logic:** The script acts as a toggle. If it's already running, it stops and saves the video. If not, it begins a new session. It also signals `waybar` to update recording status icons.    
+1. **Select a source:** The Wayland screen-sharing portal asks what to capture. Available sources depend on the portal. The initial selection prompt does not mean capture has started.
+2. **Confirm capture:** A "Recording started" notification appears after the recorder confirms it is ready. Cancelling the picker or a startup failure does not produce a success notification.
+3. **Optional audio and webcam:** Desktop and microphone audio are mixed when both are requested. `ffplay` opens a floating window titled "WebcamOverlay"; include that window in the area you capture to record it. If the webcam is unavailable, screen recording continues with a warning.
+4. **Stop and save:** Running the command again stops the current recording. The saved notification includes its filename after the recorder confirms saving and the file passes a basic media check. The webcam closes when recording ends, including on failure.
+
+Only one Prism recording runs per user. Overlapping toggle shortcuts are ignored while another start or stop command is being handled; an explicit `--stop` waits for that command. Other recording applications are not stopped.
 
 ## Dependencies
 
-- `gpu-screen-recorder`: The core recording engine.
-- `ffmpeg`: Specifically `ffplay` for the webcam preview.
+- `gpu-screen-recorder`: The recording engine and its bundled `gsr-cli` control tool.
+- `ffmpeg`: `ffplay` for the webcam preview and `ffprobe` to check saved files.
 - `v4l-utils`: For camera hardware detection.
 - `hyprland`: To ensure window rules and scaling are handled correctly.
 - `libnotify`: For start/stop status notifications.
@@ -34,7 +33,17 @@ prism-screenrecord [options]
 |`--mic`|Include microphone audio in the recording.|
 |`--webcam`|Open a webcam overlay window before starting.|
 |`--device=/dev/videoX`|Manually specify which webcam device to use.|
-|`--stop`|Forces any active recording or webcam session to end.|
+|`--stop`|Stop the current Prism recording and save it; cancel a pending capture selection. Does nothing when idle.|
+|`--help`|Show command usage.|
+
+Without options, recording has no audio or webcam. Flags configure a new recording; running any start variant during an existing recording stops it instead of changing its settings. `--device` is used with `--webcam`.
+
+## Shortcuts
+
+|**Shortcut**|**Action**|
+|---|---|
+|`Super + O`|Toggle recording with desktop audio, microphone, and webcam.|
+|`Super + Ctrl + O`|Stop and save, or cancel a pending capture selection.|
 
 ## Example: Streamer Mode
 
@@ -46,5 +55,19 @@ prism-screenrecord --desktop --mic --webcam
 
 ## Workflow & Integration
 
-- **Output Path:** Videos are saved to `~/Videos` (or your XDG defined Videos folder) with a timestamped filename: `Recording_YYYY-MM-DD_HH-MM-SS.mp4`.
-- **Window Rules:** Prism comes pre-configured with Hyprland rules for the "WebcamOverlay" class to ensure your face stays pinned and floating above other windows.
+- **Output path:** Videos are saved to `~/Videos` (or your XDG Videos folder) with a timestamped filename, including fractional seconds to avoid overwriting a recent recording.
+- **Window rules:** Prism matches the "WebcamOverlay" window title to keep the preview floating and pinned.
+- **Desktop session:** The main Hyprland session starts and stops `hyprland-session.target`, which activates the graphical session required by the screen-sharing portal.
+
+## Troubleshooting
+
+Errors are kept in `${XDG_STATE_HOME:-~/.local/state}/prism/screenrecord.log`. This log is replaced on the next recording. Failed or partial video files are kept for inspection.
+
+If the capture picker does not appear, check the desktop session and portal:
+
+```bash
+systemctl --user status graphical-session.target xdg-desktop-portal.service xdg-desktop-portal-hyprland.service
+journalctl --user -b -u xdg-desktop-portal.service -u xdg-desktop-portal-hyprland.service
+```
+
+A save error leaves the recorder available for another stop attempt if it is still running. A slow or unresponsive save is reported after 30 seconds without force-killing the recorder.
