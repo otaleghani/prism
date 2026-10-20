@@ -1,8 +1,22 @@
 { pkgs, writeShellScriptBin }:
 
 let
+  nvencHeaders = pkgs.lib.findFirst (
+    input: pkgs.lib.getName input == "nv-codec-headers"
+  ) null pkgs.ffmpeg.buildInputs;
+  recorder = pkgs.gpu-screen-recorder.overrideAttrs (old: {
+    # Upstream guesses the NVENC requirement from FFmpeg's version; use its actual headers.
+    postPatch =
+      (old.postPatch or "")
+      + pkgs.lib.optionalString (nvencHeaders != null) ''
+        substituteInPlace src/codec_query/nvenc.c \
+          --replace-fail \
+            '#define FFMPEG_REQUIRED_NVENC_API_VERSION NVENCAPI_PACKED_VERSION(13, 1)' \
+            '#define FFMPEG_REQUIRED_NVENC_API_VERSION NVENCAPI_PACKED_VERSION(${pkgs.lib.versions.major nvencHeaders.version}, ${pkgs.lib.versions.minor nvencHeaders.version})'
+      '';
+  });
   deps = [
-    pkgs.gpu-screen-recorder
+    recorder
     pkgs.ffmpeg
     pkgs.v4l-utils
     pkgs.jq
