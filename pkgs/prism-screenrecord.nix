@@ -135,22 +135,49 @@ writeShellScriptBin "prism-screenrecord" ''
       }
     fi
 
-    local scale target_width formats res
+    local scale target_width formats mode input_format resolution framerate
     scale=$(hyprctl monitors -j | jq -r '[.[] | select(.focused) | .scale][0] // 1') || scale=1
     target_width=$(awk -v scale="$scale" 'BEGIN {printf "%.0f", 360 * scale}')
-    local preferred=("640x360" "1280x720" "1920x1080")
-    local size_args=()
-    formats=$(v4l2-ctl --list-formats-ext -d "$WEBCAM_DEVICE" 2>/dev/null)
+    local input_args=()
+    formats=$(LC_ALL=C v4l2-ctl --list-formats-ext -d "$WEBCAM_DEVICE" 2>/dev/null)
+    # Keep format, size and FPS from the same advertised mode, up to 4K at 30 FPS.
+    mode=$(LC_ALL=C awk '
+      /^[[:space:]]*\[[0-9]+\]:/ {
+        fourcc = $2
+        gsub(/\047/, "", fourcc)
+        format = fourcc == "NV12" ? "nv12" : fourcc == "YUYV" ? "yuyv422" : fourcc == "MJPG" ? "mjpeg" : ""
+        preference = fourcc == "NV12" ? 3 : fourcc == "YUYV" ? 2 : 1
+        width = height = 0
+      }
+      /^[[:space:]]*Size:/ {
+        width = height = 0
+        if ($2 == "Discrete") {
+          split($3, size, "x")
+          width = size[1] + 0
+          height = size[2] + 0
+        }
+      }
+      /Interval: Discrete/ {
+        fps = $4
+        gsub(/[()]/, "", fps)
+        rate = fps + 0
+        area = width * height
+        if (format != "" && area > 0 && width <= 3840 && height <= 2160 && rate >= 29.97 && rate <= 30.001 &&
+            (area > best_area || (area == best_area && preference > best_preference))) {
+          best_area = area
+          best_preference = preference
+          selected = format " " width "x" height " " fps
+        }
+      }
+      END { if (selected != "") print selected }
+    ' <<< "$formats")
+    if [[ -n "$mode" ]]; then
+      read -r input_format resolution framerate <<< "$mode"
+      input_args=(-input_format "$input_format" -video_size "$resolution" -framerate "$framerate")
+    fi
 
-    for res in "''${preferred[@]}"; do
-      if [[ "$formats" == *"$res"* ]]; then
-        size_args=(-video_size "$res")
-        break
-      fi
-    done
-
-    ffplay -f v4l2 "''${size_args[@]}" -framerate 30 "$WEBCAM_DEVICE" \
-      -vf "scale=''${target_width}:-1" \
+    ffplay -f v4l2 "''${input_args[@]}" "$WEBCAM_DEVICE" \
+      -x "$target_width" \
       -window_title "WebcamOverlay" \
       -fflags nobuffer -flags low_delay \
       -probesize 32 -analyzeduration 0 \

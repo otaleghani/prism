@@ -58,6 +58,7 @@ prism-screenrecord --desktop --mic --webcam
 - **Output path:** Videos are saved to `~/Videos` (or your XDG Videos folder) with a timestamped filename, including fractional seconds to avoid overwriting a recent recording.
 - **Window rules:** Prism matches the "WebcamOverlay" window title to keep the preview floating and pinned.
 - **Tiling:** Focus the webcam preview and press `Super + Y` to toggle between floating and tiled. The preview remains resizable.
+- **Webcam quality:** The preview captures the highest supported resolution up to 3840×2160 at approximately 30 FPS, preferring uncompressed NV12 when available at that resolution. It keeps full-resolution frames when you enlarge or tile it; only the initial window is small. Cameras without a recognized discrete 30 FPS mode use their defaults.
 - **Desktop session:** The main Hyprland session starts and stops `hyprland-session.target`, which activates the graphical session required by the screen-sharing portal.
 
 ## Troubleshooting

@@ -19,6 +19,22 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+WEBCAM_FORMATS = """ioctl: VIDIOC_ENUM_FMT
+\tType: Video Capture
+
+\t[0]: 'MJPG' (Motion-JPEG, compressed)
+\t\tSize: Discrete 3840x2160
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t\t\tInterval: Discrete 0.017s (60.000 fps)
+\t[1]: 'YUYV' (YUYV 4:2:2)
+\t\tSize: Discrete 1920x1080
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t\tSize: Discrete 1280x720
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t[2]: 'NV12' (Y/UV 4:2:0)
+\t\tSize: Discrete 3840x2160
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+"""
 STUB = r'''
 import json, os, signal, socket, sys, time
 from pathlib import Path
@@ -79,7 +95,7 @@ if name == "jq":
 if name == "v4l2-ctl":
     if scenario == "no-camera":
         sys.exit(1)
-    print("Camera:\n\t/dev/video0" if "--list-devices" in args else "640x360 1280x720")
+    print("Camera:\n\t/dev/video0" if "--list-devices" in args else (stage / "webcam-formats.txt").read_text())
     sys.exit(0)
 if name == "gsr-cli":
     path = args[args.index("-ipc") + 1]
@@ -182,6 +198,7 @@ class ScreenrecordCheck(unittest.TestCase):
         self.stage = Path(self.directory.name)
         for name in ("bin", "home", "runtime", "state"):
             (self.stage / name).mkdir(mode=0o700)
+        (self.stage / "webcam-formats.txt").write_text(WEBCAM_FORMATS)
         source = (ROOT / "pkgs/prism-screenrecord.nix").read_text()
         body = source.split('writeShellScriptBin "prism-screenrecord" \'\'\n', 1)[1].rsplit("\n''", 1)[0]
         body = "\n".join(line for line in body.splitlines() if "export PATH=${pkgs.lib.makeBinPath deps}" not in line)
@@ -274,6 +291,9 @@ class ScreenrecordCheck(unittest.TestCase):
         self.assertEqual(args[args.index("-w") + 1], "portal")
         webcam = next(event for event in self.events("command") if event["name"] == "ffplay")
         self.assertNotIn("-noborder", webcam["args"], "The webcam must remain resizable for tiling")
+        self.assertNotIn("-vf", webcam["args"], "Preview window size must not discard camera pixel detail")
+        self.assertEqual(webcam["args"][webcam["args"].index("-x") + 1], "360")
+        self.assert_webcam_mode(webcam["args"], "nv12", "3840x2160")
         ready = self.events("recorder-ready")[0]["time"]
         started = next(event for event in self.notifications() if "Recording started" in " ".join(event["args"]))
         self.assertGreaterEqual(started["time"], ready)
@@ -281,6 +301,89 @@ class ScreenrecordCheck(unittest.TestCase):
         self.wait_for(lambda: self.notified("saved"), "No save notification")
         self.assertTrue(any(path.stat().st_size for path in (self.stage / "home/Videos").glob("*.mp4")))
         self.assert_children_stopped()
+
+    def assert_webcam_mode(self, args, pixel_format, size, rate=30):
+        self.assertEqual(args[args.index("-input_format") + 1], pixel_format)
+        self.assertEqual(args[args.index("-video_size") + 1], size)
+        self.assertEqual(float(args[args.index("-framerate") + 1]), rate)
+
+    def webcam_args(self, formats):
+        (self.stage / "webcam-formats.txt").write_text(formats)
+        previous = sum("Recording started" in " ".join(event["args"]) for event in self.notifications())
+        self.assertEqual(self.run_command("--webcam"), 0)
+        self.wait_for(lambda: sum("Recording started" in " ".join(event["args"]) for event in self.notifications()) > previous, "Webcam recording did not start")
+        args = [event["args"] for event in self.events("command") if event["name"] == "ffplay"][-1]
+        self.assertEqual(self.run_command("--stop"), 0)
+        self.assert_children_stopped()
+        return args
+
+    def test_webcam_falls_back_to_supported_non_4k_modes(self):
+        for fourcc, pixel_format in (("YUYV", "yuyv422"), ("MJPG", "mjpeg")):
+            with self.subTest(format=fourcc):
+                args = self.webcam_args(f"""ioctl: VIDIOC_ENUM_FMT
+\tType: Video Capture
+\t[0]: '{fourcc}' (Camera format)
+\t\tSize: Discrete 1920x1080
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t\tSize: Discrete 1280x720
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+""")
+                self.assert_webcam_mode(args, pixel_format, "1920x1080")
+
+    def test_webcam_keeps_format_size_and_framerate_together(self):
+        args = self.webcam_args("""ioctl: VIDIOC_ENUM_FMT
+\tType: Video Capture
+\t[0]: 'NV12' (Y/UV 4:2:0)
+\t\tSize: Discrete 1920x1080
+\t\t\tInterval: Discrete 0.017s (60.000 fps)
+\t[1]: 'MJPG' (Motion-JPEG, compressed)
+\t\tSize: Discrete 3840x2160
+\t\t\tInterval: Discrete 0.017s (60.000 fps)
+\t[2]: 'BA81' (8-bit Bayer BGBG/GRGR)
+\t\tSize: Discrete 3840x2160
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t[3]: 'YUYV' (YUYV 4:2:2)
+\t\tSize: Discrete 1280x720
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+""")
+        self.assert_webcam_mode(args, "yuyv422", "1280x720")
+
+    def test_webcam_prefers_4k_over_lower_resolution_raw_format(self):
+        args = self.webcam_args("""ioctl: VIDIOC_ENUM_FMT
+\tType: Video Capture
+\t[0]: 'NV12' (Y/UV 4:2:0)
+\t\tSize: Discrete 1920x1080
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t[1]: 'MJPG' (Motion-JPEG, compressed)
+\t\tSize: Discrete 3840x2160
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+""")
+        self.assert_webcam_mode(args, "mjpeg", "3840x2160")
+
+    def test_webcam_preserves_advertised_fractional_framerate(self):
+        args = self.webcam_args("""ioctl: VIDIOC_ENUM_FMT
+\tType: Video Capture
+\t[0]: 'YUYV' (YUYV 4:2:2)
+\t\tSize: Discrete 1920x1080
+\t\t\tInterval: Discrete 0.033s (29.970 fps)
+""")
+        self.assert_webcam_mode(args, "yuyv422", "1920x1080", 29.970)
+        self.assertEqual(args[args.index("-framerate") + 1], "29.970")
+
+    def test_webcam_unknown_modes_use_driver_defaults(self):
+        args = self.webcam_args("""ioctl: VIDIOC_ENUM_FMT
+\tType: Video Capture
+\t[0]: 'NV12' (Y/UV 4:2:0)
+\t\tSize: Discrete 3840x2160
+\t\t\tInterval: Discrete 0.017s (60.000 fps)
+\t\tSize: Stepwise 48x32 - 3840x2160 with step 2/2
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t[1]: 'BA81' (8-bit Bayer BGBG/GRGR)
+\t\tSize: Discrete 3840x2160
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+""")
+        for option in ("-input_format", "-video_size", "-framerate"):
+            self.assertNotIn(option, args, "Unknown mode must not inherit a different format/size's interval")
 
     def test_startup_failure_cleans_webcam_without_success(self):
         self.env["SCREENRECORD_TEST_SCENARIO"] = "startup-failure"
