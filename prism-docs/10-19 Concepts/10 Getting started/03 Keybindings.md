@@ -57,6 +57,7 @@ The bottom row and specific control keys manage the Prism environment and status
 |`$MOD + Z`|**Settings**|Opens the **Prism Settings** Rofi menu|
 |`$MOD + N`|**Notifications**|Opens the SwayNC Notification Center|
 |`$MOD + M`|**Audio Mixer**|Opens the WirePlumber/Pulse Audio mixer|
+|`$MOD + SHIFT + M` or `XF86AudioMicMute`|**Microphone Mute**|Toggle mute on the default microphone, including while locked|
 |`$MOD + B`|**Brightness**|Opens the brightness control overlay|
 |`$MOD + CTRL + B`|**Sidebar**|Toggles the Quickshell Sidebar|
 |`$MOD + SHIFT + C`|**Calendar**|Toggles the system calendar|
@@ -65,6 +66,8 @@ The bottom row and specific control keys manage the Prism environment and status
 |`ALT + Scroll Up`|**Zoom In**|Magnifies the desktop around the pointer|
 |`ALT + Scroll Down`|**Zoom Out**|Reduces magnification around the pointer|
 |`ALT + Z`|**Reset Zoom**|Returns desktop magnification to normal|
+
+The microphone shortcut mutes the system's default input. Select that same input in Meet or Teams; the meeting's mute button may not reflect system mute. Check the current state with `wpctl get-volume @DEFAULT_AUDIO_SOURCE@` (`[MUTED]` means muted).
 
 ## Capture and recording
 
@@ -75,7 +78,25 @@ Prism features high-performance tools for documenting your work.
 |`$MOD + P`|**Screenshot (Full)**|Capture the entire focused monitor|
 |`$MOD + SHIFT + P`|**Screenshot (Region)**|Select an area to capture and edit|
 |`$MOD + O`|**Record (Toggle)**|Start 60fps recording with microphone, desktop audio, and webcam; press again to stop and save|
+|`$MOD + SHIFT + O`|**Presentation Desktop**|Open a nested Hyprland desktop for sharing with private outer notes|
 |`$MOD + CTRL + O`|**Record (Stop)**|Gracefully stop and save the current recording|
+
+### Inside the presentation desktop
+
+The inner desktop uses `$MOD + ALT`; the outer desktop keeps its usual shortcuts, including the scratchpad and microphone mute. See [[02 Moving around#Presenting with private notes]] for the sharing workflow.
+
+|**Keybinding**|**Action**|
+|---|---|
+|`$MOD + ALT + A`|Open an inner terminal|
+|`$MOD + ALT + S`|Open the separate presentation browser|
+|`$MOD + ALT + F`|Open the inner file manager|
+|`$MOD + ALT + [1-9]`|Switch inner workspace|
+|`$MOD + ALT + SHIFT + [1-9]`|Move a window to an inner workspace|
+|`$MOD + ALT + [H J K L]`|Focus an inner window|
+|`$MOD + ALT + Y`|Toggle floating for an inner window|
+|`$MOD + ALT + CTRL + F`|Maximize an inner window|
+|`$MOD + ALT + CTRL + Q`|Close an inner window|
+|`$MOD + ALT + CTRL + M`|Close the presentation desktop|
 
 ## Workspaces and special
 

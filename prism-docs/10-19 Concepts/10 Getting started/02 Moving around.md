@@ -27,6 +27,21 @@ Think of the **Special Workspace** as a hidden drawer. It’s perfect for window
 - **Toggle Drawer:** Press `$SUPER` + `T` to show or hide the special workspace.
 - **Stash Window:** Press `$SUPER` + `SHIFT` + `T` to move the currently active window into that hidden drawer.
 
+### Presenting with private notes
+
+The scratchpad is visible in a capture of the monitor whenever it is open. Hyprland's [`no_screen_share` rule](https://wiki.hypr.land/configuring/core/rules/window-rules/) replaces protected windows with black rectangles; it does not reveal the desktop underneath them.
+
+Use the **presentation desktop** to share an entire desktop while keeping notes private:
+
+1. Press `$SUPER + SHIFT + O` (or run `prism-present`) to open Hyprland inside a window. Maximize that window with the outer desktop's `$SUPER + CTRL + F` if needed.
+2. Focus the inner desktop and press `$SUPER + ALT + S` to open its Chromium browser. This uses a separate, persistent profile; sign into Meet or Teams there.
+3. Start sharing **Entire Screen** from that browser and select the inner `WAYLAND-1` output. Launch the apps you will present from the inner terminal (`$SUPER + ALT + A`). Existing outer windows cannot be moved into the inner compositor.
+4. Keep notes on the outer desktop's scratchpad. `$SUPER + T` opens it; `$SUPER + SHIFT + M` toggles microphone mute. Outer notes and overlays are outside the inner capture, so they leave no black rectangles.
+
+Inside the presentation desktop, add `ALT` to the usual shortcuts: `$SUPER + ALT + [1-9]` switches workspaces, `$SUPER + ALT + [H J K L]` changes focus, and `$SUPER + ALT + CTRL + M` closes the presentation desktop and its apps.
+
+The launcher gives the inner desktop its own screen-sharing portal while retaining access to the system's audio server. Share from the inner browser: sharing the physical monitor from an outer browser includes your notes. Everything you open **inside** the presentation desktop is visible in its screen capture.
+
 ## The interactive panels
 
 Prism uses [[Quickshell]] and [[Rofi]] to provide interactive overlays and menus. 

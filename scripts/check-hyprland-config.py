@@ -22,6 +22,7 @@ profiles.update(
 )
 themes = sorted((root / "defaults/themes").glob("*/hypr.lua"))
 hyprland = sys.argv[1] if len(sys.argv) > 1 else "Hyprland"
+checked = 0
 
 with tempfile.TemporaryDirectory(prefix="prism-hyprland-check-") as directory:
     stage = Path(directory)
@@ -37,21 +38,24 @@ with tempfile.TemporaryDirectory(prefix="prism-hyprland-check-") as directory:
     }
     for profile, mode in profiles.items():
         shutil.copyfile(mode, stage / "config/hypr/mode.lua")
+        configs = ["hyprland.lua", "presentation.lua"] if profile == "custom" else ["hyprland.lua"]
         for theme in themes:
             current = stage / "data/prism/current"
             if current.is_symlink():
                 current.unlink()
             current.symlink_to(theme.parent, target_is_directory=True)
-            result = subprocess.run(
-                [hyprland, "--verify-config", "-c", str(stage / "config/hypr/hyprland.lua")],
-                env=env,
-                capture_output=True,
-                text=True,
-                timeout=30,
-            )
-            output = result.stdout + result.stderr
-            if result.returncode or "\nconfig ok\n" not in output:
-                sys.exit(f"FAIL {profile}/{theme.parent.name}:\n{output}")
-        print(f"PASS {profile}: {len(themes)} themes")
+            for config in configs:
+                result = subprocess.run(
+                    [hyprland, "--verify-config", "-c", str(stage / "config/hypr" / config)],
+                    env=env,
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+                output = result.stdout + result.stderr
+                if result.returncode or "\nconfig ok\n" not in output:
+                    sys.exit(f"FAIL {profile}/{theme.parent.name}/{config}:\n{output}")
+                checked += 1
+        print(f"PASS {profile}: {len(themes)} themes, {len(configs)} configurations")
 
-print(f"Validated {len(profiles) * len(themes)} profile/theme combinations.")
+print(f"Validated {checked} profile/theme/configuration combinations.")

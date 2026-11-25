@@ -95,6 +95,7 @@ with pkgs;
   prism.session
   prism.screenshot
   prism.screenrecord
+  prism.present
   prism.save
   prism.monitor
   prism.apps

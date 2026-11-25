@@ -29,6 +29,7 @@ hl.bind(main_mod .. " + Z", hl.dsp.exec_cmd("prism-settings"), { description = "
 hl.bind(main_mod .. " + CONTROL + M", hl.dsp.exit(), { description = "Close hyperland" })
 hl.bind(main_mod .. " + N", hl.dsp.exec_cmd("prism-ctl notifications"), { description = "prism-ctl notifications" })
 hl.bind(main_mod .. " + M", hl.dsp.exec_cmd("prism-ctl mixer"), { description = "prism-ctl mixer" })
+hl.bind(main_mod .. " + SHIFT + M", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { description = "Toggle microphone mute", locked = true })
 
 -- Utils / Window management -> TOP ROW
 hl.bind(main_mod .. " + Y", hl.dsp.window.float({ action = "toggle" }), { description = "togglefloating" })
@@ -37,6 +38,7 @@ hl.bind(main_mod .. " + P", hl.dsp.exec_cmd("prism-screenshot fullscreen edit"),
 hl.bind(main_mod .. " + SHIFT + P", hl.dsp.exec_cmd("prism-screenshot region edit"), { description = "prism-screenshot region edit" })
 hl.bind(main_mod .. " + CONTROL + P", hl.dsp.exec_cmd("prism-ctl session"), { description = "prism-ctl session" })
 hl.bind(main_mod .. " + O", hl.dsp.exec_cmd("prism-screenrecord --desktop --mic --webcam"), { description = "prism-screenrecord --desktop --mic --webcam" })
+hl.bind(main_mod .. " + SHIFT + O", hl.dsp.exec_cmd("prism-present"), { description = "Open presentation desktop" })
 hl.bind(main_mod .. " + CONTROL + O", hl.dsp.exec_cmd("prism-screenrecord --stop"), { description = "prism-screenrecord --stop" })
 hl.bind(main_mod .. " + T", hl.dsp.workspace.toggle_special(""), { description = "Toggle special workspace" })
 hl.bind(main_mod .. " + CONTROL + T", hl.dsp.exec_cmd("prism-ctl themes"), { description = "prism-ctl themes" })
@@ -105,7 +107,7 @@ hl.bind(main_mod .. " + SHIFT + CONTROL + L", hl.dsp.window.resize({ x = 40, y =
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"), { description = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+", repeating = true, locked = true })
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { description = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-", repeating = true, locked = true })
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { description = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle", repeating = true, locked = true })
-hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { description = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle", repeating = true, locked = true })
+hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { description = "Toggle microphone mute", locked = true })
 hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl s 10%+"), { description = "brightnessctl s 10%+", repeating = true, locked = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl s 10%-"), { description = "brightnessctl s 10%-", repeating = true, locked = true })
 

@@ -14,8 +14,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     # silentSDDM.url = "github:uiriansan/SilentSDDM";
     # silentSDDM.inputs.nixpkgs.follows = "nixpkgs";
-    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
-    codex-cli-nix.inputs.nixpkgs.follows = "nixpkgs";
     quickshell.url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
     quickshell.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -60,6 +58,7 @@
           prism-session = pkgs.callPackage ./pkgs/prism-session.nix { };
           prism-screenshot = pkgs.callPackage ./pkgs/prism-screenshot.nix { };
           prism-screenrecord = pkgs.callPackage ./pkgs/prism-screenrecord.nix { };
+          prism-present = pkgs.callPackage ./pkgs/prism-present.nix { };
           prism-save = pkgs.callPackage ./pkgs/prism-save.nix { };
           prism-monitor = pkgs.callPackage ./pkgs/prism-monitor.nix { };
           prism-apps = pkgs.callPackage ./pkgs/prism-apps.nix { };
@@ -113,8 +112,6 @@
           ...
         }:
         {
-          _module.args.prismFlakeInputs = inputs;
-
           imports = [
             # silentSDDM.nixosModules.default
             ./modules/users.nix
@@ -166,6 +163,7 @@
                   session = self.packages.${system}.prism-session;
                   screenshot = self.packages.${system}.prism-screenshot;
                   screenrecord = self.packages.${system}.prism-screenrecord;
+                  present = self.packages.${system}.prism-present;
                   save = self.packages.${system}.prism-save;
                   monitor = self.packages.${system}.prism-monitor;
                   apps = self.packages.${system}.prism-apps;
